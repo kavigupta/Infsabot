@@ -16,4 +16,6 @@ The initial board for the initial size `100 x 100` therefore looks like
 
 <img src="demo-starting-board.png" alt="Initial game board 100x100" height="200" width="200">
 
-Return 1
+where white is empty and black is material.
+
+Robots are 

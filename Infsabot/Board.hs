@@ -13,7 +13,12 @@ spotColor :: BoardSpot -> PixelRGB8
 spotColor SpotEmpty = PixelRGB8 255 255 255 
 spotColor SpotMaterial = PixelRGB8 128 128 128 
 
-data Board = Board { boardContents :: (RAL (RAL BoardSpot)), boardWidth :: Int, boardHeight :: Int}
+data Board = Board { 
+	boardContents :: (RAL (RAL BoardSpot)),
+	boardRobots :: [Robot],
+	boardWidth :: Int,
+	boardHeight :: Int
+}
 
 (!!!) :: Board -> (Int, Int) -> BoardSpot
 b !!! (x, y) = boardContents b .!. x .!. y
@@ -32,10 +37,3 @@ startingBoard size = Board startingSpots size size
 renderBoard :: Board -> Image PixelRGB8
 renderBoard b = generateImage (\x y -> spotColor $ b !!! (x, y)) (boardWidth b) (boardHeight b)
 
-rule110 :: (Bool, Bool, Bool) -> Bool
-rule110 (True, 	True,  False) = True
-rule110 (True, 	False, True)  = True
-rule110 (False, True,  True)  = True
-rule110 (False, True,  False) = True
-rule110 (False, False, True)  = True
-rule110 _                     = False
