@@ -10,6 +10,7 @@ module Infsabot.Robot (
         lineOfSight,
     ) where
 
+import Infsabot.Constants
 import Infsabot.Base
 import Infsabot.RobotAction
 
@@ -40,4 +41,4 @@ data Robot = Robot {
 
 -- The distance the given robot can see
 lineOfSight :: Robot -> Int
-lineOfSight _ = 1
+lineOfSight _ = defaultLineOfSight

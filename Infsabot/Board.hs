@@ -10,15 +10,19 @@ module Infsabot.Board (
 import Codec.Picture
 import Data.RandomAccessList
 import Infsabot.MathTools
+import Infsabot.Constants
 import Infsabot.Base
 import Infsabot.RobotAction
 import Infsabot.Robot
 
 type RAL = RandomAccessList
 
+-- Gets the display color of the given spot.
+-- If there is a robot, then the color is that of the robot
+-- Otherwise, the color is that of the underlying material
 spotColor :: SeenSpot -> PixelRGB8
-spotColor (SeenSpot SpotEmpty Nothing) 		= PixelRGB8 255 255 255
-spotColor (SeenSpot SpotMaterial Nothing) 	= PixelRGB8 128 128 128
+spotColor (SeenSpot SpotEmpty Nothing) 		= colorOfEmptySpot
+spotColor (SeenSpot SpotMaterial Nothing) 	= colorOfMaterialSpot
 spotColor (SeenSpot _ (Just rob)) 			= robotColor rob
 
 data Board = Board {
