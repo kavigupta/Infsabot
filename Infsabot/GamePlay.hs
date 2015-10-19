@@ -4,6 +4,10 @@ import Infsabot.Board
 import Infsabot.Robot
 import Infsabot.Base
 
+
+getRobotAction :: Board -> (Int, Int, Robot) -> RobotProgramResult
+getRobotAction b (x, y, rob) = robotProgram rob $ getKnownState b (x, y, rob)
+
 getKnownState :: Board -> (Int, Int, Robot) -> KnownState
 getKnownState b (x, y, rob) = KnownState {
 		peekAtSpot = peekFn,

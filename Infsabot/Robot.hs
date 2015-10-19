@@ -1,8 +1,10 @@
 module Infsabot.Robot (
         Robot(Robot), robotProgram,	robotTeam, robotAppearance, robotMaterial, robotBirthdate, robotMemory,
         SeenSpot(SeenSpot), GameSpot(GameSpot), toSeenSpot,
-        robotColor, lineOfSight,
-        KnownState(KnownState), peekAtSpot, material, stateLocation, stateAge, stateMemory
+        lineOfSight,
+        KnownState(KnownState), peekAtSpot, material, stateLocation, stateAge, stateMemory,
+        RobotProgram, RobotProgramResult,
+        RobotAppearance, robotColor
     ) where
 
 import Codec.Picture (PixelRGB8)
@@ -34,7 +36,9 @@ data KnownState = KnownState {
 	stateMemory :: InternalState
 }
 
-type RobotProgram = KnownState -> (RobotAction, InternalState)
+type RobotProgram = KnownState -> RobotProgramResult
+
+type RobotProgramResult = (RobotAction, InternalState)
 
 data RobotAction = MoveIn Direction
                  | Dig
@@ -58,9 +62,9 @@ data Robot = Robot {
 		robotMemory :: InternalState
 }
 
-lineOfSight :: Robot -> Int
-lineOfSight _ = 1
-
 data RobotAppearance = RobotAppearance {
 	robotColor :: PixelRGB8
 }
+
+lineOfSight :: Robot -> Int
+lineOfSight _ = 1
