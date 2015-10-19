@@ -11,6 +11,7 @@ import Codec.Picture
 import Data.RandomAccessList
 import Infsabot.MathTools
 import Infsabot.Base
+import Infsabot.RobotAction
 import Infsabot.Robot
 
 type RAL = RandomAccessList
