@@ -1,4 +1,11 @@
-module Infsabot.Board(BoardSpot, Board, startingBoard, renderBoard) where
+module Infsabot.Board (
+		BoardSpot,
+		Board,
+			boardContents, boardRobots, boardWidth, boardHeight, boardTime,
+			(!!!),
+		startingBoard,
+		renderBoard
+	) where
 
 import Codec.Picture
 import Data.RandomAccessList
