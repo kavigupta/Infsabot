@@ -1,6 +1,8 @@
-module Infsabot.Robot(Robot) where
+module Infsabot.Robot(Robot(Robot), SeenSpot(SeenSpot), GameSpot(GameSpot), toSeenSpot, robotAppearance, robotColor) where
 
+import Codec.Picture (PixelRGB8)
 import qualified Data.Map as M
+import Infsabot.Base
 
 -- Represents one of the 4 potential directions
 data Direction = N | E | W | S
@@ -8,18 +10,23 @@ data Direction = N | E | W | S
 -- Represents a Team. Currently, there are only two teams.
 data Team = A | B
 
--- Represents a Spot on the Board as seen by a robot.
--- This contains a Board Spot, which the Robot can always see, contains a robot's appearance iff there is a robot at that spot.
-data SeenSpot = SeenSpot {
-    boardSpot :: BoardSpot,
-    robotAt :: Maybe RobotAppearance
-}
-
 -- Represents an offset from the original position.
 newtype Offset = Offset Int
 
 -- The robot's internal state. This is represented by a Stringly-typed Map
 type InternalState = M.Map String String
+
+-- Represents a Spot on the Board as seen by a robot.
+-- This contains a Board Spot, which the Robot can always see, contains a robot's appearance iff there is a robot at that spot.
+data SeenSpot = SeenSpot BoardSpot (Maybe RobotAppearance)
+
+-- Represents a Spot on the Board as seen by a robot.
+-- This contains a Board Spot, which the Robot can always see, contains a robot's appearance iff there is a robot at that spot.
+data GameSpot = GameSpot BoardSpot (Maybe Robot)
+
+toSeenSpot :: GameSpot -> SeenSpot
+toSeenSpot (GameSpot s Nothing) = SeenSpot s Nothing
+toSeenSpot (GameSpot s (Just rob)) = SeenSpot s $ Just $ robotAppearance rob
 
 -- The Robot's concept of self.
 data KnownState = KnownState {
@@ -63,5 +70,5 @@ lineOfSight :: Robot -> Int
 lineOfSight _ = 1
 
 data RobotAppearance = RobotAppearance {
-	robotColor :: (Int, Int, Int)
+	robotColor :: PixelRGB8
 }
