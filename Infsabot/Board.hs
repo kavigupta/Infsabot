@@ -16,6 +16,7 @@ import Infsabot.RobotAction
 import Infsabot.Robot
 
 type RAL = RandomAccessList
+(.!.) = flip Data.RandomAccessList.lookup
 
 -- Gets the display color of the given spot.
 -- If there is a robot, then the color is that of the robot
@@ -25,18 +26,43 @@ spotColor (SeenSpot SpotEmpty Nothing) 		= colorOfEmptySpot
 spotColor (SeenSpot SpotMaterial Nothing) 	= colorOfMaterialSpot
 spotColor (SeenSpot _ (Just rob)) 			= robotColor rob
 
+-- Represents a board.
 data Board = Board {
-	boardContents :: (RAL (RAL GameSpot)),
+	-- The contents of the board
+	-- In the form of a RAL of RALs of GameSpots, forming a Matrix
+	boardContents :: RAL (RAL GameSpot),
+	-- The robots on the Board
 	boardRobots :: [(Int, Int, Robot)],
+	-- The Width of the Board
 	boardWidth :: Int,
+	-- The Height of the board
 	boardHeight :: Int,
+	-- The Current Time of the Board
 	boardTime :: Int
 }
 
+-- Gets the game spot at the given board location
 (!!!) :: Board -> (Int, Int) -> GameSpot
 b !!! (x, y) = boardContents b .!. x .!. y
-	where (.!.) = flip Data.RandomAccessList.lookup
 
+-- Sets the game spot at the given board location to the given value
+(!->) :: Board -> (Int, Int) -> GameSpot -> Board
+(b !-> (x, y)) gs = b {
+		boardContents = newcontents,
+		boardWidth = max x $ boardWidth b,
+		boardHeight = max y $ boardHeight b
+	}
+	where
+	-- The old column x
+	oldx = boardContents b .!. x
+	-- The updated column x with the new value of y
+	newx = update y gs oldx
+	-- The updated board with the element at (x, y)
+	newcontents = update x newx $ boardContents b
+	update = Data.RandomAccessList.update
+
+-- Creates a starting square board with a given size
+-- This board contains no robots
 startingBoard :: Int -> Board
 startingBoard size = Board {
 		boardContents 	= startingSpots,
@@ -52,10 +78,21 @@ startingBoard size = Board {
 		ys x = fmap (initialColor x) $ fromList [0..size]
 		initialColor :: Int -> Int -> GameSpot
 		initialColor x y =
-			if isPrime (x + y^2)
+			if isPrime (x^2 + y^2)
 				then GameSpot SpotMaterial Nothing
 				else GameSpot SpotEmpty Nothing
+-- Adds a robot to the board
+-- 		1. places the robot at the Gamespot at the given coordinates
+--		2. Adds the robot to the list of robots
+addRobot :: (Int, Int, Robot) -> Board -> Board
+addRobot (x, y, rob) b = newB {
+		boardRobots = (x,y,rob) : boardRobots newB
+	}
+	where
+	GameSpot oldMaterial _ = b !!! (x, y)
+	newB = b !-> (x, y) $ GameSpot oldMaterial $ Just rob
 
+-- Renders the given board as an image
 renderBoard :: Board -> Image PixelRGB8
 renderBoard b = generateImage colorAt (boardWidth b) (boardHeight b)
 	where

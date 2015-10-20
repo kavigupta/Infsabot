@@ -3,3 +3,6 @@ demo_board_size="100"
 ghci "Infsabot/Board.hs" <<EOD
 writePng "./demo-starting-board.png" $ renderBoard $ startingBoard $demo_board_size
 EOD
+
+rm ./Infsabot/*hi
+rm ./Infsabot/*.o
