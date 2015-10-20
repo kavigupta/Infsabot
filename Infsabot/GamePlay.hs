@@ -5,9 +5,23 @@ import Infsabot.Robot
 import Infsabot.RobotAction
 import Infsabot.Base
 
+-- The distance the given robot can see
+lineOfSight :: Robot -> Int
+lineOfSight _ = 1
 
-getRobotAction :: Board -> (Int, Int, Robot) -> RobotProgramResult
-getRobotAction b (x, y, rob) = robotProgram rob $ getKnownState b (x, y, rob)
+-- The distance the robot can fire
+lineOfFire :: Robot -> Int
+lineOfFire _ = 2
+
+-- Increments time by one
+applyTimeTick :: Board -> Board
+applyTimeTick b = b {boardTime = boardTime b + 1}
+
+getRobotActions :: Board -> [((Int, Int, Robot), RobotProgramResult)]
+getRobotActions b = map (getRobotAction b) $ boardRobots b
+	where
+	getRobotAction b (x, y, rob) = ((x, y, rob), robotProgram rob state)
+	   where state = getKnownState b (x, y, rob)
 
 getKnownState :: Board -> (Int, Int, Robot) -> KnownState
 getKnownState b (x, y, rob) = KnownState {

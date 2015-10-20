@@ -6,8 +6,7 @@ module Infsabot.Robot (
             robotMaterial,
             robotBirthdate,
             robotMemory,
-        GameSpot(GameSpot), toSeenSpot,
-        lineOfSight,
+        GameSpot(GameSpot), toSeenSpot
     ) where
 
 import Infsabot.Constants
@@ -33,12 +32,10 @@ data Robot = Robot {
 		robotAppearance :: RobotAppearance,
         -- The quantity of material this robot contains
 		robotMaterial :: Int,
+        -- The hitpoints of this robot
+        robotHitpoints :: Int,
         -- The birthdate of this robot
         robotBirthdate :: Int,
         -- The memory of this robot
 		robotMemory :: InternalState
 }
-
--- The distance the given robot can see
-lineOfSight :: Robot -> Int
-lineOfSight _ = defaultLineOfSight

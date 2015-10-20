@@ -1,8 +1,60 @@
 #!/bin/bash
 demo_board_size="100"
-ghci "Infsabot/Board.hs" <<EOD
+
+stdlog="___std.log"
+errlog="___err.log"
+errcolor="\e[0;31m"
+logcolor="\e[0;32m"
+succolor="\e[1;36m"
+norcolor="\033[0m"
+
+function echl {
+    echo -e "$logcolor$1$norcolor"
+}
+function echs {
+    echo -e "$succolor$1$norcolor"
+}
+function echf {
+    echo -e "$errcolor$1$norcolor"
+}
+
+function perror_clean {
+    echo -e "$red"
+    cat $errlog
+    echo -e "$normal"
+    exit 1
+}
+
+for f in ./Infsabot/*.hs
+do
+    ghci "$f" <<EOD >> $stdlog 2> $errlog
+EOD
+echl "Compiling $f"
+done
+
+errsize=$(wc -c <"$errlog")
+
+if [ "$errsize" = "0" ]; then
+    echs "All Haskell Files Built"
+else
+    echf "Haskell Files did not build correctly"
+    perror_clean
+fi
+ghci "Infsabot/Board.hs" <<EOD >> $stdlog 2> $errlog
+
 writePng "./demo-starting-board.png" $ renderBoard $ startingBoard $demo_board_size
 EOD
 
-rm ./Infsabot/*hi
-rm ./Infsabot/*.o
+errsize=$(wc -c <"$errlog")
+
+if [ "$errsize" = "0" ] ; then
+    echs "Image produced"
+else
+    echf "Image was not correctly produced"
+    perror_clean
+fi
+
+rm ./Infsabot/*hi 2>> /dev/null
+rm ./Infsabot/*.o 2>> /dev/null
+rm "$errlog"
+rm "$stdlog"
