@@ -3,6 +3,8 @@ import Infsabot.Robot
 import Infsabot.RobotAction
 import Infsabot.Parameters
 import Infsabot.Base
+import Data.List(groupBy)
+import Data.Function(on)
 
 -- The distance the given robot can see
 lineOfSight :: Robot -> Int
@@ -16,11 +18,19 @@ lineOfFire _ = 2
 applyTimeTick :: Board -> Board
 applyTimeTick b = b {boardTime = boardTime b + 1}
 
-getRobotActions :: Board -> [((Int, Int, Robot), RobotProgramResult)]
+type RobotAndResult = ((Int, Int, Robot), RobotProgramResult)
+
+getRobotActions :: Board -> [RobotAndResult]
 getRobotActions b = map (getRobotAction) $ boardRobots b
 	where
 	getRobotAction (x, y, rob) = ((x, y, rob), robotProgram rob state)
 	   where state = getKnownState b (x, y, rob)
+
+groupedActions :: Board -> [[RobotAndResult]]
+groupedActions b = groupBy ((==) `on` classify) $ getRobotActions b
+	where
+	classify :: RobotAndResult -> ActionGroup
+	classify (_, (act, _)) = getActionGroup act
 
 getKnownState :: Board -> (Int, Int, Robot) -> KnownState
 getKnownState b (x, y, rob) = KnownState {

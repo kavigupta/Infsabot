@@ -6,7 +6,9 @@ module Infsabot.RobotAction (
             newProgram, newAppearance, newMaterial, newMemory, newDirection,
             fireDirection, materialExpended,
             messageToSend, sendDirection,
-        actionCost
+        actionCost,
+        ActionGroup(AGNoEffect, AGInstantaneous, AGNoExternalEffect, AGRobotPlace),
+            getActionGroup
     ) where
 
 import Infsabot.Base
@@ -76,21 +78,21 @@ data RobotAction =
                     sendDirection :: Direction
                 }
 
--- robActA < robActB iff robActA should be executed before robActB
-instance Ord RobotAction where
-    compare x y = compare (priority x) (priority y)
-        where
-        priority :: RobotAction -> Int
-        priority Die = 0
-        priority Noop = 0
-        priority Dig = 1
-        priority (Fire _ _) = 2
-        priority (SendMessage _ _) = 2
-        priority (MoveIn _) = 3
-        priority (Spawn _ _ _ _ _) = 3
+data ActionGroup =
+    AGNoEffect |
+    AGInstantaneous |
+    AGNoExternalEffect |
+    AGRobotPlace
+        deriving (Eq, Ord)
 
-instance Eq RobotAction where
-    (==) x y = compare x y == EQ
+getActionGroup :: RobotAction -> ActionGroup
+getActionGroup Die = AGNoEffect
+getActionGroup Noop = AGNoEffect
+getActionGroup Dig = AGNoExternalEffect
+getActionGroup (Fire _ _) = AGInstantaneous
+getActionGroup (SendMessage _ _) = AGInstantaneous
+getActionGroup (MoveIn _) = AGRobotPlace
+getActionGroup (Spawn _ _ _ _ _) = AGRobotPlace
 
 -- Outputs the cost of performing the given action.
 actionCost :: Parameters -> RobotAction -> Int
