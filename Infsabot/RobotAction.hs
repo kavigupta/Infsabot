@@ -1,10 +1,11 @@
 module Infsabot.RobotAction (
         RobotProgram, RobotProgramResult,
         KnownState(KnownState),
-            peekAtSpot, material, stateLocation, stateAge, stateMemory,
-        RobotAction(MoveIn, Dig, Spawn, Fire),
-            newProgram, newAppearance, newMaterial, newMemory,
-            fireDirection, materialExpended
+            peekAtSpot, material, stateLocation, stateAge, stateMemory, robotMessages,
+        RobotAction(MoveIn, Dig, Spawn, Fire, SendMessage),
+            newProgram, newAppearance, newMaterial, newMemory, newDirection,
+            fireDirection, materialExpended,
+            messageToSend, sendDirection
     ) where
 
 import Infsabot.Base
@@ -27,7 +28,10 @@ data KnownState = KnownState {
 	-- The robot's age
 	stateAge :: Int,
 	-- The robot's memory
-	stateMemory :: InternalState
+	stateMemory :: InternalState,
+    -- The robot's received messages as a list of pairs of
+    -- message and direction received.
+    robotMessages :: [(String, Direction)]
 }
 
 -- Represents an action a robot can take.
@@ -39,6 +43,8 @@ data RobotAction =
                 Dig |
                 -- Robot will spawn a new Robot
                 Spawn {
+                    -- The direction the new robot will be placed in
+                    newDirection :: Direction,
                     -- The program the new Robot will have
                     newProgram :: RobotProgram,
                     -- The appearance of the new Robot
@@ -55,4 +61,11 @@ data RobotAction =
                     -- Material devoted to this task.
                     -- More material means greater blow
                     materialExpended :: Int
+                } |
+                -- Robot will send a message in a given direction
+                SendMessage {
+                    -- The message to send to another robot
+                    messageToSend :: String,
+                    -- The direction to send the message in
+                    sendDirection :: Direction
                 }
