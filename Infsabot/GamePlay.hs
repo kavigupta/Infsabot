@@ -1,6 +1,7 @@
 import Infsabot.Board
 import Infsabot.Robot
 import Infsabot.RobotAction
+import Infsabot.Parameters
 import Infsabot.Base
 
 -- The distance the given robot can see
@@ -36,3 +37,23 @@ getKnownState b (x, y, rob) = KnownState {
 		| withinRange	= Just $ toSeenSpot $ b !!! (x + offx, y + offy)
 		| otherwise		= Nothing
             where withinRange = offx * offx + offy * offy <= (lineOfSight rob) * (lineOfSight rob)
+
+-- Returns the closest approximation to the requested action that is possible
+    -- given the robot's level of material.
+-- This may be another type of action.
+possibleAction :: Parameters -> Robot -> RobotAction -> RobotAction
+possibleAction p rob action
+    | actionCost p action <= robotMaterial rob  = action
+    | otherwise 								= downgrade action
+	where
+		downgrade :: RobotAction -> RobotAction
+		downgrade Die = Die
+		downgrade Noop = Die -- no alternative
+		downgrade (MoveIn _) = tryNoop
+		downgrade Dig = tryNoop
+		downgrade s@(Spawn _ _ _ _ _)
+			= possibleAction p rob $ s {newMaterial = newMaterial s - 1}
+		downgrade f@(Fire _ _)
+			= possibleAction p rob $ f {materialExpended = materialExpended f - 1}
+		downgrade (SendMessage _ _) = tryNoop
+		tryNoop = possibleAction p rob Noop

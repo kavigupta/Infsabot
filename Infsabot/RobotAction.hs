@@ -2,7 +2,7 @@ module Infsabot.RobotAction (
         RobotProgram, RobotProgramResult,
         KnownState(KnownState),
             peekAtSpot, material, stateLocation, stateAge, stateMemory, robotMessages,
-        RobotAction(Noop, MoveIn, Dig, Spawn, Fire, SendMessage),
+        RobotAction(Die, Noop, MoveIn, Dig, Spawn, Fire, SendMessage),
             newProgram, newAppearance, newMaterial, newMemory, newDirection,
             fireDirection, materialExpended,
             messageToSend, sendDirection,
@@ -39,6 +39,9 @@ data KnownState = KnownState {
 -- Represents an action a robot can take.
 -- If the action is impossible, nothing will occur
 data RobotAction =
+                -- Robot will die
+                Die |
+                -- Robot will do nothing
                 Noop |
                 -- Robot will move in the given Direction
                 MoveIn Direction |
@@ -73,8 +76,10 @@ data RobotAction =
                     sendDirection :: Direction
                 }
 
+-- Outputs the cost of performing the given action.
 actionCost :: Parameters -> RobotAction -> Int
 actionCost p Noop = paramNoopCost p
+actionCost _ Die = 0
 actionCost p (MoveIn _) = paramMoveCost p
 actionCost p Dig = paramDigCost p
 actionCost p s@(Spawn _ _ _ _ _) = newMaterial s + paramNewRobotCost p
