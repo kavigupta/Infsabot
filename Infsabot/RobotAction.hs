@@ -5,10 +5,12 @@ module Infsabot.RobotAction (
         RobotAction(Noop, MoveIn, Dig, Spawn, Fire, SendMessage),
             newProgram, newAppearance, newMaterial, newMemory, newDirection,
             fireDirection, materialExpended,
-            messageToSend, sendDirection
+            messageToSend, sendDirection,
+        actionCost
     ) where
 
 import Infsabot.Base
+import Infsabot.Parameters
 
 -- A robot program takes the Robot's state and returns a RobotProgramResult
 type RobotProgram = KnownState -> RobotProgramResult
@@ -70,3 +72,11 @@ data RobotAction =
                     -- The direction to send the message in
                     sendDirection :: Direction
                 }
+
+actionCost :: Parameters -> RobotAction -> Int
+actionCost p Noop = paramNoopCost p
+actionCost p (MoveIn _) = paramMoveCost p
+actionCost p Dig = paramDigCost p
+actionCost p s@(Spawn _ _ _ _ _) = newMaterial s + paramNewRobotCost p
+actionCost p f@(Fire _ _) = materialExpended f + paramFireCost p
+actionCost p (SendMessage _ _) = actionCost p Noop
