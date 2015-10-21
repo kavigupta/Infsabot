@@ -19,27 +19,27 @@ function echf {
 }
 
 function perror_clean {
-    echo -e "$red"
+    echo -e "$errcolor"
     cat $errlog
-    echo -e "$normal"
+    echo -e "$norcolor"
     exit 1
 }
 
 for f in ./Infsabot/*.hs
 do
-    ghci "$f" <<EOD >> $stdlog 2> $errlog
+    ghci "$f" -Wall -Werror <<EOD >> $stdlog 2> $errlog
 EOD
-echl "Compiling $f"
+    errsize=$(wc -c <"$errlog")
+
+    if [ "$errsize" != "0" ]; then
+        echf "Haskell Files did not build correctly"
+        perror_clean
+    fi
+    echl "Compiling $f"
 done
 
-errsize=$(wc -c <"$errlog")
+echs "All Haskell Files Built"
 
-if [ "$errsize" = "0" ]; then
-    echs "All Haskell Files Built"
-else
-    echf "Haskell Files did not build correctly"
-    perror_clean
-fi
 ghci "Infsabot/Board.hs" <<EOD >> $stdlog 2> $errlog
 
 writePng "./demo-starting-board.png" $ renderBoard $ startingBoard $demo_board_size

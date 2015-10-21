@@ -1,5 +1,3 @@
-module Infsabot.GamePlay() where
-
 import Infsabot.Board
 import Infsabot.Robot
 import Infsabot.RobotAction
@@ -18,9 +16,9 @@ applyTimeTick :: Board -> Board
 applyTimeTick b = b {boardTime = boardTime b + 1}
 
 getRobotActions :: Board -> [((Int, Int, Robot), RobotProgramResult)]
-getRobotActions b = map (getRobotAction b) $ boardRobots b
+getRobotActions b = map (getRobotAction) $ boardRobots b
 	where
-	getRobotAction b (x, y, rob) = ((x, y, rob), robotProgram rob state)
+	getRobotAction (x, y, rob) = ((x, y, rob), robotProgram rob state)
 	   where state = getKnownState b (x, y, rob)
 
 getKnownState :: Board -> (Int, Int, Robot) -> KnownState
@@ -29,11 +27,12 @@ getKnownState b (x, y, rob) = KnownState {
 		material = robotMaterial rob,
 		stateLocation = (x,y),
 		stateAge = boardTime b - robotBirthdate rob,
-		stateMemory = robotMemory rob
+		stateMemory = robotMemory rob,
+		robotMessages = []
 	}
 	where
 	peekFn :: Offset ->  Offset -> Maybe SeenSpot
 	peekFn (Offset offx) (Offset offy)
 		| withinRange	= Just $ toSeenSpot $ b !!! (x + offx, y + offy)
 		| otherwise		= Nothing
-            where withinRange = offx * offx + offy * offy <= lineOfSight rob ^ 2
+            where withinRange = offx * offx + offy * offy <= (lineOfSight rob) * (lineOfSight rob)

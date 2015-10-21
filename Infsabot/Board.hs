@@ -2,7 +2,7 @@ module Infsabot.Board (
 		BoardSpot,
 		Board,
 			boardContents, boardRobots, boardWidth, boardHeight, boardTime,
-			(!!!),
+			(!!!), addRobot,
 		startingBoard,
 		renderBoard
 	) where
@@ -12,10 +12,11 @@ import Data.RandomAccessList
 import Infsabot.MathTools
 import Infsabot.Constants
 import Infsabot.Base
-import Infsabot.RobotAction
 import Infsabot.Robot
 
 type RAL = RandomAccessList
+
+(.!.) :: RandomAccessList a -> Int -> a
 (.!.) = flip Data.RandomAccessList.lookup
 
 -- Gets the display color of the given spot.
@@ -59,26 +60,25 @@ b !!! (x, y) = boardContents b .!. x .!. y
 	newx = update y gs oldx
 	-- The updated board with the element at (x, y)
 	newcontents = update x newx $ boardContents b
-	update = Data.RandomAccessList.update
 
 -- Creates a starting square board with a given size
 -- This board contains no robots
 startingBoard :: Int -> Board
-startingBoard size = Board {
+startingBoard n = Board {
 		boardContents 	= startingSpots,
 		boardRobots 	= [],
-		boardWidth 		= size,
-		boardHeight 	= size,
+		boardWidth 		= n,
+		boardHeight 	= n,
 		boardTime 		= 0
 	}
 	where
 	startingSpots :: (RAL (RAL GameSpot))
-	startingSpots = fmap ys $ fromList [0..size]
+	startingSpots = fmap ys $ fromList [0..n]
 		where
-		ys x = fmap (initialColor x) $ fromList [0..size]
+		ys x = fmap (initialColor x) $ fromList [0..n]
 		initialColor :: Int -> Int -> GameSpot
 		initialColor x y =
-			if isPrime (x^2 + y^2)
+			if isPrime (x * x + y * y)
 				then GameSpot SpotMaterial Nothing
 				else GameSpot SpotEmpty Nothing
 -- Adds a robot to the board

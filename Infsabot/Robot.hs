@@ -6,10 +6,10 @@ module Infsabot.Robot (
             robotMaterial,
             robotBirthdate,
             robotMemory,
+            robotHitpoints,
         GameSpot(GameSpot), toSeenSpot
     ) where
 
-import Infsabot.Constants
 import Infsabot.Base
 import Infsabot.RobotAction
 
