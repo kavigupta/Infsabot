@@ -76,6 +76,22 @@ data RobotAction =
                     sendDirection :: Direction
                 }
 
+-- robActA < robActB iff robActA should be executed before robActB
+instance Ord RobotAction where
+    compare x y = compare (priority x) (priority y)
+        where
+        priority :: RobotAction -> Int
+        priority Die = 0
+        priority Noop = 0
+        priority Dig = 1
+        priority (Fire _ _) = 2
+        priority (SendMessage _ _) = 2
+        priority (MoveIn _) = 3
+        priority (Spawn _ _ _ _ _) = 3
+
+instance Eq RobotAction where
+    (==) x y = compare x y == EQ
+
 -- Outputs the cost of performing the given action.
 actionCost :: Parameters -> RobotAction -> Int
 actionCost p Noop = paramNoopCost p
