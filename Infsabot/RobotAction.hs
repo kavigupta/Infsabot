@@ -2,7 +2,7 @@ module Infsabot.RobotAction (
         RobotProgram, RobotProgramResult,
         KnownState(KnownState),
             peekAtSpot, material, stateLocation, stateAge, stateMemory, robotMessages,
-        RobotAction(MoveIn, Dig, Spawn, Fire, SendMessage),
+        RobotAction(Noop, MoveIn, Dig, Spawn, Fire, SendMessage),
             newProgram, newAppearance, newMaterial, newMemory, newDirection,
             fireDirection, materialExpended,
             messageToSend, sendDirection
@@ -37,6 +37,7 @@ data KnownState = KnownState {
 -- Represents an action a robot can take.
 -- If the action is impossible, nothing will occur
 data RobotAction =
+                Noop |
                 -- Robot will move in the given Direction
                 MoveIn Direction |
                 -- Robot will dig
