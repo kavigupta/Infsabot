@@ -46,14 +46,14 @@ possibleAction p rob action
     | actionCost p action <= robotMaterial rob  = action
     | otherwise 								= downgrade action
 	where
-		downgrade :: RobotAction -> RobotAction
-		downgrade Die = Die
-		downgrade Noop = Die -- no alternative
-		downgrade (MoveIn _) = tryNoop
-		downgrade Dig = tryNoop
-		downgrade s@(Spawn _ _ _ _ _)
-			= possibleAction p rob $ s {newMaterial = newMaterial s - 1}
-		downgrade f@(Fire _ _)
-			= possibleAction p rob $ f {materialExpended = materialExpended f - 1}
-		downgrade (SendMessage _ _) = tryNoop
-		tryNoop = possibleAction p rob Noop
+	downgrade :: RobotAction -> RobotAction
+	downgrade Die = Die
+	downgrade Noop = Die -- no alternative
+	downgrade (MoveIn _) = tryNoop
+	downgrade Dig = tryNoop
+	downgrade s@(Spawn _ _ _ _ _)
+		= possibleAction p rob $ s {newMaterial = newMaterial s - 1}
+	downgrade f@(Fire _ _)
+		= possibleAction p rob $ f {materialExpended = materialExpended f - 1}
+	downgrade (SendMessage _ _) = tryNoop
+	tryNoop = possibleAction p rob Noop
