@@ -2,7 +2,7 @@ module Infsabot.Board (
 		BoardSpot,
 		Board,
 			boardContents, boardRobots, boardWidth, boardHeight, boardTime,
-			(!!!), setRobot, deleteRobot,
+			(!!!), setRobot, deleteRobot, updateSpot,
 		startingBoard,
 		renderBoard
 	) where
@@ -100,6 +100,14 @@ deleteRobot (x, y) b = newB {
 	pointNEQ (x2,y2,_) = (x /= x2) && (y /= y2)
 	GameSpot oldMaterial _ = b !!! (x, y)
 	newB = b !-> (x, y) $ GameSpot oldMaterial $ Nothing
+
+updateSpot :: (Int, Int) -> BoardSpot -> Board -> Board
+updateSpot (x, y) spot b = newB
+	where
+	currentRobot :: Maybe Robot
+	GameSpot _ currentRobot = b !!! (x, y)
+	newB :: Board
+	newB = b !-> (x, y) $ GameSpot spot currentRobot
 
 -- Renders the given board as an image
 renderBoard :: Board -> Image PixelRGB8

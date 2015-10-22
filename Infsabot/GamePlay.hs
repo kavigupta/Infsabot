@@ -20,15 +20,21 @@ applyTimeTick b = b {boardTime = boardTime b + 1}
 
 type RobotAndResult = ((Int, Int, Robot), RobotProgramResult)
 
-updateHardDrive :: (Int, Int, Robot) -> InternalState -> Board -> Board
-updateHardDrive (x,y,rob) newstate = setRobot (x,y,rob {robotMemory = newstate})
+type RobotAndAction = ((Int, Int, Robot), RobotAction)
 
-applyNonModifyingChanges :: RobotAndResult -> Maybe (Board -> Board)
-applyNonModifyingChanges ((x,y,rob), (Noop, newstate))
-	= Just $ updateHardDrive (x,y,rob) newstate
-applyNonModifyingChanges ((x,y,_), (Die, _))
-	= Just $ deleteRobot (x,y)
-applyNonModifyingChanges _ = Nothing
+updateAllHardDrives :: [RobotAndResult] -> (Board -> Board, [RobotAndAction])
+updateAllHardDrives [] = (id, [])
+updateAllHardDrives ((robAndCoor@(x,y,rob), (action, state)):rars)
+		= (currentModifier . restOfmodifiers, (robAndCoor, action):restOfActions)
+	where
+	(restOfmodifiers, restOfActions) = updateAllHardDrives rars
+	currentModifier b = setRobot (x,y,rob {robotMemory = state}) b
+
+
+--applyNonExterMod :: RobotAndAction -> Maybe (Board -> Board)
+--applyNonExterMod ((x,y,rob), Dig) b
+--	| existMaterial == SpotEmpty	=
+--	where GameSpot existMaterial existingRobot = b !!! (x,y)
 
 actionsInGroup :: [[RobotAndResult]] -> ActionGroup -> [RobotAndResult]
 actionsInGroup rars ag = concat $ filter isInGroup rars
