@@ -22,6 +22,10 @@ type RobotAndResult = ((Int, Int, Robot), RobotProgramResult)
 
 type RobotAndAction = ((Int, Int, Robot), RobotAction)
 
+-- Takes a list of robots and results and outputs
+	-- (a function that updates a board to one with hard drives updated,
+	-- 	a list of robots and their actions)
+-- This is performed before any robot actions are carried out.
 updateAllHardDrives :: [RobotAndResult] -> (Board -> Board, [RobotAndAction])
 updateAllHardDrives [] = (id, [])
 updateAllHardDrives ((robAndCoor@(x,y,rob), (action, state)):rars)
@@ -33,27 +37,34 @@ updateAllHardDrives ((robAndCoor@(x,y,rob), (action, state)):rars)
 
 --applyNonExterMod :: RobotAndAction -> Maybe (Board -> Board)
 --applyNonExterMod ((x,y,rob), Dig) b
---	| existMaterial == SpotEmpty	=
+--	| existMaterial == SpotEmpty	= Just id
 --	where GameSpot existMaterial existingRobot = b !!! (x,y)
 
-actionsInGroup :: [[RobotAndResult]] -> ActionGroup -> [RobotAndResult]
+-- Gets the actions in the given group from the given list of actions.
+-- May not be used in the future.
+actionsInGroup :: [[RobotAndAction]] -> ActionGroup -> [RobotAndAction]
 actionsInGroup rars ag = concat $ filter isInGroup rars
 	where
-	isInGroup :: [RobotAndResult] -> Bool
+	isInGroup :: [RobotAndAction] -> Bool
 	isInGroup [] = False
-	isInGroup ((_,(act,_)):_) = getActionGroup act == ag
+	isInGroup ((_, act):_) = getActionGroup act == ag
 
-groupedActions :: Board -> [[RobotAndResult]]
-groupedActions b = groupBy ((==) `on` classify) getRobotActions
+-- Groups actions by their action execution group.
+-- May not be used in the future
+groupedActions :: [RobotAndAction] -> [[RobotAndAction]]
+groupedActions = groupBy ((==) `on` classify)
 	where
-	classify :: RobotAndResult -> ActionGroup
-	classify (_, (act, _)) = getActionGroup act
-	getRobotActions :: [RobotAndResult]
-	getRobotActions = map (getRobotAction) $ boardRobots b
-		where
-		getRobotAction (x, y, rob) = ((x, y, rob), robotProgram rob state)
-		   where state = getKnownState b (x, y, rob)
+	classify :: RobotAndAction -> ActionGroup
+	classify (_, act) = getActionGroup act
 
+-- Gets a list of robots and their program results
+getRobotActions :: Board -> [RobotAndResult]
+getRobotActions b = map (getRobotAction) $ boardRobots b
+	where
+	getRobotAction (x, y, rob) = ((x, y, rob), robotProgram rob state)
+	   where state = getKnownState b (x, y, rob)
+
+-- Gets the known state for the given robot
 getKnownState :: Board -> (Int, Int, Robot) -> KnownState
 getKnownState b (x, y, rob) = KnownState {
 		peekAtSpot = peekFn,
@@ -71,7 +82,7 @@ getKnownState b (x, y, rob) = KnownState {
             where withinRange = offx * offx + offy * offy <= (lineOfSight rob) * (lineOfSight rob)
 
 -- Returns the closest approximation to the requested action that is possible
-    -- given the robot's level of material.
+    -- given the robot's level of material
 -- This may be another type of action.
 possibleAction :: Parameters -> Robot -> RobotAction -> RobotAction
 possibleAction p rob action
