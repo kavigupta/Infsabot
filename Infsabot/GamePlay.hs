@@ -27,13 +27,21 @@ type RobotAndAction = ((Int, Int, Robot), RobotAction)
 	-- 	a list of robots and their actions)
 -- This is performed before any robot actions are carried out.
 updateAllHardDrives :: [RobotAndResult] -> (Board -> Board, [RobotAndAction])
-updateAllHardDrives [] = (id, [])
-updateAllHardDrives ((robAndCoor@(x,y,rob), (action, state)):rars)
-		= (currentModifier . restOfmodifiers, (robAndCoor, action):restOfActions)
+updateAllHardDrives rars = (
+		foldr (.) id $ map updateHardDrive rars,
+		map removeState rars)
 	where
-	(restOfmodifiers, restOfActions) = updateAllHardDrives rars
-	currentModifier b = setRobot (x,y,rob {robotMemory = state}) b
+	removeState ((x,y,rob), (act, _)) = ((x,y,rob), act)
+	updateHardDrive ((x,y,rob), (_, state)) = setRobot (x,y,rob {robotMemory = state})
 
+applyActionCosts :: Parameters -> [RobotAndAction] -> Board -> Board
+applyActionCosts params raas = foldr (.) id $ map applyActionCost raas
+	where
+	applyActionCost :: RobotAndAction -> Board -> Board
+	applyActionCost ((x,y,rob), act) = setRobot (x, y, newRobot)
+		where
+		cost = actionCost params act
+		newRobot = rob {robotMaterial = robotMaterial rob - cost}
 
 --applyNonExterMod :: RobotAndAction -> Maybe (Board -> Board)
 --applyNonExterMod ((x,y,rob), Dig) b
