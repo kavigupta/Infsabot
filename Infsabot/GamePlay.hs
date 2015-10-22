@@ -18,7 +18,9 @@ play p b =
 		-- update all hard drives
 		hardDriveUpdater .
 		-- apply all action costs
-		actionCostApplier $
+		actionCostApplier .
+		-- apply all die actions
+		dieApplier $
 		b
 	where
 		-- all robots and robot program results
@@ -26,7 +28,24 @@ play p b =
 		-- actions := results - state.
 		(hardDriveUpdater, actions) = updateAllHardDrives results
 		actionCostApplier = applyActionCosts p actions
+		nonNoopActions = removeNoops actions
+		(dieApplier, _) = applyDies nonNoopActions
 
+removeNoops :: [RobotAndAction] -> [RobotAndAction]
+removeNoops = filter isNotNoop
+	where
+	isNotNoop (_, Noop) = False
+	isNotNoop _ 		= True
+
+applyDies :: [RobotAndAction] -> (Board -> Board, [RobotAndAction])
+applyDies [] = (id, [])
+applyDies (((x,y,_),Die):remActions)
+		= ((deleteRobot (x, y)) . restFunction, restActions)
+	where
+		(restFunction, restActions) = applyDies remActions
+applyDies (nonDie:remActions) = (restFunction, nonDie:restActions)
+	where
+		(restFunction, restActions) = applyDies remActions
 -- Takes a list of robots and results and outputs
 	-- (a function that updates a board to one with hard drives updated,
 	-- 	a list of robots and their actions)
