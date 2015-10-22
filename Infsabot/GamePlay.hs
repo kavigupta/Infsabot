@@ -6,21 +6,26 @@ import Infsabot.Base
 import Data.List(groupBy)
 import Data.Function(on)
 
--- The distance the given robot can see
-lineOfSight :: Robot -> Int
-lineOfSight _ = 1
-
--- The distance the robot can fire
-lineOfFire :: Robot -> Int
-lineOfFire _ = 2
-
--- Increments time by one
-applyTimeTick :: Board -> Board
-applyTimeTick b = b {boardTime = boardTime b + 1}
-
 type RobotAndResult = ((Int, Int, Robot), RobotProgramResult)
 
 type RobotAndAction = ((Int, Int, Robot), RobotAction)
+
+-- the main play function. This executes all robot actions and updates the board.
+play :: Parameters -> Board -> Board
+play p b =
+		-- apply the time tick
+		applyTimeTick .
+		-- update all hard drives
+		hardDriveUpdater .
+		-- apply all action costs
+		actionCostApplier $
+		b
+	where
+		-- all robots and robot program results
+		results = getRobotResults b
+		-- actions := results - state.
+		(hardDriveUpdater, actions) = updateAllHardDrives results
+		actionCostApplier = applyActionCosts p actions
 
 -- Takes a list of robots and results and outputs
 	-- (a function that updates a board to one with hard drives updated,
@@ -34,6 +39,8 @@ updateAllHardDrives rars = (
 	removeState ((x,y,rob), (act, _)) = ((x,y,rob), act)
 	updateHardDrive ((x,y,rob), (_, state)) = setRobot (x,y,rob {robotMemory = state})
 
+-- Takes a parameter list and list of actions, and applies all their costs to
+-- the given board.
 applyActionCosts :: Parameters -> [RobotAndAction] -> Board -> Board
 applyActionCosts params raas = foldr (.) id $ map applyActionCost raas
 	where
@@ -66,10 +73,10 @@ groupedActions = groupBy ((==) `on` classify)
 	classify (_, act) = getActionGroup act
 
 -- Gets a list of robots and their program results
-getRobotActions :: Board -> [RobotAndResult]
-getRobotActions b = map (getRobotAction) $ boardRobots b
+getRobotResults :: Board -> [RobotAndResult]
+getRobotResults b = map getRobotResult $ boardRobots b
 	where
-	getRobotAction (x, y, rob) = ((x, y, rob), robotProgram rob state)
+	getRobotResult (x, y, rob) = ((x, y, rob), robotProgram rob state)
 	   where state = getKnownState b (x, y, rob)
 
 -- Gets the known state for the given robot
@@ -102,9 +109,21 @@ possibleAction p rob action
 	downgrade Noop = Die -- no alternative
 	downgrade (MoveIn _) = tryNoop
 	downgrade Dig = tryNoop
-	downgrade s@(Spawn _ _ _ _ _)
+	downgrade s@(Spawn _ _ _ _ _) -- TODO Potential massive inefficiency here!
 		= possibleAction p rob $ s {newMaterial = newMaterial s - 1}
 	downgrade f@(Fire _ _)
 		= possibleAction p rob $ f {materialExpended = materialExpended f - 1}
 	downgrade (SendMessage _ _) = tryNoop
 	tryNoop = possibleAction p rob Noop
+
+-- The distance the given robot can see
+lineOfSight :: Robot -> Int
+lineOfSight _ = 1
+
+-- The distance the robot can fire
+lineOfFire :: Robot -> Int
+lineOfFire _ = 2
+
+-- Increments time by one
+applyTimeTick :: Board -> Board
+applyTimeTick b = b {boardTime = boardTime b + 1}
