@@ -6,9 +6,7 @@ module Infsabot.RobotAction (
             newProgram, newAppearance, newMaterial, newMemory, newDirection,
             fireDirection, materialExpended,
             messageToSend, sendDirection,
-        actionCost,
-        ActionGroup(AGNoEffect, AGInstantaneous, AGNoExternalEffect, AGRobotPlace),
-            getActionGroup, actionGroups
+        actionCost
     ) where
 
 import Infsabot.Base
@@ -77,25 +75,6 @@ data RobotAction =
                     -- The direction to send the message in
                     sendDirection :: Direction
                 }
-
-data ActionGroup =
-    AGNoEffect |
-    AGInstantaneous |
-    AGNoExternalEffect |
-    AGRobotPlace
-        deriving (Eq, Ord, Enum, Bounded)
-
-actionGroups :: [ActionGroup]
-actionGroups = [minBound..]
-
-getActionGroup :: RobotAction -> ActionGroup
-getActionGroup Die = AGNoEffect
-getActionGroup Noop = AGNoEffect
-getActionGroup Dig = AGNoExternalEffect
-getActionGroup (Fire _ _) = AGInstantaneous
-getActionGroup (SendMessage _ _) = AGInstantaneous
-getActionGroup (MoveIn _) = AGRobotPlace
-getActionGroup (Spawn _ _ _ _ _) = AGRobotPlace
 
 -- Outputs the cost of performing the given action.
 actionCost :: Parameters -> RobotAction -> Int

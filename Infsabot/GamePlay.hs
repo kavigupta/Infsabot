@@ -3,8 +3,6 @@ import Infsabot.Robot
 import Infsabot.RobotAction
 import Infsabot.Parameters
 import Infsabot.Base
-import Data.List(groupBy)
-import Data.Function(on)
 
 type RobotAndResult = ((Int, Int, Robot), RobotProgramResult)
 
