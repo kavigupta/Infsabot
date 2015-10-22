@@ -69,28 +69,6 @@ applyActionCosts params raas = foldr (.) id $ map applyActionCost raas
 		cost = actionCost params act
 		newRobot = rob {robotMaterial = robotMaterial rob - cost}
 
---applyNonExterMod :: RobotAndAction -> Maybe (Board -> Board)
---applyNonExterMod ((x,y,rob), Dig) b
---	| existMaterial == SpotEmpty	= Just id
---	where GameSpot existMaterial existingRobot = b !!! (x,y)
-
--- Gets the actions in the given group from the given list of actions.
--- May not be used in the future.
-actionsInGroup :: [[RobotAndAction]] -> ActionGroup -> [RobotAndAction]
-actionsInGroup rars ag = concat $ filter isInGroup rars
-	where
-	isInGroup :: [RobotAndAction] -> Bool
-	isInGroup [] = False
-	isInGroup ((_, act):_) = getActionGroup act == ag
-
--- Groups actions by their action execution group.
--- May not be used in the future
-groupedActions :: [RobotAndAction] -> [[RobotAndAction]]
-groupedActions = groupBy ((==) `on` classify)
-	where
-	classify :: RobotAndAction -> ActionGroup
-	classify (_, act) = getActionGroup act
-
 -- Gets a list of robots and their program results
 getRobotResults :: Board -> [RobotAndResult]
 getRobotResults b = map getRobotResult $ boardRobots b
