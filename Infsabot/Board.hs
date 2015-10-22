@@ -2,7 +2,7 @@ module Infsabot.Board (
 		BoardSpot,
 		Board,
 			boardContents, boardRobots, boardWidth, boardHeight, boardTime,
-			(!!!), addRobot,
+			(!!!), setRobot, deleteRobot,
 		startingBoard,
 		renderBoard
 	) where
@@ -84,13 +84,22 @@ startingBoard n = Board {
 -- Adds a robot to the board
 -- 		1. places the robot at the Gamespot at the given coordinates
 --		2. Adds the robot to the list of robots
-addRobot :: (Int, Int, Robot) -> Board -> Board
-addRobot (x, y, rob) b = newB {
+setRobot :: (Int, Int, Robot) -> Board -> Board
+setRobot (x, y, rob) b = newB {
 		boardRobots = (x,y,rob) : boardRobots newB
 	}
 	where
 	GameSpot oldMaterial _ = b !!! (x, y)
 	newB = b !-> (x, y) $ GameSpot oldMaterial $ Just rob
+
+deleteRobot :: (Int, Int) -> Board -> Board
+deleteRobot (x, y) b = newB {
+		boardRobots = Prelude.filter pointNEQ $ boardRobots newB
+	}
+	where
+	pointNEQ (x2,y2,_) = (x /= x2) && (y /= y2)
+	GameSpot oldMaterial _ = b !!! (x, y)
+	newB = b !-> (x, y) $ GameSpot oldMaterial $ Nothing
 
 -- Renders the given board as an image
 renderBoard :: Board -> Image PixelRGB8

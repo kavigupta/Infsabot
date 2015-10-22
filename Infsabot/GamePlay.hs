@@ -20,17 +20,33 @@ applyTimeTick b = b {boardTime = boardTime b + 1}
 
 type RobotAndResult = ((Int, Int, Robot), RobotProgramResult)
 
-getRobotActions :: Board -> [RobotAndResult]
-getRobotActions b = map (getRobotAction) $ boardRobots b
+updateHardDrive :: (Int, Int, Robot) -> InternalState -> Board -> Board
+updateHardDrive (x,y,rob) newstate = setRobot (x,y,rob {robotMemory = newstate})
+
+applyNonModifyingChanges :: RobotAndResult -> Maybe (Board -> Board)
+applyNonModifyingChanges ((x,y,rob), (Noop, newstate))
+	= Just $ updateHardDrive (x,y,rob) newstate
+applyNonModifyingChanges ((x,y,_), (Die, _))
+	= Just $ deleteRobot (x,y)
+applyNonModifyingChanges _ = Nothing
+
+actionsInGroup :: [[RobotAndResult]] -> ActionGroup -> [RobotAndResult]
+actionsInGroup rars ag = concat $ filter isInGroup rars
 	where
-	getRobotAction (x, y, rob) = ((x, y, rob), robotProgram rob state)
-	   where state = getKnownState b (x, y, rob)
+	isInGroup :: [RobotAndResult] -> Bool
+	isInGroup [] = False
+	isInGroup ((_,(act,_)):_) = getActionGroup act == ag
 
 groupedActions :: Board -> [[RobotAndResult]]
-groupedActions b = groupBy ((==) `on` classify) $ getRobotActions b
+groupedActions b = groupBy ((==) `on` classify) getRobotActions
 	where
 	classify :: RobotAndResult -> ActionGroup
 	classify (_, (act, _)) = getActionGroup act
+	getRobotActions :: [RobotAndResult]
+	getRobotActions = map (getRobotAction) $ boardRobots b
+		where
+		getRobotAction (x, y, rob) = ((x, y, rob), robotProgram rob state)
+		   where state = getKnownState b (x, y, rob)
 
 getKnownState :: Board -> (Int, Int, Robot) -> KnownState
 getKnownState b (x, y, rob) = KnownState {

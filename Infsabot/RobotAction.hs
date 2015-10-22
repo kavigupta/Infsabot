@@ -8,7 +8,7 @@ module Infsabot.RobotAction (
             messageToSend, sendDirection,
         actionCost,
         ActionGroup(AGNoEffect, AGInstantaneous, AGNoExternalEffect, AGRobotPlace),
-            getActionGroup
+            getActionGroup, actionGroups
     ) where
 
 import Infsabot.Base
@@ -83,7 +83,10 @@ data ActionGroup =
     AGInstantaneous |
     AGNoExternalEffect |
     AGRobotPlace
-        deriving (Eq, Ord)
+        deriving (Eq, Ord, Enum, Bounded)
+
+actionGroups :: [ActionGroup]
+actionGroups = [minBound..]
 
 getActionGroup :: RobotAction -> ActionGroup
 getActionGroup Die = AGNoEffect
