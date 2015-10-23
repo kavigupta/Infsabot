@@ -17,7 +17,9 @@ play p b =
 		-- apply all action costs
 		actionCostApplier .
 		-- apply all die actions
-		dieApplier $
+		dieApplier .
+		-- apply all send and fire actions
+		sendAndFireApplier $
 		b
 	where
 		-- all robots and robot program results
@@ -26,7 +28,8 @@ play p b =
 		(hardDriveUpdater, actions) = updateAllHardDrives results
 		actionCostApplier = applyActionCosts p actions
 		nonNoopActions = removeNoops actions
-		(dieApplier, _) = applyDies nonNoopActions
+		(dieApplier, afterDiesApplied) = applyDies nonNoopActions
+		(sendAndFireApplier, _) = applySendAndFire afterDiesApplied
 
 removeNoops :: [RobotAndAction] -> [RobotAndAction]
 removeNoops = filter isNotNoop
@@ -46,8 +49,7 @@ applyDies (nonDie:remActions) = (restFunction, nonDie:restActions)
 
 applySendAndFire :: [RobotAndAction] -> (Board -> Board, [RobotAndAction])
 applySendAndFire [] = (id, [])
-applySendAndFire (((x,y,rob), action):remActions)
-		= applyAction action
+applySendAndFire (((x,y,rob), action):remActions) = applyAction action
 		where
 		applyAction :: RobotAction -> (Board->Board, [RobotAndAction])
 		applyAction send@(SendMessage _ _) = mutateRobot sendAction (sendDirection send)
@@ -63,15 +65,15 @@ applySendAndFire (((x,y,rob), action):remActions)
 				 	= robotHitpoints toReceive - hitpointsRemoved (materialExpended fire)
 				}
 		applyAction nonSendOrFire = (restFunction, ((x,y,rob),nonSendOrFire):restActions)
-		mutateRobot mutator direction = (individualAction mutator direction . restFunction, restActions)
-		(restFunction, restActions) = applySendAndFire remActions
-		individualAction :: (Robot -> Robot) -> Direction -> Board -> Board
-		individualAction newRobot dir b
-				= case maybeRobot of
-					Just (_, _, toReceive) 		-> setRobot (x,y,newRobot toReceive) b
-					Nothing						-> b
+		mutateRobot mutator direction = (individualAction . restFunction, restActions)
 			where
-			maybeRobot = robotAlongPath b (x, y) dir (lineOfMessageSending rob)
+			individualAction b
+					= case maybeRobot of
+						Just (_, _, toReceive) 		-> setRobot (x,y,mutator toReceive) b
+						Nothing						-> b
+				where
+				maybeRobot = robotAlongPath b (x, y) direction (lineOfMessageSending rob)
+		(restFunction, restActions) = applySendAndFire remActions
 
 
 -- Takes a list of robots and results and outputs
