@@ -1,7 +1,7 @@
 module Infsabot.RobotAction (
         RobotProgram, RobotProgramResult,
         KnownState(KnownState),
-            peekAtSpot, material, stateLocation, stateAge, stateMemory, robotMessages,
+            peekAtSpot, material, stateLocation, stateAge, stateMemory, stateMessages,
         RobotAction(Die, Noop, MoveIn, Dig, Spawn, Fire, SendMessage),
             newProgram, newAppearance, newMaterial, newMemory, newDirection,
             fireDirection, materialExpended,
@@ -33,7 +33,7 @@ data KnownState = KnownState {
 	stateMemory :: InternalState,
     -- The robot's received messages as a list of pairs of
     -- message and direction received.
-    robotMessages :: [(String, Direction)]
+    stateMessages :: [(String, Direction)]
 }
 
 -- Represents an action a robot can take.

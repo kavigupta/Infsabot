@@ -1,8 +1,10 @@
 module Infsabot.Base(
 		Direction(N,E,W,S),
+			oppositeDirection,
 		Team(A,B),
 		BoardSpot(SpotEmpty, SpotMaterial),
 		Offset(Offset),
+			getOffset, applyOffset,
 		InternalState,
 		RobotAppearance(RobotAppearance), robotColor,
 		SeenSpot(SeenSpot),
@@ -35,3 +37,18 @@ data RobotAppearance = RobotAppearance {
 -- Represents a Spot on the Board as seen by a robot.
 -- This contains a Board Spot, which the Robot can always see, contains a robot's appearance iff there is a robot at that spot.
 data SeenSpot = SeenSpot BoardSpot (Maybe RobotAppearance)
+
+getOffset :: Direction -> (Offset, Offset)
+getOffset N = (Offset 0, Offset 1)
+getOffset S = (Offset 0, Offset (-1))
+getOffset E = (Offset 1, Offset 0)
+getOffset W = (Offset (-1), Offset 0)
+
+applyOffset :: (Offset, Offset) -> (Int, Int) -> (Int, Int)
+applyOffset (Offset offx, Offset offy) (x, y) = (x + offx, y + offy)
+
+oppositeDirection :: Direction -> Direction
+oppositeDirection N = S
+oppositeDirection S = N
+oppositeDirection E = W
+oppositeDirection W = E

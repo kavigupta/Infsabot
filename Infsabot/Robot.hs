@@ -7,6 +7,7 @@ module Infsabot.Robot (
             robotBirthdate,
             robotMemory,
             robotHitpoints,
+            robotMessages,
         GameSpot(GameSpot), toSeenSpot
     ) where
 
@@ -37,5 +38,7 @@ data Robot = Robot {
         -- The birthdate of this robot
         robotBirthdate :: Int,
         -- The memory of this robot
-		robotMemory :: InternalState
+		robotMemory :: InternalState,
+        -- The messages this robot has on the stack
+        robotMessages :: [(String, Direction)]
 }

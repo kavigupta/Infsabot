@@ -5,7 +5,6 @@ import Infsabot.Parameters
 import Infsabot.Base
 
 type RobotAndResult = ((Int, Int, Robot), RobotProgramResult)
-
 type RobotAndAction = ((Int, Int, Robot), RobotAction)
 
 -- the main play function. This executes all robot actions and updates the board.
@@ -40,10 +39,33 @@ applyDies [] = (id, [])
 applyDies (((x,y,_),Die):remActions)
 		= ((deleteRobot (x, y)) . restFunction, restActions)
 	where
-		(restFunction, restActions) = applyDies remActions
+	(restFunction, restActions) = applyDies remActions
 applyDies (nonDie:remActions) = (restFunction, nonDie:restActions)
 	where
-		(restFunction, restActions) = applyDies remActions
+	(restFunction, restActions) = applyDies remActions
+
+applySendMessages :: [RobotAndAction] -> (Board -> Board, [RobotAndAction])
+applySendMessages [] = (id, [])
+applySendMessages (((x,y,rob), send@(SendMessage _ _)):remActions)
+		= (sendAction . restFunction, restActions)
+	where
+	(restFunction, restActions) = applySendMessages remActions
+	sendAction :: Board -> Board
+	sendAction b = case maybeRobot of
+			Just (_, _, toReceive) 		-> setRobot (x,y,newRobot toReceive) b
+			Nothing						-> b
+		where
+		maybeRobot = robotAlongPath b (x, y) (sendDirection send) (lineOfMessageSending rob)
+		newRobot :: Robot -> Robot
+		newRobot toReceive = toReceive { robotMessages = newMessage: robotMessages toReceive }
+			where
+			newMessage :: (String, Direction)
+			newMessage = (messageToSend send, oppositeDirection $ sendDirection send)
+applySendMessages (nonSend:remActions)
+		= (restFunction, nonSend:restActions)
+	where
+	(restFunction, restActions) = applySendMessages remActions
+
 -- Takes a list of robots and results and outputs
 	-- (a function that updates a board to one with hard drives updated,
 	-- 	a list of robots and their actions)
@@ -82,7 +104,7 @@ getKnownState b (x, y, rob) = KnownState {
 		stateLocation = (x,y),
 		stateAge = boardTime b - robotBirthdate rob,
 		stateMemory = robotMemory rob,
-		robotMessages = []
+		stateMessages = robotMessages rob
 	}
 	where
 	peekFn :: Offset ->  Offset -> Maybe SeenSpot
@@ -113,11 +135,15 @@ possibleAction p rob action
 
 -- The distance the given robot can see
 lineOfSight :: Robot -> Int
-lineOfSight _ = 1
+lineOfSight _ = 3
 
 -- The distance the robot can fire
 lineOfFire :: Robot -> Int
 lineOfFire _ = 2
+
+-- The distance the robot can fire
+lineOfMessageSending :: Robot -> Int
+lineOfMessageSending _ = 3
 
 -- Increments time by one
 applyTimeTick :: Board -> Board

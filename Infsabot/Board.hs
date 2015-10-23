@@ -2,7 +2,7 @@ module Infsabot.Board (
 		BoardSpot,
 		Board,
 			boardContents, boardRobots, boardWidth, boardHeight, boardTime,
-			(!!!), setRobot, deleteRobot, updateSpot,
+			(!!!), setRobot, deleteRobot, updateSpot, robotAlongPath,
 		startingBoard,
 		renderBoard
 	) where
@@ -108,6 +108,19 @@ updateSpot (x, y) spot b = newB
 	GameSpot _ currentRobot = b !!! (x, y)
 	newB :: Board
 	newB = b !-> (x, y) $ GameSpot spot currentRobot
+
+-- Finds the first robot along the given direction from the given position
+	-- (but not the robot at the given position)
+-- Which may be up to n paces away
+robotAlongPath :: Board -> (Int, Int) -> Direction -> Int -> Maybe (Int, Int, Robot)
+robotAlongPath _ _ _ 0 = Nothing
+robotAlongPath b (x, y) dir n =
+		case perhapsRobot of
+			Nothing 	-> robotAlongPath b offsettedPosition dir (n-1)
+			Just rob 	-> Just $ (x, y, rob)
+	where
+	offsettedPosition = applyOffset (getOffset dir) (x, y)
+	GameSpot _ perhapsRobot = b !!! offsettedPosition
 
 -- Renders the given board as an image
 renderBoard :: Board -> Image PixelRGB8
