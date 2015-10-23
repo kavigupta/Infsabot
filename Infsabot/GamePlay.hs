@@ -44,27 +44,35 @@ applyDies (nonDie:remActions) = (restFunction, nonDie:restActions)
 	where
 	(restFunction, restActions) = applyDies remActions
 
-applySendMessages :: [RobotAndAction] -> (Board -> Board, [RobotAndAction])
-applySendMessages [] = (id, [])
-applySendMessages (((x,y,rob), send@(SendMessage _ _)):remActions)
-		= (sendAction . restFunction, restActions)
-	where
-	(restFunction, restActions) = applySendMessages remActions
-	sendAction :: Board -> Board
-	sendAction b = case maybeRobot of
-			Just (_, _, toReceive) 		-> setRobot (x,y,newRobot toReceive) b
-			Nothing						-> b
+applySendAndFire :: [RobotAndAction] -> (Board -> Board, [RobotAndAction])
+applySendAndFire [] = (id, [])
+applySendAndFire (((x,y,rob), action):remActions)
+		= applyAction action
 		where
-		maybeRobot = robotAlongPath b (x, y) (sendDirection send) (lineOfMessageSending rob)
-		newRobot :: Robot -> Robot
-		newRobot toReceive = toReceive { robotMessages = newMessage: robotMessages toReceive }
+		applyAction :: RobotAction -> (Board->Board, [RobotAndAction])
+		applyAction send@(SendMessage _ _) = mutateRobot sendAction (sendDirection send)
 			where
-			newMessage :: (String, Direction)
-			newMessage = (messageToSend send, oppositeDirection $ sendDirection send)
-applySendMessages (nonSend:remActions)
-		= (restFunction, nonSend:restActions)
-	where
-	(restFunction, restActions) = applySendMessages remActions
+			sendAction toReceive = toReceive { robotMessages = newMessage: robotMessages toReceive }
+				where
+				newMessage :: (String, Direction)
+				newMessage = (messageToSend send, oppositeDirection $ sendDirection send)
+		applyAction fire@(Fire _ _) = mutateRobot fireAction (fireDirection fire)
+			where
+			fireAction toReceive = toReceive {
+				 robotHitpoints
+				 	= robotHitpoints toReceive - hitpointsRemoved (materialExpended fire)
+				}
+		applyAction nonSendOrFire = (restFunction, ((x,y,rob),nonSendOrFire):restActions)
+		mutateRobot mutator direction = (individualAction mutator direction . restFunction, restActions)
+		(restFunction, restActions) = applySendAndFire remActions
+		individualAction :: (Robot -> Robot) -> Direction -> Board -> Board
+		individualAction newRobot dir b
+				= case maybeRobot of
+					Just (_, _, toReceive) 		-> setRobot (x,y,newRobot toReceive) b
+					Nothing						-> b
+			where
+			maybeRobot = robotAlongPath b (x, y) dir (lineOfMessageSending rob)
+
 
 -- Takes a list of robots and results and outputs
 	-- (a function that updates a board to one with hard drives updated,
@@ -132,6 +140,9 @@ possibleAction p rob action
 		= possibleAction p rob $ f {materialExpended = materialExpended f - 1}
 	downgrade (SendMessage _ _) = tryNoop
 	tryNoop = possibleAction p rob Noop
+
+hitpointsRemoved :: Int -> Int
+hitpointsRemoved matExpend = 2 + matExpend
 
 -- The distance the given robot can see
 lineOfSight :: Robot -> Int
