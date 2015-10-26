@@ -75,7 +75,47 @@ applySendAndFire (((x,y,rob), action):remActions) = applyAction action
 				maybeRobot = robotAlongPath b (x, y) direction (lineOfMessageSending rob)
 		(restFunction, restActions) = applySendAndFire remActions
 
+applyDigs :: [RobotAndAction] -> (Board -> Board, [RobotAndAction])
+applyDigs [] = (id, [])
+applyDigs (((x, y, _), Dig):remActions) = (digFunction . restFunction, restActions)
+	where
+	(restFunction, restActions) = applyDigs remActions
+	digFunction :: Board -> Board
+	digFunction b
+		| mat == SpotMaterial		= updateSpot (x,y) SpotEmpty b
+		| otherwise						= b
+		where GameSpot mat _ = b !!! (x, y)
+applyDigs (nonDig:remActions) = (restFunction, nonDig:restActions)
+	where
+	(restFunction, restActions) = applyDigs remActions
 
+-- Given a robot and action, gets a list containing ((oldx, oldy), (newx, newy))
+finalLocations :: RobotAndAction -> [(Int, Int)]
+finalLocations ((x,y,_), act) = locs act
+	where
+	locs (MoveIn dir) = [applyOffset (getOffset dir) (x,y)]
+	locs spawn@(Spawn _ _ _ _ _)
+		= [applyOffset (getOffset $ newDirection spawn) (x,y)]
+	locs Die = []
+	locs _ = [(x,y)]
+
+-- Removes all moves that compete with the given move.
+-- Outputs False if the currently processed move should be removed, True otherwise
+competingMove :: RobotAndAction -> [RobotAndAction] -> (Bool, [RobotAndAction])
+competingMove current other
+	| any canConflict robAndLocOther			= (True, other)
+	| otherwise									= (False, map fst $ nonConflicting)
+		where
+		nonConflicting :: [(RobotAndAction, (Int, Int))]
+		nonConflicting = filter (not . canConflict) robAndLocOther
+		locThis :: [(Int, Int)]
+		locThis = finalLocations current
+		robAndLocOther :: [(RobotAndAction, (Int, Int))]
+		robAndLocOther = concat $ map (\(raa, xys) -> map (raa,) xys) robAsscLocs
+			where
+			robAsscLocs = zip other $ map finalLocations other
+		canConflict :: (RobotAndAction, (Int, Int)) -> Bool
+		canConflict (_, xy) = any (== xy) locThis
 -- Takes a list of robots and results and outputs
 	-- (a function that updates a board to one with hard drives updated,
 	-- 	a list of robots and their actions)

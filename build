@@ -25,9 +25,13 @@ function perror_clean {
     exit 1
 }
 
+function runInterpreter {
+    ghci "$1" -XTupleSections -Wall -Werror
+}
+
 for f in ./Infsabot/*.hs
 do
-    ghci "$f" -Wall -Werror <<EOD >> $stdlog 2> $errlog
+    runInterpreter "$f" <<EOD >> $stdlog 2> $errlog
 EOD
     errsize=$(wc -c <"$errlog")
 
@@ -40,7 +44,7 @@ done
 
 echs "All Haskell Files Built"
 
-ghci "Infsabot/Board.hs" <<EOD >> $stdlog 2> $errlog
+runInterpreter "Infsabot/Board.hs" <<EOD >> $stdlog 2> $errlog
 
 writePng "./demo-starting-board.png" $ renderBoard $ startingBoard $demo_board_size
 EOD
