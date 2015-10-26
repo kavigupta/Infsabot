@@ -32,10 +32,10 @@ play p b =
 		(hardDriveUpdater, actions) = updateAllHardDrives results
 		actionCostApplier = applyActionCosts p actions
 		nonNoopActions = removeNoops actions
-		(dieApplier, afterDiesApplied) = applyDies nonNoopActions
-		(sendAndFireApplier, afterSFApplied) = applySendAndFire afterDiesApplied
-		(digApplier, afterDigApplied) = applyDigs afterSFApplied
-		(moveApplier, _) = applyMovesAndSpawns p afterDigApplied
+		(dieApplier, afterDiesApplied) = applyToList applyDies nonNoopActions
+		(sendAndFireApplier, afterSFApplied) = applyToList applySendAndFire afterDiesApplied
+		(digApplier, afterDigApplied) = applyToList applyDigs afterSFApplied
+		(moveApplier, _) = applyToList (applyMovesAndSpawns p) afterDigApplied
 
 removeNoops :: [RobotAndAction] -> [RobotAndAction]
 removeNoops = filter isNotNoop
@@ -43,71 +43,66 @@ removeNoops = filter isNotNoop
 	isNotNoop (_, Noop) = False
 	isNotNoop _ 		= True
 
-applyDies :: [RobotAndAction] -> (Board -> Board, [RobotAndAction])
-applyDies [] = (id, [])
-applyDies (((x,y,_),Die):remActions)
-		= ((deleteRobot (x, y)) . restFunction, restActions)
-	where
-	(restFunction, restActions) = applyDies remActions
-applyDies (nonDie:remActions) = (restFunction, nonDie:restActions)
-	where
-	(restFunction, restActions) = applyDies remActions
+applyDies :: RobotAndAction -> Maybe (Board -> Board)
+applyDies ((x,y,_),Die) = Just $ deleteRobot (x, y)
+applyDies _ = Nothing
 
-applySendAndFire :: [RobotAndAction] -> (Board -> Board, [RobotAndAction])
-applySendAndFire [] = (id, [])
-applySendAndFire (((x,y,rob), action):remActions) = applyAction action
+applyToList :: (RobotAndAction -> Maybe (Board -> Board)) -> ([RobotAndAction] -> (Board -> Board, [RobotAndAction]))
+applyToList _ [] = (id, [])
+applyToList f (raa:raas)
+		= case immediateResult of
+			Nothing 		-> (restFunction, raa : restActions)
+			(Just boardF) 	-> (boardF . restFunction, restActions)
+	where
+	immediateResult :: Maybe (Board -> Board)
+	immediateResult = f raa
+	(restFunction, restActions) = applyToList f raas
+
+applySendAndFire :: RobotAndAction -> Maybe (Board->Board)
+applySendAndFire (xyrob, send@(SendMessage _ _)) = Just $ mutateRobot xyrob sendAction (sendDirection send)
+	where
+	sendAction toReceive = toReceive { robotMessages = newMessage: robotMessages toReceive }
 		where
-		applyAction :: RobotAction -> (Board->Board, [RobotAndAction])
-		applyAction send@(SendMessage _ _) = mutateRobot sendAction (sendDirection send)
-			where
-			sendAction toReceive = toReceive { robotMessages = newMessage: robotMessages toReceive }
-				where
-				newMessage :: (String, Direction)
-				newMessage = (messageToSend send, oppositeDirection $ sendDirection send)
-		applyAction fire@(Fire _ _) = mutateRobot fireAction (fireDirection fire)
-			where
-			fireAction toReceive = toReceive {
-				 robotHitpoints
-				 	= robotHitpoints toReceive - hitpointsRemoved (materialExpended fire)
-				}
-		applyAction nonSendOrFire = (restFunction, ((x,y,rob),nonSendOrFire):restActions)
-		mutateRobot mutator direction = (individualAction . restFunction, restActions)
-			where
-			individualAction b
-					= case maybeRobot of
-						Just (_, _, toReceive) 		-> setRobot (x,y,mutator toReceive) b
-						Nothing						-> b
-				where
-				maybeRobot = robotAlongPath b (x, y) direction (lineOfMessageSending rob)
-		(restFunction, restActions) = applySendAndFire remActions
-
-applyDigs :: [RobotAndAction] -> (Board -> Board, [RobotAndAction])
-applyDigs [] = (id, [])
-applyDigs (((x, y, _), Dig):remActions) = (digFunction . restFunction, restActions)
+		newMessage :: (String, Direction)
+		newMessage = (messageToSend send, oppositeDirection $ sendDirection send)
+applySendAndFire (xyrob, fire@(Fire _ _)) = Just $ mutateRobot xyrob fireAction (fireDirection fire)
 	where
-	(restFunction, restActions) = applyDigs remActions
+	fireAction toReceive = toReceive {
+		 robotHitpoints
+		 	= robotHitpoints toReceive - hitpointsRemoved (materialExpended fire)
+		}
+applySendAndFire _ = Nothing
+
+mutateRobot :: (Int, Int, Robot) -> (Robot -> Robot) -> Direction -> Board -> Board
+mutateRobot (x, y, rob) mutator direction = individualAction
+	where
+	individualAction b
+			= case maybeRobot of
+				Just (_, _, toReceive) 		-> setRobot (x,y,mutator toReceive) b
+				Nothing						-> b
+		where
+		maybeRobot = robotAlongPath b (x, y) direction (lineOfMessageSending rob)
+
+applyDigs :: RobotAndAction -> Maybe (Board -> Board)
+applyDigs ((x, y, _), Dig) = Just $ digFunction
+	where
 	digFunction :: Board -> Board
 	digFunction b
 		| mat == SpotMaterial		= updateSpot (x,y) SpotEmpty b
 		| otherwise						= b
 		where GameSpot mat _ = b !!! (x, y)
-applyDigs (nonDig:remActions) = (restFunction, nonDig:restActions)
-	where
-	(restFunction, restActions) = applyDigs remActions
+applyDigs _ = Nothing
 
-applyMovesAndSpawns :: Parameters -> [RobotAndAction] -> (Board -> Board, [RobotAction])
-applyMovesAndSpawns _ [] = (id, [])
-applyMovesAndSpawns params (((x, y, rob), MoveIn dir):remActions)
-		= (remFunction . applyMove, filteredRest)
+applyMovesAndSpawns :: Parameters -> RobotAndAction -> Maybe (Board -> Board)
+applyMovesAndSpawns _ ((x, y, rob), MoveIn dir)
+		= Just $ applyMove
 	where
-	(remFunction, filteredRest) = applyMovesAndSpawns params remActions
 	applyMove :: Board -> Board
 	applyMove = deleteRobot (x, y) . setRobot (newx, newy, rob)
 	(newx, newy) = applyOffset (getOffset dir) (x, y)
-applyMovesAndSpawns params (((x, y, rob), spawn@(Spawn _ _ _ _ _)):remActions)
-		= (remFunction . applySpawn, filteredRest)
+applyMovesAndSpawns params ((x, y, rob), spawn@(Spawn _ _ _ _ _))
+		= Just $ applySpawn
 	where
-	(remFunction, filteredRest) = applyMovesAndSpawns params remActions
 	applySpawn :: Board -> Board
 	applySpawn b = setRobot (newx, newy, newRobot) b
 		where
@@ -122,7 +117,7 @@ applyMovesAndSpawns params (((x, y, rob), spawn@(Spawn _ _ _ _ _)):remActions)
 			robotMessages = []
 		}
 	(newx, newy) = applyOffset (getOffset $ newDirection spawn) (x, y)
-applyMovesAndSpawns params (_:remActions) = applyMovesAndSpawns params remActions
+applyMovesAndSpawns _ _ = Nothing
 
 -- Given a robot and action, gets a list containing ((oldx, oldy), (newx, newy))
 finalLocations :: RobotAndAction -> [(Int, Int)]

@@ -31,6 +31,7 @@ function runInterpreter {
 
 for f in ./Infsabot/*.hs
 do
+    echl "Compiling $f"
     runInterpreter "$f" <<EOD >> $stdlog 2> $errlog
 EOD
     errsize=$(wc -c <"$errlog")
@@ -39,7 +40,6 @@ EOD
         echf "Haskell Files did not build correctly"
         perror_clean
     fi
-    echl "Compiling $f"
 done
 
 echs "All Haskell Files Built"
