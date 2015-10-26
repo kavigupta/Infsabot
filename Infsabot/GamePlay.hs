@@ -99,6 +99,15 @@ finalLocations ((x,y,_), act) = locs act
 	locs Die = []
 	locs _ = [(x,y)]
 
+removeCompetingMoves :: [RobotAndAction] -> [RobotAndAction]
+removeCompetingMoves [] = []
+removeCompetingMoves (x:xs)
+		| works			= x : pureRest
+		| otherwise 	= pureRest
+	where
+	(works, rest) = competingMove x xs
+	pureRest = removeCompetingMoves rest
+
 -- Removes all moves that compete with the given move.
 -- Outputs False if the currently processed move should be removed, True otherwise
 competingMove :: RobotAndAction -> [RobotAndAction] -> (Bool, [RobotAndAction])
