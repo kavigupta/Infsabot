@@ -19,7 +19,11 @@ play p b =
 		-- apply all die actions
 		dieApplier .
 		-- apply all send and fire actions
-		sendAndFireApplier $
+		sendAndFireApplier .
+		-- apply all the digs
+		digApplier .
+		-- apply move and spawn actions
+		moveApplier $
 		b
 	where
 		-- all robots and robot program results
@@ -29,7 +33,9 @@ play p b =
 		actionCostApplier = applyActionCosts p actions
 		nonNoopActions = removeNoops actions
 		(dieApplier, afterDiesApplied) = applyDies nonNoopActions
-		(sendAndFireApplier, _) = applySendAndFire afterDiesApplied
+		(sendAndFireApplier, afterSFApplied) = applySendAndFire afterDiesApplied
+		(digApplier, afterDigApplied) = applyDigs afterSFApplied
+		(moveApplier, _) = applyMovesAndSpawns p afterDigApplied
 
 removeNoops :: [RobotAndAction] -> [RobotAndAction]
 removeNoops = filter isNotNoop
@@ -88,6 +94,35 @@ applyDigs (((x, y, _), Dig):remActions) = (digFunction . restFunction, restActio
 applyDigs (nonDig:remActions) = (restFunction, nonDig:restActions)
 	where
 	(restFunction, restActions) = applyDigs remActions
+
+applyMovesAndSpawns :: Parameters -> [RobotAndAction] -> (Board -> Board, [RobotAction])
+applyMovesAndSpawns _ [] = (id, [])
+applyMovesAndSpawns params (((x, y, rob), MoveIn dir):remActions)
+		= (remFunction . applyMove, filteredRest)
+	where
+	(remFunction, filteredRest) = applyMovesAndSpawns params remActions
+	applyMove :: Board -> Board
+	applyMove = deleteRobot (x, y) . setRobot (newx, newy, rob)
+	(newx, newy) = applyOffset (getOffset dir) (x, y)
+applyMovesAndSpawns params (((x, y, rob), spawn@(Spawn _ _ _ _ _)):remActions)
+		= (remFunction . applySpawn, filteredRest)
+	where
+	(remFunction, filteredRest) = applyMovesAndSpawns params remActions
+	applySpawn :: Board -> Board
+	applySpawn b = setRobot (newx, newy, newRobot) b
+		where
+		newRobot = Robot {
+			robotProgram = newProgram spawn,
+			robotTeam = robotTeam rob,
+			robotAppearance = newAppearance spawn,
+			robotMaterial = paramInitialMaterial params,
+			robotHitpoints = paramInitialHP params,
+			robotBirthdate = boardTime b,
+			robotMemory = newMemory spawn,
+			robotMessages = []
+		}
+	(newx, newy) = applyOffset (getOffset $ newDirection spawn) (x, y)
+applyMovesAndSpawns params (_:remActions) = applyMovesAndSpawns params remActions
 
 -- Given a robot and action, gets a list containing ((oldx, oldy), (newx, newy))
 finalLocations :: RobotAndAction -> [(Int, Int)]
