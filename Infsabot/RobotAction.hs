@@ -6,6 +6,7 @@ module Infsabot.RobotAction (
             newProgram, newAppearance, newMaterial, newMemory, newDirection,
             fireDirection, materialExpended,
             messageToSend, sendDirection,
+            orderOfOperations,
         actionCost
     ) where
 
@@ -43,23 +44,6 @@ data RobotAction =
                 Die |
                 -- Robot will do nothing
                 Noop |
-                -- Robot will move in the given Direction
-                MoveIn Direction |
-                -- Robot will dig
-                Dig |
-                -- Robot will spawn a new Robot
-                Spawn {
-                    -- The direction the new robot will be placed in
-                    newDirection :: Direction,
-                    -- The program the new Robot will have
-                    newProgram :: RobotProgram,
-                    -- The appearance of the new Robot
-                	newAppearance :: RobotAppearance,
-                    -- The quantity of material to transfer to the new robot
-                	newMaterial :: Int,
-                    -- The memory of the new robot
-                	newMemory :: InternalState
-                } |
                 -- Robot will fire in a given direction
                 Fire {
                     -- Direction to fire in
@@ -74,7 +58,33 @@ data RobotAction =
                     messageToSend :: String,
                     -- The direction to send the message in
                     sendDirection :: Direction
+                } |
+                -- Robot will dig
+                Dig |
+                -- Robot will move in the given Direction
+                MoveIn Direction |
+                -- Robot will spawn a new Robot
+                Spawn {
+                    -- The direction the new robot will be placed in
+                    newDirection :: Direction,
+                    -- The program the new Robot will have
+                    newProgram :: RobotProgram,
+                    -- The appearance of the new Robot
+                	newAppearance :: RobotAppearance,
+                    -- The quantity of material to transfer to the new robot
+                	newMaterial :: Int,
+                    -- The memory of the new robot
+                	newMemory :: InternalState
                 }
+
+orderOfOperations :: RobotAction -> Int
+orderOfOperations Die = 0
+orderOfOperations Noop = 1
+orderOfOperations (Fire _ _) = 2
+orderOfOperations (SendMessage _ _) = 3
+orderOfOperations Dig = 4
+orderOfOperations (MoveIn _) = 5
+orderOfOperations (Spawn _ _ _ _ _) = 6
 
 -- Outputs the cost of performing the given action.
 actionCost :: Parameters -> RobotAction -> Int

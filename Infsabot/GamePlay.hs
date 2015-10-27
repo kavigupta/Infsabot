@@ -3,6 +3,8 @@ import Infsabot.Robot
 import Infsabot.RobotAction
 import Infsabot.Parameters
 import Infsabot.Base
+import Data.List(sortBy)
+import Data.Function(on)
 
 type RobotAndResult = ((Int, Int, Robot), RobotProgramResult)
 type RobotAndAction = ((Int, Int, Robot), RobotAction)
@@ -10,114 +12,77 @@ type RobotAndAction = ((Int, Int, Robot), RobotAction)
 -- the main play function. This executes all robot actions and updates the board.
 play :: Parameters -> Board -> Board
 play p b =
-		-- apply the time tick
-		applyTimeTick .
-		-- update all hard drives
-		hardDriveUpdater .
+		-- apply move and spawn actions
+		actionApplier .
 		-- apply all action costs
 		actionCostApplier .
-		-- apply all die actions
-		dieApplier .
-		-- apply all send and fire actions
-		sendAndFireApplier .
-		-- apply all the digs
-		digApplier .
-		-- apply move and spawn actions
-		moveApplier $
+		-- update all hard drives
+		hardDriveUpdater .
+		-- apply the time tick
+		applyTimeTick $
 		b
 	where
 		-- all robots and robot program results
 		results = getRobotResults b
 		-- actions := results - state.
 		(hardDriveUpdater, actions) = updateAllHardDrives results
+		resolvedAndSortedActions
+			= sortBy (compare `on` (orderOfOperations . snd))
+				$ removeCompetingMoves actions
 		actionCostApplier = applyActionCosts p actions
-		nonNoopActions = removeNoops actions
-		(dieApplier, afterDiesApplied) = applyToList applyDies nonNoopActions
-		(sendAndFireApplier, afterSFApplied) = applyToList applySendAndFire afterDiesApplied
-		(digApplier, afterDigApplied) = applyToList applyDigs afterSFApplied
-		(moveApplier, _) = applyToList (applyMovesAndSpawns p) afterDigApplied
+		actionApplier = foldl (.) id $ map (applyDNSF p) resolvedAndSortedActions
 
-removeNoops :: [RobotAndAction] -> [RobotAndAction]
-removeNoops = filter isNotNoop
+applyDNSF :: Parameters -> RobotAndAction -> Board -> Board
+applyDNSF _ ((x,y,_),Die) b 	= deleteRobot (x, y) b
+applyDNSF _ (_, Noop) b		 	= b
+applyDNSF _ (xyrob, send@(SendMessage _ _)) b
+								= mutateRobot xyrob sendAction (sendDirection send) b
 	where
-	isNotNoop (_, Noop) = False
-	isNotNoop _ 		= True
-
-applyDies :: RobotAndAction -> Maybe (Board -> Board)
-applyDies ((x,y,_),Die) = Just $ deleteRobot (x, y)
-applyDies _ = Nothing
-
-applyToList :: (RobotAndAction -> Maybe (Board -> Board)) -> ([RobotAndAction] -> (Board -> Board, [RobotAndAction]))
-applyToList _ [] = (id, [])
-applyToList f (raa:raas)
-		= case immediateResult of
-			Nothing 		-> (restFunction, raa : restActions)
-			(Just boardF) 	-> (boardF . restFunction, restActions)
-	where
-	immediateResult :: Maybe (Board -> Board)
-	immediateResult = f raa
-	(restFunction, restActions) = applyToList f raas
-
-applySendAndFire :: RobotAndAction -> Maybe (Board->Board)
-applySendAndFire (xyrob, send@(SendMessage _ _)) = Just $ mutateRobot xyrob sendAction (sendDirection send)
-	where
-	sendAction toReceive = toReceive { robotMessages = newMessage: robotMessages toReceive }
+	sendAction toReceive 		= Just $ toReceive { robotMessages = newMessage: robotMessages toReceive }
 		where
 		newMessage :: (String, Direction)
 		newMessage = (messageToSend send, oppositeDirection $ sendDirection send)
-applySendAndFire (xyrob, fire@(Fire _ _)) = Just $ mutateRobot xyrob fireAction (fireDirection fire)
+applyDNSF _ (xyrob, fire@(Fire _ _)) b
+								= mutateRobot xyrob fireAction (fireDirection fire) b
 	where
-	fireAction toReceive = toReceive {
-		 robotHitpoints
-		 	= robotHitpoints toReceive - hitpointsRemoved (materialExpended fire)
-		}
-applySendAndFire _ = Nothing
+	fireAction toReceive
+			| newHP > 0 		= Just $ toReceive { robotHitpoints = newHP }
+			| otherwise			= Nothing
+		where newHP = robotHitpoints toReceive - hitpointsRemoved (materialExpended fire)
+applyDNSF _ ((x, y, _), Dig) b
+		| mat == SpotMaterial	= updateSpot (x,y) SpotEmpty b
+		| otherwise				= b
+		where GameSpot mat _ = b !!! (x, y)
+applyDNSF _ ((x, y, rob), MoveIn dir) b
+								= deleteRobot (x, y) $ setRobot (newx, newy, rob) b
+	where (newx, newy) = applyOffset (getOffset dir) (x, y)
+applyDNSF params ((x, y, rob), spawn@(Spawn _ _ _ _ _)) b
+								= setRobot (newx, newy, newRobot) b
+	where
+	newRobot = Robot {
+		robotProgram = newProgram spawn,
+		robotTeam = robotTeam rob,
+		robotAppearance = newAppearance spawn,
+		robotMaterial = paramInitialMaterial params,
+		robotHitpoints = paramInitialHP params,
+		robotBirthdate = boardTime b,
+		robotMemory = newMemory spawn,
+		robotMessages = []
+	}
+	(newx, newy) = applyOffset (getOffset $ newDirection spawn) (x, y)
 
-mutateRobot :: (Int, Int, Robot) -> (Robot -> Robot) -> Direction -> Board -> Board
+mutateRobot :: (Int, Int, Robot) -> (Robot -> Maybe Robot) -> Direction -> Board -> Board
 mutateRobot (x, y, rob) mutator direction = individualAction
 	where
 	individualAction b
 			= case maybeRobot of
-				Just (_, _, toReceive) 		-> setRobot (x,y,mutator toReceive) b
-				Nothing						-> b
+				Just (_, _, toReceive) 	->
+					case (mutator toReceive) of
+						Just newRobot 		-> setRobot (x,y,newRobot) b
+						Nothing				-> deleteRobot (x, y) b
+				Nothing					-> b
 		where
 		maybeRobot = robotAlongPath b (x, y) direction (lineOfMessageSending rob)
-
-applyDigs :: RobotAndAction -> Maybe (Board -> Board)
-applyDigs ((x, y, _), Dig) = Just $ digFunction
-	where
-	digFunction :: Board -> Board
-	digFunction b
-		| mat == SpotMaterial		= updateSpot (x,y) SpotEmpty b
-		| otherwise						= b
-		where GameSpot mat _ = b !!! (x, y)
-applyDigs _ = Nothing
-
-applyMovesAndSpawns :: Parameters -> RobotAndAction -> Maybe (Board -> Board)
-applyMovesAndSpawns _ ((x, y, rob), MoveIn dir)
-		= Just $ applyMove
-	where
-	applyMove :: Board -> Board
-	applyMove = deleteRobot (x, y) . setRobot (newx, newy, rob)
-	(newx, newy) = applyOffset (getOffset dir) (x, y)
-applyMovesAndSpawns params ((x, y, rob), spawn@(Spawn _ _ _ _ _))
-		= Just $ applySpawn
-	where
-	applySpawn :: Board -> Board
-	applySpawn b = setRobot (newx, newy, newRobot) b
-		where
-		newRobot = Robot {
-			robotProgram = newProgram spawn,
-			robotTeam = robotTeam rob,
-			robotAppearance = newAppearance spawn,
-			robotMaterial = paramInitialMaterial params,
-			robotHitpoints = paramInitialHP params,
-			robotBirthdate = boardTime b,
-			robotMemory = newMemory spawn,
-			robotMessages = []
-		}
-	(newx, newy) = applyOffset (getOffset $ newDirection spawn) (x, y)
-applyMovesAndSpawns _ _ = Nothing
 
 -- Given a robot and action, gets a list containing ((oldx, oldy), (newx, newy))
 finalLocations :: RobotAndAction -> [(Int, Int)]
