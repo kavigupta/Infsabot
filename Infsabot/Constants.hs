@@ -16,4 +16,4 @@ colorOfMaterialSpot = PixelRGB8 128 128 128
 
 colorDefaultOf :: Team -> PixelRGB8
 colorDefaultOf A = PixelRGB8 255 0 0
-colorDefaultOf B = PixelRGB8 0 0 255
+colorDefaultOf B = PixelRGB8 0 0 128

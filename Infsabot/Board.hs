@@ -71,13 +71,15 @@ b !!! (x, y)
 -- Creates a starting square board with a given size
 -- This board contains no robots`
 startingBoard :: Parameters -> (Team -> RobotProgram) -> Board
-startingBoard p programOf = Board {
-		boardContents 	= startingSpots,
-		boardRobots 	= [	(paramBoardSize p, 0, bot A),
-							(0, paramBoardSize p, bot B)],
-		boardSize 		= paramBoardSize p,
-		boardTime 		= 0
-	}
+startingBoard p programOf
+	= setRobot (0, paramBoardSize p - 1, bot B) $
+		setRobot (paramBoardSize p - 1, 0, bot A) $
+		Board {
+			boardContents 	= startingSpots,
+			boardRobots 	= [],
+			boardSize 		= paramBoardSize p,
+			boardTime 		= 0
+		}
 	where
 	startingSpots :: (RAL (RAL GameSpot))
 	startingSpots = fmap ys $ fromList [0..paramBoardSize p]
