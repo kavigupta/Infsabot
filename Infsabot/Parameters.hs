@@ -9,7 +9,8 @@ module Infsabot.Parameters(
             paramInitialMaterial,
             lineOfSight,
             lineOfFire,
-            lineOfMessageSending
+            lineOfMessageSending,
+            hitpointsRemoved
     ) where
 
 data Parameters = Parameters {
@@ -22,5 +23,6 @@ data Parameters = Parameters {
     paramInitialMaterial :: Int,
     lineOfSight :: Int,
     lineOfFire :: Int,
-    lineOfMessageSending :: Int
+    lineOfMessageSending :: Int,
+    hitpointsRemoved :: Int -> Int
 }

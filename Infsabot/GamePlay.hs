@@ -66,7 +66,7 @@ getAction p ((x, y, _), fire@(Fire _ _)) b
 	fireAction toReceive
 			| newHP > 0 	= Just $ toReceive { robotHitpoints = newHP }
 			| otherwise		= Nothing
-		where newHP = robotHitpoints toReceive - hitpointsRemoved (materialExpended fire)
+		where newHP = robotHitpoints toReceive - hitpointsRemoved p (materialExpended fire)
 getAction _ ((x, y, _), Dig) b
 		| mat == SpotMaterial		= updateSpot (x,y) SpotEmpty b
 		| otherwise					= b
@@ -215,9 +215,6 @@ possibleAction p (xyrob@(_, _, rob), action)
 		= possibleAction p (xyrob, f {materialExpended = materialExpended f - 1})
 	downgrade (SendMessage _ _) = tryNoop
 	tryNoop = possibleAction p (xyrob, Noop)
-
-hitpointsRemoved :: Int -> Int
-hitpointsRemoved matExpend = 2 + matExpend
 
 -- Increments time by one
 applyTimeTick :: Board -> Board
