@@ -70,7 +70,7 @@ getAction p ((x, y, _), fire@(Fire _ _)) b
 getAction _ ((x, y, _), Dig) b
 		| mat == SpotMaterial		= updateSpot (x,y) SpotEmpty b
 		| otherwise					= b
-		where GameSpot mat _ = b !!! (x, y)
+		where GameSpot mat _ = unpack $ b !!! (x, y)
 getAction _ ((x, y, rob), MoveIn dir) b
 									= deleteRobot (x, y) $ setRobot (newx, newy, rob) b
 	where (newx, newy) = applyOffset (getOffset dir) (x, y)
@@ -192,7 +192,8 @@ getKnownState p b (x, y, rob) = KnownState {
 	where
 	peekFn :: Offset ->  Offset -> Maybe SeenSpot
 	peekFn (Offset offx) (Offset offy)
-		| withinRange	= Just $ toSeenSpot $ b !!! (x + offx, y + offy)
+		| withinRange
+			= (b !!! (x + offx, y + offy)) >>= Just . toSeenSpot
 		| otherwise		= Nothing
             where withinRange = offx * offx + offy * offy <= (lineOfSight p) * (lineOfSight p)
 

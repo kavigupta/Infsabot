@@ -8,6 +8,7 @@ module Infsabot.Base(
 		InternalState,
 		RobotAppearance(RobotAppearance), robotColor,
 		SeenSpot(SeenSpot),
+		unpack
 	) where
 
 import qualified Data.Map as M
@@ -52,3 +53,7 @@ oppositeDirection N = S
 oppositeDirection S = N
 oppositeDirection E = W
 oppositeDirection W = E
+
+unpack :: (Maybe a) -> a
+unpack Nothing = error "logic error"
+unpack (Just x) = x

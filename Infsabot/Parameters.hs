@@ -1,6 +1,6 @@
 module Infsabot.Parameters(
         Parameters(Parameters),
-            boardSize,
+            paramBoardSize,
             paramNoopCost,
             paramMoveCost,
             paramDigCost,
@@ -16,7 +16,7 @@ module Infsabot.Parameters(
     ) where
 
 data Parameters = Parameters {
-    boardSize :: Int,
+    paramBoardSize :: Int,
     paramNoopCost :: Int,
     paramMoveCost :: Int,
     paramDigCost :: Int,
@@ -32,7 +32,7 @@ data Parameters = Parameters {
 
 defaultParameters :: Parameters
 defaultParameters = Parameters {
-    boardSize = 500,
+    paramBoardSize = 500,
     paramNoopCost = 1,
     paramMoveCost = 5,
     paramDigCost = 10,
