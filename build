@@ -46,7 +46,7 @@ echs "All Haskell Files Built"
 
 runInterpreter "Infsabot/Board.hs" <<EOD >> $stdlog 2> $errlog
 
-writePng "./demo-starting-board.png" $ renderBoard $ startingBoard $demo_board_size
+writePng "./demo-starting-board.png" $ renderBoard $ startingBoard $ defaultParameters {boardSize = $demo_board_size} 
 EOD
 
 errsize=$(wc -c <"$errlog")

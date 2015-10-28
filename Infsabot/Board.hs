@@ -13,6 +13,7 @@ import Infsabot.MathTools
 import Infsabot.Constants
 import Infsabot.Base
 import Infsabot.Robot
+import Infsabot.Parameters
 
 type RAL = RandomAccessList
 
@@ -63,19 +64,19 @@ b !!! (x, y) = boardContents b .!. x .!. y
 
 -- Creates a starting square board with a given size
 -- This board contains no robots
-startingBoard :: Int -> Board
-startingBoard n = Board {
+startingBoard :: Parameters -> Board
+startingBoard p = Board {
 		boardContents 	= startingSpots,
 		boardRobots 	= [],
-		boardWidth 		= n,
-		boardHeight 	= n,
+		boardWidth 		= boardSize p,
+		boardHeight 	= boardSize p,
 		boardTime 		= 0
 	}
 	where
 	startingSpots :: (RAL (RAL GameSpot))
-	startingSpots = fmap ys $ fromList [0..n]
+	startingSpots = fmap ys $ fromList [0..boardSize p]
 		where
-		ys x = fmap (initialColor x) $ fromList [0..n]
+		ys x = fmap (initialColor x) $ fromList [0..boardSize p]
 		initialColor :: Int -> Int -> GameSpot
 		initialColor x y =
 			if isPrime (x * x + y * y)
