@@ -46,7 +46,7 @@ echs "All Haskell Files Built"
 
 runInterpreter "Infsabot/Board.hs" <<EOD >> $stdlog 2> $errlog
 
-writePng "./demo-starting-board.png" $ renderBoard $ startingBoard $ defaultParameters {boardSize = $demo_board_size} 
+writePng "./demo-starting-board.png" $ renderBoard $ startingBoard $ defaultParameters {boardSize = $demo_board_size}
 EOD
 
 errsize=$(wc -c <"$errlog")
@@ -65,8 +65,8 @@ rm "$stdlog"
 
 if [ $# -eq 1 ]; then
     echo -e "$logcolor"
-    echo "Committing changes"
     git add .
     git commit -m "$1"
     echo -e "$norcolor"
+    echs "Changes Committed"
 fi
