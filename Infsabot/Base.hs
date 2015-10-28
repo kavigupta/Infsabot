@@ -4,7 +4,7 @@ module Infsabot.Base(
 		Team(A,B),
 		BoardSpot(SpotEmpty, SpotMaterial),
 		Offset(Offset),
-			getOffset, applyOffset,
+			getOffset, applyOffset, squareNorm, asSeen,
 		InternalState,
 		RobotAppearance(RobotAppearance), robotColor,
 		SeenSpot(SeenSpot),
@@ -54,6 +54,13 @@ oppositeDirection S = N
 oppositeDirection E = W
 oppositeDirection W = E
 
+squareNorm :: (Offset, Offset) -> Int
+squareNorm (Offset x, Offset y) = x * x + y * y
+
 unpack :: (Maybe a) -> a
 unpack Nothing = error "logic error"
 unpack (Just x) = x
+
+asSeen :: Team -> (Offset, Offset) -> (Offset, Offset)
+asSeen A xy = xy
+asSeen B (Offset x, Offset y) = (Offset (-x), Offset (-y))

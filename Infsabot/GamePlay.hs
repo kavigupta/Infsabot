@@ -188,13 +188,14 @@ getKnownState p b (x, y, rob) = KnownState {
 		stateMessages = robotMessages rob
 	}
 	where
-	peekFn :: Offset ->  Offset -> Maybe SeenSpot
-	peekFn (Offset offx) (Offset offy)
+	peekFn :: (Offset,  Offset) -> Maybe SeenSpot
+	peekFn offs
 		| withinRange
-			= (b !!! (x + offx, y + offy)) >>= Just . toSeenSpot
-		| otherwise		= Nothing
-            where withinRange = offx * offx + offy * offy <= (lineOfSight p) * (lineOfSight p)
-
+			= (b !!! (applyOffset (asSeen (robotTeam rob) offs) (x, y)))
+				>>= Just . toSeenSpot
+		| otherwise	= Nothing
+	        where
+			withinRange = squareNorm offs <= (lineOfSight p) * (lineOfSight p)
 -- Returns the closest approximation to the requested action that is possible
     -- given the robot's level of material
 -- This may be another type of action.
