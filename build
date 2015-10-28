@@ -58,12 +58,15 @@ else
     perror_clean
 fi
 
+if [ $# -eq 1 ]; then
+    echo -e "$logcolor"
+    echo "Committing changes"
+    git add .
+    git commit -m "$1"
+    echo -e "$norcolor"
+fi
+
 rm ./Infsabot/*hi 2>> /dev/null
 rm ./Infsabot/*.o 2>> /dev/null
 rm "$errlog"
 rm "$stdlog"
-
-if [ $# -eq 1 ]; then
-    git add .
-    git commit -m "$1"
-fi
