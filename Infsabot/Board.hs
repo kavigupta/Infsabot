@@ -2,7 +2,7 @@ module Infsabot.Board (
 		BoardSpot,
 		Board,
 			boardContents, boardRobots, boardSize, boardTime,
-			(!!!), setRobot, deleteRobot, updateSpot, robotAlongPath,
+			(!!!), setRobot, updateSpot, robotAlongPath,
 		startingBoard,
 		renderBoard
 	) where
@@ -43,17 +43,15 @@ data Board = Board {
 	boardTime :: Int
 }
 
+-- Returns true iff the given coordinate pair is in the board
 inBoard :: Board -> (Int, Int) -> Bool
-inBoard b (x, y) = x >= 0
-					&& x < boardSize b
-					&& y >= 0
-					&& y < boardSize b
+inBoard b (x, y) = x >= 0 && x < boardSize b && y >= 0 && y < boardSize b
 
 -- Gets the game spot at the given board location
 (!!!) :: Board -> (Int, Int) -> Maybe GameSpot
 b !!! (x, y)
-		| inBoard b (x, y)	= Just $ boardContents b .!. x .!. y
-		| otherwise			= Nothing
+	| inBoard b (x, y)	= Just $ boardContents b .!. x .!. y
+	| otherwise			= Nothing
 
 -- Sets the game spot at the given board location to the given value
 (!->) :: Board -> (Int, Int) -> GameSpot -> Board
@@ -69,11 +67,11 @@ b !!! (x, y)
 	newcontents = update x newx $ boardContents b
 
 -- Creates a starting square board with a given size
--- This board contains no robots`
+-- This board contains one robot from each team.
 startingBoard :: Parameters -> (Team -> RobotProgram) -> Board
 startingBoard p programOf
-	= setRobot (0, paramBoardSize p - 1, bot B) $
-		setRobot (paramBoardSize p - 1, 0, bot A) $
+	= setRobot (0, paramBoardSize p - 1, Just $ bot B) $
+		setRobot (paramBoardSize p - 1, 0, Just $ bot A) $
 		Board {
 			boardContents 	= startingSpots,
 			boardRobots 	= [],
@@ -100,48 +98,36 @@ startingBoard p programOf
 		robotMemory = M.empty,
 		robotMessages = []
 	}
--- Adds a robot to the board
--- 		1. places the robot at the Gamespot at the given coordinates
---		2. Adds the robot to the list of robots
-setRobot :: (Int, Int, Robot) -> Board -> Board
-setRobot (x, y, rob) b = case b !!! (x, y) of
- 		Nothing
-			-> b
-		Just (GameSpot oldMaterial _)
-			-> (newB oldMaterial) {
-				boardRobots = (x,y,rob)
-					: boardRobots (newB oldMaterial)
-			}
-	where newB oldMaterial =  (b !-> (x, y) $ GameSpot oldMaterial $ Just rob)
 
-deleteRobot :: (Int, Int) -> Board -> Board
-deleteRobot (x, y) b = delRobot $ b !!! (x, y)
+-- Sets the robot at the given spot to the given value, or deletes it.
+-- 		1. places the robot at the gamespot at the given coordinates
+--		2. Adds the robot to the list of robots
+setRobot :: (Int, Int, Maybe Robot) -> Board -> Board
+setRobot (x, y, rob) b = delRobot $ b !!! (x, y)
 	where
 	delRobot Nothing = b
 	delRobot (Just (GameSpot oldMaterial _))
-			= newB {boardRobots = newRobots}
+			= newB {boardRobots = newRobots rob}
 		where
-		pointNEQ (x2,y2,_) = (x /= x2) && (y /= y2)
-		newB = b !-> (x, y) $ GameSpot oldMaterial $ Nothing
-		newRobots =  Prelude.filter pointNEQ $ boardRobots newB
+		pointNEQ (x2,y2,_) = (x, y) /= (x2, y2)
+		newB = b !-> (x, y) $ GameSpot oldMaterial rob
+		oldRemoved = Prelude.filter pointNEQ $ boardRobots newB
+		newRobots Nothing = oldRemoved
+		newRobots (Just robot) = (x, y, robot) : oldRemoved
 
+--Updates the given spot to the new value
 updateSpot :: (Int, Int) -> BoardSpot -> Board -> Board
-updateSpot (x, y) spot b = newB
-	where
-	currentRobot = robotAt b (x, y)
-	newB :: Board
-	newB = b !-> (x, y) $ GameSpot spot currentRobot
+updateSpot (x, y) spot b = b !-> (x, y) $ GameSpot spot (robotAt b (x, y))
 
+-- Gets the robot at the given position, if it exists
 robotAt :: Board -> (Int, Int) -> Maybe (Robot)
-robotAt b pos = case (b !!! pos) of
-	Just (GameSpot _ rob) 	-> rob
-	Nothing			 		-> Nothing
+robotAt b pos = (b !!! pos) >>= (\(GameSpot _ rob) -> rob)
+
 -- Finds the first robot along the given direction from the given position
 	-- (but not the robot at the given position)
 -- Which may be up to n paces away
 robotAlongPath :: Board -> (Int, Int) -> Direction -> Int -> Maybe (Int, Int, Robot)
-robotAlongPath _ _ _ 0
-	= Nothing
+robotAlongPath _ _ _ 0 = Nothing
 robotAlongPath b (x, y) dir n
 	= case perhapsRobot of
 		Nothing 	-> robotAlongPath b offsettedPosition dir (n-1)
@@ -150,7 +136,7 @@ robotAlongPath b (x, y) dir n
 	offsettedPosition = applyOffset (getOffset dir) (x, y)
 	perhapsRobot = robotAt b (x, y)
 
-	--- Renders the given board as an image
+-- Renders the given board as an image
 renderBoard :: Board -> Image PixelRGB8
 renderBoard b = generateImage colorAt (boardSize b) (boardSize b)
 	where

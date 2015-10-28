@@ -40,7 +40,7 @@ play p b =
 -- gets the action associated with the given robotandaction in the form
 -- of a function that mutates a board
 getAction :: Parameters -> RobotAndAction -> Board -> Board
-getAction _ ((x,y,_),Die) b 		= deleteRobot (x, y) b
+getAction _ ((x,y,_),Die) b 		= setRobot (x, y, Nothing) b
 getAction _ (_, Noop) b		 	= b
 getAction p ((x, y, _), send@(SendMessage _ _)) b
 									= mutateRobot
@@ -72,10 +72,10 @@ getAction _ ((x, y, _), Dig) b
 		| otherwise					= b
 		where GameSpot mat _ = unpack $ b !!! (x, y)
 getAction _ ((x, y, rob), MoveIn dir) b
-									= deleteRobot (x, y) $ setRobot (newx, newy, rob) b
+									= setRobot (x, y, Nothing) $ setRobot (newx, newy, Just rob) b
 	where (newx, newy) = applyOffset (getOffset dir) (x, y)
 getAction params ((x, y, rob), spawn@(Spawn _ _ _ _ _)) b
-									= setRobot (newx, newy, newRobot) b
+									= setRobot (newx, newy, Just newRobot) b
 	where
 	newRobot = Robot {
 		robotProgram = newProgram spawn,
@@ -99,10 +99,7 @@ getAction params ((x, y, rob), spawn@(Spawn _ _ _ _ _)) b
 mutateRobot :: (Int, Int) -> Direction -> Int -> (Robot -> Maybe Robot) -> Board -> Board
 mutateRobot (x, y) direction distance mutator b
 		= case maybeRobot of
-			Just (_, _, toReceive) 	->
-				case (mutator toReceive) of
-					Just newRobot 		-> setRobot (x,y,newRobot) b
-					Nothing				-> deleteRobot (x, y) b
+			Just (_, _, toReceive) 	-> setRobot (x, y, mutator toReceive) b
 			Nothing					-> b
 	where
 	maybeRobot = robotAlongPath b (x, y) direction distance
@@ -159,7 +156,8 @@ updateAllHardDrives rars = (
 		map removeState rars)
 	where
 	removeState (xyrob, (act, _)) = (xyrob, act)
-	updateHardDrive ((x,y,rob), (_, state)) = setRobot (x,y,rob {robotMemory = state})
+	updateHardDrive ((x,y,rob), (_, state))
+		= setRobot (x,y,Just rob {robotMemory = state})
 
 -- Takes a parameter list and list of actions, and applies all their costs to
 -- the given board.
@@ -167,7 +165,7 @@ applyActionCosts :: Parameters -> [RobotAndAction] -> Board -> Board
 applyActionCosts params raas = foldr (.) id $ map applyActionCost raas
 	where
 	applyActionCost :: RobotAndAction -> Board -> Board
-	applyActionCost ((x,y,rob), act) = setRobot (x, y, newRobot)
+	applyActionCost ((x,y,rob), act) = setRobot (x, y, Just newRobot)
 		where
 		cost = actionCost params act
 		newRobot = rob {robotMaterial = robotMaterial rob - cost}
