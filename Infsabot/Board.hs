@@ -13,7 +13,9 @@ import Infsabot.MathTools
 import Infsabot.Constants
 import Infsabot.Base
 import Infsabot.Robot
+import Infsabot.RobotAction
 import Infsabot.Parameters
+import qualified Data.Map as M
 
 type RAL = RandomAccessList
 
@@ -63,11 +65,12 @@ b !!! (x, y) = boardContents b .!. x .!. y
 	newcontents = update x newx $ boardContents b
 
 -- Creates a starting square board with a given size
--- This board contains no robots
-startingBoard :: Parameters -> Board
-startingBoard p = Board {
+-- This board contains no robots`
+startingBoard :: Parameters -> (Team -> RobotProgram) -> Board
+startingBoard p programOf = Board {
 		boardContents 	= startingSpots,
-		boardRobots 	= [],
+		boardRobots 	= [	(boardSize p, 0, bot A),
+							(0, boardSize p, bot B)],
 		boardWidth 		= boardSize p,
 		boardHeight 	= boardSize p,
 		boardTime 		= 0
@@ -82,6 +85,16 @@ startingBoard p = Board {
 			if isPrime (x * x + y * y)
 				then GameSpot SpotMaterial Nothing
 				else GameSpot SpotEmpty Nothing
+	bot team = Robot{
+		robotProgram = programOf team,
+		robotTeam = team,
+		robotAppearance = RobotAppearance {robotColor = colorDefaultOf team},
+		robotMaterial = paramInitialMaterial p,
+		robotHitpoints = paramInitialHP p,
+		robotBirthdate = 0,
+		robotMemory = M.empty,
+		robotMessages = []
+	}
 -- Adds a robot to the board
 -- 		1. places the robot at the Gamespot at the given coordinates
 --		2. Adds the robot to the list of robots
