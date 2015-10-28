@@ -26,7 +26,7 @@ play p b =
 	where
 		-- actions := results - state.
 		-- hardDriveUpdater updates the hard drive
-		(hardDriveUpdater, actions) = updateAllHardDrives $ getRobotResults b
+		(hardDriveUpdater, actions) = updateAllHardDrives $ getRobotResults p b
 		-- resolves and sorts the actions
 		resolvedAndSortedActions
 			= sortBy (compare `on` (orderOfOperations . snd))
@@ -42,11 +42,11 @@ play p b =
 getAction :: Parameters -> RobotAndAction -> Board -> Board
 getAction _ ((x,y,_),Die) b 		= deleteRobot (x, y) b
 getAction _ (_, Noop) b		 	= b
-getAction _ ((x, y, rob), send@(SendMessage _ _)) b
+getAction p ((x, y, _), send@(SendMessage _ _)) b
 									= mutateRobot
 										(x, y)
 										(sendDirection send)
-										(lineOfMessageSending rob)
+										(lineOfMessageSending p)
 										sendAction
 										b
 	where
@@ -55,11 +55,11 @@ getAction _ ((x, y, rob), send@(SendMessage _ _)) b
 		where
 		newMessage :: (String, Direction)
 		newMessage = (messageToSend send, oppositeDirection $ sendDirection send)
-getAction _ ((x, y, rob), fire@(Fire _ _)) b
+getAction p ((x, y, _), fire@(Fire _ _)) b
 									= mutateRobot
 										(x, y)
 										(fireDirection fire)
-										(lineOfFire rob)
+										(lineOfFire p)
 										fireAction
 										b
 	where
@@ -173,15 +173,15 @@ applyActionCosts params raas = foldr (.) id $ map applyActionCost raas
 		newRobot = rob {robotMaterial = robotMaterial rob - cost}
 
 -- Gets a list of robots and their program results
-getRobotResults :: Board -> [RobotAndResult]
-getRobotResults b = map getRobotResult $ boardRobots b
+getRobotResults :: Parameters -> Board -> [RobotAndResult]
+getRobotResults p b = map getRobotResult $ boardRobots b
 	where
 	getRobotResult (x, y, rob) = ((x, y, rob), robotProgram rob state)
-	   where state = getKnownState b (x, y, rob)
+	   where state = getKnownState p b (x, y, rob)
 
 -- Gets the known state for the given robot
-getKnownState :: Board -> (Int, Int, Robot) -> KnownState
-getKnownState b (x, y, rob) = KnownState {
+getKnownState :: Parameters -> Board -> (Int, Int, Robot) -> KnownState
+getKnownState p b (x, y, rob) = KnownState {
 		peekAtSpot = peekFn,
 		material = robotMaterial rob,
 		stateLocation = (x,y),
@@ -194,7 +194,7 @@ getKnownState b (x, y, rob) = KnownState {
 	peekFn (Offset offx) (Offset offy)
 		| withinRange	= Just $ toSeenSpot $ b !!! (x + offx, y + offy)
 		| otherwise		= Nothing
-            where withinRange = offx * offx + offy * offy <= (lineOfSight rob) * (lineOfSight rob)
+            where withinRange = offx * offx + offy * offy <= (lineOfSight p) * (lineOfSight p)
 
 -- Returns the closest approximation to the requested action that is possible
     -- given the robot's level of material
@@ -218,18 +218,6 @@ possibleAction p (xyrob@(_, _, rob), action)
 
 hitpointsRemoved :: Int -> Int
 hitpointsRemoved matExpend = 2 + matExpend
-
--- The distance the given robot can see
-lineOfSight :: Robot -> Int
-lineOfSight _ = 3
-
--- The distance the robot can fire
-lineOfFire :: Robot -> Int
-lineOfFire _ = 2
-
--- The distance the robot can fire
-lineOfMessageSending :: Robot -> Int
-lineOfMessageSending _ = 3
 
 -- Increments time by one
 applyTimeTick :: Board -> Board

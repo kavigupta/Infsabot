@@ -6,7 +6,10 @@ module Infsabot.Parameters(
             paramNewRobotCost,
             paramFireCost,
             paramInitialHP,
-            paramInitialMaterial
+            paramInitialMaterial,
+            lineOfSight,
+            lineOfFire,
+            lineOfMessageSending
     ) where
 
 data Parameters = Parameters {
@@ -16,5 +19,8 @@ data Parameters = Parameters {
     paramNewRobotCost :: Int,
     paramFireCost :: Int,
     paramInitialHP :: Int,
-    paramInitialMaterial :: Int
+    paramInitialMaterial :: Int,
+    lineOfSight :: Int,
+    lineOfFire :: Int,
+    lineOfMessageSending :: Int
 }
