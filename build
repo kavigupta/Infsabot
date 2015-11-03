@@ -14,6 +14,7 @@ while [ "$n" -lt "$#" ]; do
     if [ "${!n}" == "-commit" ]; then
         perform_commit=true
         n=$((n+1))
+        echo "${!n}"
         commit_msg=${!n}
     elif [ "${!n}" == "-keeplog"]; then
         keep_log=true
@@ -84,7 +85,7 @@ fi
 if [ "$perform_commit" == true ]; then
     echo -e "$logcolor"
     git add .
-    git commit -m "$1"
+    git commit -m "$commit_msg"
     echo -e "$norcolor"
     echs "Changes Committed"
 fi
