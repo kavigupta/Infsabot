@@ -76,12 +76,12 @@ fi
 rm ./Infsabot/*hi 2>> /dev/null
 rm ./Infsabot/*.o 2>> /dev/null
 
-if [ "$keep_log" = false ]; then
+if [ "$keep_log" == false ]; then
     rm "$errlog"
     rm "$stdlog"
 fi
 
-if [ "$perform_commit" = true ]; then
+if [ "$perform_commit" == true ]; then
     echo -e "$logcolor"
     git add .
     git commit -m "$1"
