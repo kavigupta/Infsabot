@@ -16,7 +16,7 @@ import Infsabot.RobotAction
 
 -- Represents a Spot on the Board as seen by a robot.
 -- This contains a Board Spot, which the Robot can always see, contains a robot's appearance iff there is a robot at that spot.
-data GameSpot = GameSpot BoardSpot (Maybe Robot)
+data GameSpot = GameSpot BoardSpot (Maybe Robot) deriving Show
 
 -- Converts a GameSpot to a seen spot
 toSeenSpot :: GameSpot -> SeenSpot
@@ -40,5 +40,14 @@ data Robot = Robot {
         -- The memory of this robot
 		robotMemory :: InternalState,
         -- The messages this robot has on the stack
-        robotMessages :: [(String, Direction)]
+        robotMessages :: [(String, RDirection)]
 }
+
+instance Show (Robot) where
+    show x = "Team = " ++ show (robotTeam x)
+                ++ "Appearance = " ++ show (robotAppearance x)
+                ++ "; Material = " ++ show (robotMaterial x)
+                ++ "; Hitpoints = " ++ show (robotHitpoints x)
+                ++ "; Birthdate = " ++ show (robotBirthdate x)
+                ++ "; Memory = " ++ show (robotMemory x)
+                ++ "; Messages = " ++ show (robotMessages x)

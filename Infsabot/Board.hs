@@ -41,7 +41,7 @@ data Board = Board {
 	boardSize :: Int,
 	-- The Current Time of the Board
 	boardTime :: Int
-}
+} deriving (Show)
 
 -- Returns true iff the given coordinate pair is in the board
 inBoard :: Board -> (Int, Int) -> Bool
@@ -126,14 +126,15 @@ robotAt b pos = (b !!! pos) >>= (\(GameSpot _ rob) -> rob)
 -- Finds the first robot along the given direction from the given position
 	-- (but not the robot at the given position)
 -- Which may be up to n paces away
-robotAlongPath :: Board -> (Int, Int) -> Direction -> Int -> Maybe (Int, Int, Robot)
-robotAlongPath _ _ _ 0 = Nothing
-robotAlongPath b (x, y) dir n
+robotAlongPath :: Team -> Board -> (Int, Int) -> RDirection -> Int -> Maybe (Int, Int, Robot)
+robotAlongPath _ _ _ _ 0 = Nothing
+robotAlongPath team b (x, y) dir n
 	= case perhapsRobot of
-		Nothing 	-> robotAlongPath b offsettedPosition dir (n-1)
+		Nothing 	-> robotAlongPath team b offsettedPosition dir (n-1)
 		Just rob 	-> Just $ (x, y, rob)
 	where
-	offsettedPosition = applyOffset (getOffset dir) (x, y)
+	offsettedPosition :: (Int, Int)
+	offsettedPosition = applyOffset (getOffset team dir) (x, y)
 	perhapsRobot = robotAt b (x, y)
 
 -- Renders the given board as an image

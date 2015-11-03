@@ -26,7 +26,8 @@ play p b =
 	where
 		-- actions := results - state.
 		-- hardDriveUpdater updates the hard drive
-		(hardDriveUpdater, actions) = updateAllHardDrives $ getRobotResults p b
+		(hardDriveUpdater, actions)
+			= updateAllHardDrives $ getRobotResults p b
 		-- resolves and sorts the actions
 		resolvedAndSortedActions
 			= sortBy (compare `on` (orderOfOperations . snd))
@@ -35,15 +36,17 @@ play p b =
 		-- gets the function which applies the costs of the actions
 		actionCostApplier = applyActionCosts p resolvedAndSortedActions
 		-- gets the function which applies all actions
-		actionApplier = foldl (.) id $ map (getAction p) resolvedAndSortedActions
+		actionApplier
+			= foldl (.) id $ map (getAction p) resolvedAndSortedActions
 
 -- gets the action associated with the given robotandaction in the form
 -- of a function that mutates a board
 getAction :: Parameters -> RobotAndAction -> Board -> Board
 getAction _ ((x,y,_),Die) b 		= setRobot (x, y, Nothing) b
 getAction _ (_, Noop) b		 	= b
-getAction p ((x, y, _), send@(SendMessage _ _)) b
+getAction p ((x, y, rob), send@(SendMessage _ _)) b
 									= mutateRobot
+										(robotTeam rob)
 										(x, y)
 										(sendDirection send)
 										(lineOfMessageSending p)
@@ -53,10 +56,11 @@ getAction p ((x, y, _), send@(SendMessage _ _)) b
 	sendAction toReceive
 			= Just $ toReceive { robotMessages = newMessage: robotMessages toReceive }
 		where
-		newMessage :: (String, Direction)
+		newMessage :: (String, RDirection)
 		newMessage = (messageToSend send, oppositeDirection $ sendDirection send)
-getAction p ((x, y, _), fire@(Fire _ _)) b
+getAction p ((x, y, rob), fire@(Fire _ _)) b
 									= mutateRobot
+										(robotTeam rob)
 										(x, y)
 										(fireDirection fire)
 										(lineOfFire p)
@@ -73,7 +77,7 @@ getAction _ ((x, y, _), Dig) b
 		where GameSpot mat _ = unpack $ b !!! (x, y)
 getAction _ ((x, y, rob), MoveIn dir) b
 									= setRobot (x, y, Nothing) $ setRobot (newx, newy, Just rob) b
-	where (newx, newy) = applyOffset (getOffset dir) (x, y)
+	where (newx, newy) = applyOffset (getOffset (robotTeam rob) dir) (x, y)
 getAction params ((x, y, rob), spawn@(Spawn _ _ _ _ _)) b
 									= setRobot (newx, newy, Just newRobot) b
 	where
@@ -87,7 +91,7 @@ getAction params ((x, y, rob), spawn@(Spawn _ _ _ _ _)) b
 		robotMemory = newMemory spawn,
 		robotMessages = []
 	}
-	(newx, newy) = applyOffset (getOffset $ newDirection spawn) (x, y)
+	(newx, newy) = applyOffset (getOffset (robotTeam rob) $ newDirection spawn) (x, y)
 
 -- Gets a function that mutates a robot along a path, given
 	-- an original position
@@ -96,13 +100,13 @@ getAction params ((x, y, rob), spawn@(Spawn _ _ _ _ _)) b
 	-- a function that takes a robot and returns
 		-- Just (the updated robot)
 		-- Nothing (the robot will be deleted)
-mutateRobot :: (Int, Int) -> Direction -> Int -> (Robot -> Maybe Robot) -> Board -> Board
-mutateRobot (x, y) direction distance mutator b
+mutateRobot :: Team -> (Int, Int) -> RDirection -> Int -> (Robot -> Maybe Robot) -> Board -> Board
+mutateRobot team (x, y) direction distance mutator b
 		= case maybeRobot of
 			Just (_, _, toReceive) 	-> setRobot (x, y, mutator toReceive) b
 			Nothing					-> b
 	where
-	maybeRobot = robotAlongPath b (x, y) direction distance
+	maybeRobot = robotAlongPath team b (x, y) direction distance
 
 --	Removes any moves that would result in two robots being in the same spot.
 --	Whichever move is a movement will be removed. If both are movements, both
@@ -119,15 +123,16 @@ removeCompetingMoves (move:remainder)
 	-- Outputs False if the currently processed move should be removed, True otherwise
 	removeCompetitionTo :: RobotAndAction -> [RobotAndAction] -> (Bool, [RobotAndAction])
 	removeCompetitionTo current@((xcur,ycur,_), _) other
-			| any (fst . fault) robAndLocOther			= (True, other)
-			| otherwise									= (False, map fst $ nonConflicting)
+			| any (fst . fault) robAndLocOther			= (False, other)
+			| otherwise									= (True, map fst $ nonConflicting)
 		where
 		nonConflicting :: [(RobotAndAction, (Int, Int))]
 		nonConflicting = filter (not . snd . fault) robAndLocOther
 		locThis :: [(Int, Int)]
 		locThis = finalLocations current
 		robAndLocOther :: [(RobotAndAction, (Int, Int))]
-		robAndLocOther = concat $ map (\(raa, xys) -> map (raa,) xys) robAsscLocs
+		robAndLocOther
+			= concat $ map (\(raa, xys) -> map (raa,) xys) robAsscLocs
 			where
 			robAsscLocs = zip other $ map finalLocations other
 		fault :: (RobotAndAction, (Int, Int)) -> Conflict
@@ -135,11 +140,11 @@ removeCompetingMoves (move:remainder)
 			| xy == (xcur, ycur) 			= (False, True)
 			| otherwise						= (any (==xy) locThis, False)
 		finalLocations :: RobotAndAction -> [(Int, Int)]
-		finalLocations ((x,y,_), act) = locs act
+		finalLocations ((x,y,rob), act) = locs act
 			where
-			locs (MoveIn dir) = [applyOffset (getOffset dir) (x,y)]
+			locs (MoveIn dir) = [applyOffset (getOffset (robotTeam rob) dir) (x,y)]
 			locs spawn@(Spawn _ _ _ _ _)
-				= [applyOffset (getOffset $ newDirection spawn) (x,y)]
+				= [applyOffset (getOffset (robotTeam rob) $ newDirection spawn) (x,y)]
 			locs Die = []
 			locs _ = [(x,y)]
 

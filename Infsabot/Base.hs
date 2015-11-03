@@ -1,5 +1,5 @@
 module Infsabot.Base(
-		Direction(N,E,W,S),
+		RDirection(N,E,W,S),
 			oppositeDirection,
 		Team(A,B),
 		BoardSpot(SpotEmpty, SpotMaterial),
@@ -15,10 +15,10 @@ import qualified Data.Map as M
 import Codec.Picture (PixelRGB8)
 
 -- Represents one of the 4 potential directions
-data Direction = N | E | W | S
+data RDirection = N | E | W | S deriving (Show)
 
 -- Represents a Team. Currently, there are only two teams.
-data Team = A | B
+data Team = A | B deriving (Show)
 
 -- A spot on the Board. This is either empty or contains material.
 data BoardSpot = SpotEmpty | SpotMaterial
@@ -33,22 +33,23 @@ type InternalState = M.Map String String
 -- The robot's appearance. Currently just contains a color.
 data RobotAppearance = RobotAppearance {
 	robotColor :: PixelRGB8
-}
+} deriving (Show)
 
 -- Represents a Spot on the Board as seen by a robot.
 -- This contains a Board Spot, which the Robot can always see, contains a robot's appearance iff there is a robot at that spot.
 data SeenSpot = SeenSpot BoardSpot (Maybe RobotAppearance)
 
-getOffset :: Direction -> (Offset, Offset)
-getOffset N = (Offset 0, Offset 1)
-getOffset S = (Offset 0, Offset (-1))
-getOffset E = (Offset 1, Offset 0)
-getOffset W = (Offset (-1), Offset 0)
+getOffset :: Team -> RDirection -> (Offset, Offset)
+getOffset B N = (Offset 0, Offset (-1))
+getOffset B E = (Offset 1, Offset 0)
+getOffset B W = (Offset (-1), Offset 0)
+getOffset B S = (Offset 0, Offset 1)
+getOffset A dir = getOffset B $ oppositeDirection dir
 
 applyOffset :: (Offset, Offset) -> (Int, Int) -> (Int, Int)
 applyOffset (Offset offx, Offset offy) (x, y) = (x + offx, y + offy)
 
-oppositeDirection :: Direction -> Direction
+oppositeDirection :: RDirection -> RDirection
 oppositeDirection N = S
 oppositeDirection S = N
 oppositeDirection E = W

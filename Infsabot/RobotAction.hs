@@ -1,3 +1,5 @@
+{-# Language TypeSynonymInstances #-}
+{-# Language FlexibleInstances #-}
 module Infsabot.RobotAction (
         RobotProgram, RobotProgramResult,
         KnownState(KnownState),
@@ -15,6 +17,9 @@ import Infsabot.Parameters
 
 -- A robot program takes the Robot's state and returns a RobotProgramResult
 type RobotProgram = KnownState -> RobotProgramResult
+
+instance Show (RobotProgram) where
+    show _ = "Program"
 
 -- A robot program result consists of an action and a potentially modified internal state
 type RobotProgramResult = (RobotAction, InternalState)
@@ -34,7 +39,7 @@ data KnownState = KnownState {
 	stateMemory :: InternalState,
     -- The robot's received messages as a list of pairs of
     -- message and direction received.
-    stateMessages :: [(String, Direction)]
+    stateMessages :: [(String, RDirection)]
 }
 
 -- Represents an action a robot can take.
@@ -47,7 +52,7 @@ data RobotAction =
                 -- Robot will fire in a given direction
                 Fire {
                     -- Direction to fire in
-                    fireDirection :: Direction,
+                    fireDirection :: RDirection,
                     -- Material devoted to this task.
                     -- More material means greater blow
                     materialExpended :: Int
@@ -57,16 +62,16 @@ data RobotAction =
                     -- The message to send to another robot
                     messageToSend :: String,
                     -- The direction to send the message in
-                    sendDirection :: Direction
+                    sendDirection :: RDirection
                 } |
                 -- Robot will dig
                 Dig |
                 -- Robot will move in the given Direction
-                MoveIn Direction |
+                MoveIn RDirection |
                 -- Robot will spawn a new Robot
                 Spawn {
                     -- The direction the new robot will be placed in
-                    newDirection :: Direction,
+                    newDirection :: RDirection,
                     -- The program the new Robot will have
                     newProgram :: RobotProgram,
                     -- The appearance of the new Robot
@@ -76,6 +81,7 @@ data RobotAction =
                     -- The memory of the new robot
                 	newMemory :: InternalState
                 }
+    deriving (Show)
 
 orderOfOperations :: RobotAction -> Int
 orderOfOperations Die = 0
