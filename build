@@ -14,7 +14,7 @@ while [ "$n" -lt "$#" ]; do
     if [ "${!n}" == "-commit" ]; then
         perform_commit=true
         n=$((n+1))
-        commit_msg=$@{!n}
+        commit_msg=${!n}
     elif [ "${!n}" == "-keeplog"]; then
         keep_log=true
     else
