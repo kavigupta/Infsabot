@@ -14,11 +14,11 @@ writeBoard s = writePng s . renderBoard
 createDemoBoards :: Int -> IO ()
 createDemoBoards demoBoardSize
     = do
-        writeBoard "./demo-starting-board.png" initialBoard
-        forM_ [1..10] $ \x ->
+        writeBoard "./___demo-starting-board.png" initialBoard
+        forM_ [10,20..100] $ \x ->
             do
                 let board = fullGame x initialBoard
-                writeBoard ("./demo-moves-" ++ (show x) ++ ".png") board
+                writeBoard ("./___demo-moves-" ++ (show x) ++ ".png") board
                 putStrLn $ show $ boardRobots board
     where
     params = defaultParameters {paramBoardSize = demoBoardSize, paramInitialMaterial=1000}

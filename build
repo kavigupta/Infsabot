@@ -10,14 +10,20 @@ norcolor="\033[0m"
 
 n=1
 perform_commit=false
-while [ "$n" -lt "$#" ]; do
+keep_log=false
+while [ "$n" -le "$#" ]; do
+    echo "$n"
     if [ "${!n}" == "-commit" ]; then
         perform_commit=true
         n=$((n+1))
         echo "${!n}"
         commit_msg=${!n}
-    elif [ "${!n}" == "-keeplog"]; then
+    elif [ "${!n}" == "-keeplog" ]; then
         keep_log=true
+    elif [ "${!n}" == "-clean" ]; then
+        echo "CLEANING"
+        find . -name '___*' -delete
+        exit 0
     else
         echo "Unrecognized command $@{!n}"
     fi

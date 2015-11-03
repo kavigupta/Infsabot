@@ -14,7 +14,7 @@ If `x^2 + y^2` is prime, the square at `(x, y)` is material.
 
 The initial board for the initial size `100 x 100` therefore looks like
 
-<img src="demo-starting-board.png" alt="Initial game board 100x100" height="200" width="200">
+<img src="\___demo-starting-board.png" alt="Initial game board 100x100" height="200" width="200">
 
 where white is empty and black is material.
 
