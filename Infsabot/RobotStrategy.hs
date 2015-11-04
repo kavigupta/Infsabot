@@ -19,7 +19,7 @@ basicProgram team state
             (createSpawn E, stateMemory state)
     where
     mat
-        = case peekAtSpot state (Offset 0, Offset 0) of
+        = case peekAtSpot state [] of
             Nothing -> SpotEmpty
             Just (SeenSpot current _) -> current
     createSpawn dir = Spawn {

@@ -28,7 +28,7 @@ type RobotProgramResult = (RobotAction, InternalState)
 data KnownState = KnownState {
     -- Function the Robot can use to see around it.
     -- Returns Nothing if the robot can't see that far.
-	peekAtSpot :: (Offset, Offset) -> Maybe SeenSpot,
+	peekAtSpot :: [RDirection] -> Maybe SeenSpot,
 	-- The quantity of material the robot has
 	material :: Int,
 	-- The current location of the robot

@@ -1,3 +1,4 @@
+{-# Language TupleSections #-}
 module Infsabot.GamePlay(play) where
 
 import Infsabot.Board
@@ -180,11 +181,11 @@ getRobotResults :: Parameters -> Board -> [RobotAndResult]
 getRobotResults p b = map getRobotResult $ boardRobots b
 	where
 	getRobotResult (x, y, rob) = ((x, y, rob), robotProgram rob state)
-	   where state = getKnownState p b (x, y, rob)
+	   where state = getKnownState p (robotTeam rob) b (x, y, rob)
 
 -- Gets the known state for the given robot
-getKnownState :: Parameters -> Board -> (Int, Int, Robot) -> KnownState
-getKnownState p b (x, y, rob) = KnownState {
+getKnownState :: Parameters -> Team -> Board -> (Int, Int, Robot) -> KnownState
+getKnownState p team b (x, y, rob) = KnownState {
 		peekAtSpot = peekFn,
 		material = robotMaterial rob,
 		stateLocation = (x,y),
@@ -193,14 +194,15 @@ getKnownState p b (x, y, rob) = KnownState {
 		stateMessages = robotMessages rob
 	}
 	where
-	peekFn :: (Offset,  Offset) -> Maybe SeenSpot
-	peekFn offs
+	peekFn :: [RDirection] -> Maybe SeenSpot
+	peekFn directs
 		| withinRange
 			= (b !!! (applyOffset (asSeen (robotTeam rob) offs) (x, y)))
 				>>= Just . toSeenSpot
 		| otherwise	= Nothing
 	        where
 			withinRange = squareNorm offs <= (lineOfSight p) * (lineOfSight p)
+			offs = foldr (addOffset) (Offset 0, Offset 0) $ map (getOffset team) directs
 -- Returns the closest approximation to the requested action that is possible
     -- given the robot's level of material
 -- This may be another type of action.
