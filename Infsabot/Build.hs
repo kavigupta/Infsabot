@@ -107,6 +107,7 @@ commit (Just msg) =
         putStrLn logColor
         system "git add ."
         system $ "git commit -m " ++ show msg
+        system "git status"
         putStrLn noColor
         echs "Changes Committed"
 
