@@ -1,4 +1,4 @@
-module Infsabot.Tests (assertTeamsSymmetric) where
+module Infsabot.Tests (tests) where
 
 import Test.HUnit
 import Data.Function(on)
@@ -7,6 +7,22 @@ import Data.List(partition, sortBy)
 import Infsabot.Base
 import Infsabot.Board
 import Infsabot.Robot
+import Infsabot.RobotStrategy
+import Infsabot.GamePlay(boards)
+import Infsabot.Parameters
+
+tests :: Test
+tests
+    = TestLabel "Symmetry Tests" $ TestList
+            $ map (\(n, t) -> TestLabel ("Turn " ++ show n) t)
+            $ zip [0 ::Int ..]
+            $ map assertTeamsSymmetric $ take 1 $ boards params initialBoard
+
+    where
+    params :: Parameters
+    params = defaultParameters {paramBoardSize = 100, paramInitialMaterial = 1000}
+    initialBoard :: Board
+    initialBoard = startingBoard params basicProgram
 
 assertTeamsSymmetric :: Board -> Test
 assertTeamsSymmetric b

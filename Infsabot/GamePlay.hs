@@ -1,16 +1,24 @@
 {-# Language TupleSections #-}
-module Infsabot.GamePlay(play) where
+module Infsabot.GamePlay(boards) where
 
 import Infsabot.Board
 import Infsabot.Robot
 import Infsabot.RobotAction
 import Infsabot.Parameters
 import Infsabot.Base
+import Infsabot.RobotStrategy
 import Data.List(sortBy)
 import Data.Function(on)
 
 type RobotAndResult = ((Int, Int, Robot), RobotProgramResult)
 type RobotAndAction = ((Int, Int, Robot), RobotAction)
+
+
+boards :: Parameters -> Board -> [Board]
+boards params initialBoard = iterate (play params) initialBoard
+    where
+    initialBoard = startingBoard params basicProgram
+
 
 -- the main play function. This executes all robot actions and updates the board.
 play :: Parameters -> Board -> Board
