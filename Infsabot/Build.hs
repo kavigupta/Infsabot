@@ -45,21 +45,9 @@ main = do
         cleanUp
     else return ()
     buildAll
-    echs "Haskell Files Built Correctly"
     runTests
     demoes
     commit $ performCommit whatToDo
-
-commit :: Maybe String -> IO ()
-commit Nothing = return ()
-commit (Just msg) =
-    do
-        putStrLn logColor
-        system "git add ."
-        system $ "git commit -m " ++ show msg
-        putStrLn noColor
-        echs "Changes Committed"
-
 
 cleanUp :: IO ()
 cleanUp =
@@ -84,6 +72,7 @@ buildAll
     = do
         contents <- getDirectoryContents directory
         forM_ (processHSs contents) build
+        echs "Haskell Files Built Correctly"
     where
     processHSs :: [String] -> [String]
     processHSs paths = map ((directory ++ "/") ++)
@@ -110,6 +99,16 @@ readWhatToDo args
     where
     commit :: Maybe Int
     commit = elemIndex "-commit" args
+
+commit :: Maybe String -> IO ()
+commit Nothing = return ()
+commit (Just msg) =
+    do
+        putStrLn logColor
+        system "git add ."
+        system $ "git commit -m " ++ show msg
+        putStrLn noColor
+        echs "Changes Committed"
 
 echl :: String -> IO ()
 echl s = putStrLn $ logColor ++ s ++ noColor
