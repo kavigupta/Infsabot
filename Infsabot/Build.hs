@@ -46,7 +46,7 @@ main = do
     else return ()
     buildAll
     runTests
-    demoes
+    --demoes
     commit $ performCommit whatToDo
 
 cleanUp :: IO ()
@@ -76,12 +76,14 @@ buildAll
     where
     processHSs :: [String] -> [String]
     processHSs paths = map ((directory ++ "/") ++)
-        $ filter (".hs" `isSuffixOf`) paths
+        $ filter isHaskell paths
+        where
+        isHaskell s = isSuffixOf ".hs" s && s /= "Build.hs"
     build :: String -> IO ()
     build name =
         do
             echl $ "Compiling " ++ name
-            exitCode <- system $ "ghc -fno-code -odir bin " ++ name
+            exitCode <- system $ "ghc -fno-code -Wall -Werror -odir bin " ++ name
                 ++ " >> " ++ stdLog
                 ++ " 2> " ++ errLog
             case exitCode of

@@ -42,9 +42,9 @@ data SeenSpot = SeenSpot BoardSpot (Maybe RobotAppearance)
 getOffset :: Team -> RDirection -> (Offset, Offset)
 getOffset B N = (Offset 0, Offset (-1))
 getOffset B E = (Offset 1, Offset 0)
-getOffset B W = (Offset (-1), Offset 0)
-getOffset B S = (Offset 0, Offset 1)
-getOffset A dir = getOffset B $ oppositeDirection dir
+getOffset A N = (Offset (-1), Offset 0)
+getOffset A E = (Offset 0, Offset 1)
+getOffset team dir = getOffset team $ oppositeDirection dir
 
 applyOffset :: (Offset, Offset) -> (Int, Int) -> (Int, Int)
 applyOffset (Offset offx, Offset offy) (x, y) = (x + offx, y + offy)

@@ -10,28 +10,36 @@ import Infsabot.Robot
 import Infsabot.RobotStrategy
 import Infsabot.GamePlay(boards)
 import Infsabot.Parameters
+import Debug.Trace
+import Infsabot.Debug
 
 tests :: Test
-tests
-    = TestLabel "Symmetry Tests" $ TestList
+tests = TestList [symmetryTests]
+
+symmetryTests :: Test
+symmetryTests
+    | trace ("Boards = " ++ concat (map (\x -> show (map printRobot $ boardRobots x) ++ "\n") neededBoards)) False = undefined
+    | otherwise = TestLabel "Symmetry Tests" $ TestList
             $ map (\(n, t) -> TestLabel ("Turn " ++ show n) t)
             $ zip [0 ::Int ..]
-            $ map assertTeamsSymmetric $ take 1 $ boards params initialBoard
-
+            $ map (\b -> TestList [assertTeamsSymmetric b, assertBoardSymmetry b]) $ neededBoards
     where
+    neededBoards = take nTurns $ boards params initialBoard
+    nTurns = 6
     params :: Parameters
-    params = defaultParameters {paramBoardSize = 100, paramInitialMaterial = 1000}
+    params = defaultParameters {paramBoardSize = 5, paramInitialMaterial = 1000}
     initialBoard :: Board
     initialBoard = startingBoard params basicProgram
 
 assertTeamsSymmetric :: Board -> Test
 assertTeamsSymmetric b
-        = TestList [equalLength, TestList $ map assertTeamSymmetry sortedAsBs]
+    | trace ("Set = " ++ show (map printRobot as) ++ " ?= " ++ show (map printRobot adjustedBs)) False = undefined
+    | otherwise = TestList [equalLength, TestList $ map assertTeamSymmetry sortedAsBs]
     where
     (as, bs) = partition teamIsA $ boardRobots b
     equalLength = TestCase $ assertEqual
         "Equal numbers of robots" (length as) (length bs)
-    adjustedBs = map (\(x, y, rob) -> (boardSize b - x - 1, boardSize b - y - 1, rob)) bs
+    adjustedBs = map (\(x, y, rob) -> (y, x, rob)) bs
     sorter =  sortBy (compare `on` getCoordinates)
     sortedAsBs = zip (sorter as) (sorter adjustedBs)
 
@@ -45,11 +53,9 @@ assertTeamSymmetry ((x1, y1, rob1), (x2, y2, rob2))
     | otherwise
         = TestLabel ("The robots at "
                 ++ show (x1, y1) ++ " are not equivalent")
-            $ TestList tests
+            $ TestList $ map getTests
+                $ zip assertLabels results
     where
-        tests :: [Test]
-        tests = map getTests
-            $ zip assertLabels results
         getTests :: (String, Bool) -> Test
         getTests (label, result) = TestCase $ assertBool label result
         results :: [Bool]
@@ -67,7 +73,18 @@ assertTeamSymmetry ((x1, y1, rob1), (x2, y2, rob2))
                 "memory",
                 "messages"
             ]
-
+assertBoardSymmetry :: Board -> Test
+assertBoardSymmetry b = TestList $ map symmetric $ zip [0.. boardSize b - 1] [0..boardSize b - 1]
+    where
+    symmetric (x, y) = case u of
+            Nothing -> TestCase $ assertBool "" True
+            (Just value) -> TestCase $ assertBool
+                ("The coordinates at " ++ show ((x, y), (y, x))++ " do not match") value
+        where
+        u = do
+            (GameSpot regular _) <- b !!! (x, y)
+            (GameSpot other _) <- b !!! (y, x)
+            return $ regular == other
 getCoordinates :: (Int, Int, Robot) -> (Int, Int)
 getCoordinates (x, y, _) = (x, y)
 

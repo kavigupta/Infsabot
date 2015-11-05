@@ -1,14 +1,16 @@
 {-# Language TupleSections #-}
-module Infsabot.GamePlay(boards) where
+module Infsabot.GamePlay(boards, RobotAndAction) where
 
 import Infsabot.Board
 import Infsabot.Robot
 import Infsabot.RobotAction
 import Infsabot.Parameters
 import Infsabot.Base
-import Infsabot.RobotStrategy
 import Data.List(sortBy)
 import Data.Function(on)
+
+import Debug.Trace
+import Infsabot.Debug
 
 type RobotAndResult = ((Int, Int, Robot), RobotProgramResult)
 type RobotAndAction = ((Int, Int, Robot), RobotAction)
@@ -16,13 +18,14 @@ type RobotAndAction = ((Int, Int, Robot), RobotAction)
 
 boards :: Parameters -> Board -> [Board]
 boards params initialBoard = iterate (play params) initialBoard
-    where
-    initialBoard = startingBoard params basicProgram
-
 
 -- the main play function. This executes all robot actions and updates the board.
 play :: Parameters -> Board -> Board
-play p b =
+play p b
+    | trace (show (map printRobotAndAction actions)
+        ++ "\n\t"
+        ++ show (map printRobotAndAction resolvedAndSortedActions)) False = undefined
+    | otherwise =
 		-- apply actions
 		actionApplier .
 		-- apply all action costs
@@ -145,11 +148,9 @@ removeCompetingMoves (move:remainder)
 			where
 			robAsscLocs = zip other $ map finalLocations other
 		fault :: (RobotAndAction, (Int, Int)) -> Conflict
-		fault (_, xy)
-			| xy == (xcur, ycur) 			= (False, True)
-			| otherwise						= (any (==xy) locThis, False)
+		fault (_, xy) = (any (==xy) locThis, xy == (xcur, ycur))
 		finalLocations :: RobotAndAction -> [(Int, Int)]
-		finalLocations ((x,y,rob), act) = locs act
+		finalLocations ((x,y,rob), act) = trace ("Final locations for " ++ printRobotAndAction ((x, y, rob), act) ++ "\n\t" ++ show (locs act)) $ locs act
 			where
 			locs (MoveIn dir) = [applyOffset (getOffset (robotTeam rob) dir) (x,y)]
 			locs spawn@(Spawn _ _ _ _ _)

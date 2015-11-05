@@ -22,7 +22,7 @@ createDemoBoards demoBoardSize
     params = defaultParameters {paramBoardSize = demoBoardSize, paramInitialMaterial=1000}
     selectedBoards
         = take 30 $
-            zip [0..] $
+            zip [0 :: Int ..] $
             boards params $ startingBoard params basicProgram
 
 writeBoard :: String -> Board -> IO ()
