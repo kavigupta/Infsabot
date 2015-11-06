@@ -1,15 +1,20 @@
-module MoveConflictResolution (removeConflicting) where
+module Infsabot.MoveConflictResolution (RobotAndAction, removeConflicting) where
 
 import Infsabot.Robot
 import Infsabot.RobotAction
-import Infsabot.GamePlay
 import Infsabot.Base
+
+type RobotAndAction = ((Int, Int, Robot), RobotAction)
 
 type FinalLocations = [(Int, Int, Bool)]
 
 data Remove = Remove Bool Bool
 
+--	Removes any moves that would result in two robots being in the same spot.
+--	Whichever move is a movement will be removed. If both are movements, both
+ 	-- are removed
 removeConflicting :: [RobotAndAction] -> [RobotAndAction]
+removeConflicting [] = []
 removeConflicting (raa:raas)
     | removeThis    = removeConflicting restNoConflicts
     | otherwise     = raa:removeConflicting restNoConflicts
@@ -23,6 +28,7 @@ removeConflicting (raa:raas)
         where
         conflictsWithThis other = isConflict flThis (finalLocations other)
             where flThis = finalLocations raa
+
 merge :: Remove -> Remove -> Remove
 merge (Remove a b) (Remove c d) = Remove (a || b) (c || d)
 
@@ -38,7 +44,8 @@ locationConflicts (x1, y1, keep1) ((x2, y2, keep2):rest)
             (True, True)    -> merge (Remove False True) $ conflictsInRest
             (True, False)   -> Remove False True
             (False, True)   -> conflictsInRest
-            (False, False)  -> Remove True True
+            _               -> Remove True True
+    | otherwise     = Remove False False
     where
     conflictsInRest = locationConflicts (x1, y1, keep1) rest
 
@@ -47,7 +54,7 @@ finalLocations ((x,y,rob), act) = locs act
     where
     locs (MoveIn dir)
         = let (newx, newy) = applyOffset (getOffset (robotTeam rob) dir) (x,y)
-            in [(newx, newy, False), (x, y, True)]
+            in [(newx, newy, False)]
     locs spawn@(Spawn _ _ _ _ _)
         = let (newx, newy) = applyOffset (getOffset (robotTeam rob) $ newDirection spawn) (x,y)
             in [(newx, newy, False), (x, y, True)]

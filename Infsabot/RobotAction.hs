@@ -21,6 +21,9 @@ type RobotProgram = KnownState -> RobotProgramResult
 instance Show (RobotProgram) where
     show _ = "Program"
 
+instance Eq (RobotProgram) where
+    _ == _ = True
+
 -- A robot program result consists of an action and a potentially modified internal state
 type RobotProgramResult = (RobotAction, InternalState)
 
@@ -81,7 +84,7 @@ data RobotAction =
                     -- The memory of the new robot
                 	newMemory :: InternalState
                 }
-    deriving (Show)
+    deriving (Show, Eq)
 
 orderOfOperations :: RobotAction -> Int
 orderOfOperations Die = 0

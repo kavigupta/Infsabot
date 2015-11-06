@@ -13,6 +13,7 @@ import Test.HUnit(runTestTT, failures)
 
 import Infsabot.Demoes(demoes)
 import Infsabot.Tests(tests)
+import Infsabot.QuickChecks(checks)
 import Infsabot.Board(Board(..), renderBoard)
 import Infsabot.Parameters
 
@@ -45,7 +46,10 @@ main = do
         cleanUp
     else return ()
     buildAll
-    runTests
+    echl "Running Quick Checks"
+    checks
+    echl "Checks completed!"
+    --runTests
     --demoes
     commit $ performCommit whatToDo
 
@@ -83,7 +87,7 @@ buildAll
     build name =
         do
             echl $ "Compiling " ++ name
-            exitCode <- system $ "ghc -fno-code -Wall -Werror -odir bin " ++ name
+            exitCode <- system $ "ghc -fno-code -Wall -fno-warn-orphans -Werror -odir bin " ++ name
                 ++ " >> " ++ stdLog
                 ++ " 2> " ++ errLog
             case exitCode of

@@ -1,4 +1,5 @@
 #!/bin/bash
-ghc Infsabot/Build.hs -O -rtsopts -outputdir bin -main-is Infsabot.Build
+ghc Infsabot/Build.hs -rtsopts -outputdir bin -main-is Infsabot.Build
+ghc Infsabot/Build.hs -osuf p_o -prof -auto -auto-all -rtsopts -outputdir bin -main-is Infsabot.Build
 mv Infsabot/Build bin/Build
-./bin/Build "$@"
+./bin/Build "$@" +RTS -xc -RTS

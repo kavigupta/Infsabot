@@ -33,7 +33,7 @@ type InternalState = M.Map String String
 -- The robot's appearance. Currently just contains a color.
 data RobotAppearance = RobotAppearance {
 	robotColor :: PixelRGB8
-} deriving (Show)
+} deriving (Show, Eq)
 
 -- Represents a Spot on the Board as seen by a robot.
 -- This contains a Board Spot, which the Robot can always see, contains a robot's appearance iff there is a robot at that spot.

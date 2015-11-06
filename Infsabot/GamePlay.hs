@@ -1,10 +1,11 @@
 {-# Language TupleSections #-}
-module Infsabot.GamePlay(boards, RobotAndAction) where
+module Infsabot.GamePlay(boards) where
 
 import Infsabot.Board
 import Infsabot.Robot
 import Infsabot.RobotAction
 import Infsabot.Parameters
+import Infsabot.MoveConflictResolution
 import Infsabot.Base
 import Data.List(sortBy)
 import Data.Function(on)
@@ -13,8 +14,6 @@ import Debug.Trace
 import Infsabot.Debug
 
 type RobotAndResult = ((Int, Int, Robot), RobotProgramResult)
-type RobotAndAction = ((Int, Int, Robot), RobotAction)
-
 
 boards :: Parameters -> Board -> [Board]
 boards params initialBoard = iterate (play params) initialBoard
@@ -43,7 +42,7 @@ play p b
 		-- resolves and sorts the actions
 		resolvedAndSortedActions
 			= sortBy (compare `on` (orderOfOperations . snd))
-				$ removeCompetingMoves
+				$ removeConflicting
 				$ map (possibleAction p) actions
 		-- gets the function which applies the costs of the actions
 		actionCostApplier = applyActionCosts p resolvedAndSortedActions
@@ -119,47 +118,6 @@ mutateRobot team (x, y) direction distance mutator b
 			Nothing					-> b
 	where
 	maybeRobot = robotAlongPath team b (x, y) direction distance
-
---	Removes any moves that would result in two robots being in the same spot.
---	Whichever move is a movement will be removed. If both are movements, both
- 	-- are removed
-removeCompetingMoves :: [RobotAndAction] -> [RobotAndAction]
-removeCompetingMoves [] = []
-removeCompetingMoves (move:remainder)
-		| works			= move : pureRest
-		| otherwise 	= pureRest
-	where
-	(works, rest) = removeCompetitionTo move remainder
-	pureRest = removeCompetingMoves rest
-	-- Removes all moves that compete with the given move.
-	-- Outputs False if the currently processed move should be removed, True otherwise
-	removeCompetitionTo :: RobotAndAction -> [RobotAndAction] -> (Bool, [RobotAndAction])
-	removeCompetitionTo current@((xcur,ycur,_), _) other
-			| any (fst . fault) robAndLocOther			= (False, other)
-			| otherwise									= (True, map fst $ nonConflicting)
-		where
-		nonConflicting :: [(RobotAndAction, (Int, Int))]
-		nonConflicting = filter (not . snd . fault) robAndLocOther
-		locThis :: [(Int, Int)]
-		locThis = finalLocations current
-		robAndLocOther :: [(RobotAndAction, (Int, Int))]
-		robAndLocOther
-			= concat $ map (\(raa, xys) -> map (raa,) xys) robAsscLocs
-			where
-			robAsscLocs = zip other $ map finalLocations other
-		fault :: (RobotAndAction, (Int, Int)) -> Conflict
-		fault (_, xy) = (any (==xy) locThis, xy == (xcur, ycur))
-		finalLocations :: RobotAndAction -> [(Int, Int)]
-		finalLocations ((x,y,rob), act) = trace ("Final locations for " ++ printRobotAndAction ((x, y, rob), act) ++ "\n\t" ++ show (locs act)) $ locs act
-			where
-			locs (MoveIn dir) = [applyOffset (getOffset (robotTeam rob) dir) (x,y)]
-			locs spawn@(Spawn _ _ _ _ _)
-				= [applyOffset (getOffset (robotTeam rob) $ newDirection spawn) (x,y)]
-			locs Die = []
-			locs _ = [(x,y)]
-
--- first one is if my fault, second is if other fault
-type Conflict = (Bool, Bool)
 
 -- Takes a list of robots and results and outputs
 	-- (a function that updates a board to one with hard drives updated,
