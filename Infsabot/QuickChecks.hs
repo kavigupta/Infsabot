@@ -12,7 +12,7 @@ import Infsabot.RobotAction
 import Infsabot.RobotStrategy
 import Infsabot.Robot
 import Infsabot.MoveConflictResolution
-import qualified Data.Map as M
+import Data.Map(fromList, Map)
 
 import Data.DeriveTH(derive, makeArbitrary)
 --import Debug.Trace
@@ -22,7 +22,14 @@ checks :: IO ()
 checks =
     do
         putStrLn "checking"
+        quickCheck propConflictOrderIndependence
         quickCheck propOrderIndependence
+
+propConflictOrderIndependence :: (FinalLocations, FinalLocations) -> Bool
+propConflictOrderIndependence (x, y) = a == c && b == d
+    where
+    (Remove a b) = doConflict x y
+    (Remove d c) = doConflict y x
 
 propOrderIndependence :: [RobotAndAction] -> Int -> Bool
 propOrderIndependence xs seed = length originalOut == length shuffleOut
@@ -45,7 +52,6 @@ instance Arbitrary Robot where
         hp <- arbitrary
         date <- arbitrary
         state <- arbitrary
-        msgs <- arbitrary
         return $ Robot {
             robotProgram = basicProgram team,
             robotTeam = team,
@@ -54,12 +60,11 @@ instance Arbitrary Robot where
             robotHitpoints = abs hp,
             robotBirthdate = abs date,
             robotMemory = state,
-            robotMessages = msgs
+            robotMessages = []
 }
 
 instance CoArbitrary KnownState where
     coarbitrary _ = id
 
-instance Arbitrary (M.Map String String) where
-    arbitrary = contents >>= (return . M.fromList)
-        where contents = arbitrary :: Gen [(String, String)]
+instance Arbitrary (Map String String) where
+    arbitrary = return (fromList [])

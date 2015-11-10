@@ -138,8 +138,8 @@ robotAlongPath team b (x, y) dir n
 	perhapsRobot = robotAt b (x, y)
 
 -- Renders the given board as an image
-renderBoard :: Board -> Image PixelRGB8
-renderBoard b = generateImage colorAt (boardSize b) (boardSize b)
+renderBoard :: Int -> Board -> Image PixelRGB8
+renderBoard n b = generateImage colorAt (n * boardSize b) (n * boardSize b)
 	where
 	colorAt :: Int -> Int -> PixelRGB8
-	colorAt x y = spotColor . toSeenSpot . unpack $ b !!! (x, y)
+	colorAt x y = spotColor . toSeenSpot . unpack $ b !!! (x `div` n, y `div` n)

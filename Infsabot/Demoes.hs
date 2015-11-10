@@ -17,13 +17,13 @@ createDemoBoards demoBoardSize
         writeBoard "demo-starting-board.png" $ snd $ head selectedBoards
         forM_ (tail selectedBoards) $ \(x, board) ->
             do
-                writeBoard ("gen/___demo-moves-" ++ (show x) ++ ".png") board
+                writeBoard ("demo/demo-moves-" ++ (show x) ++ ".png") board
     where
     params = defaultParameters {paramBoardSize = demoBoardSize, paramInitialMaterial=1000}
     selectedBoards
-        = take 30 $
+        = take 500 $
             zip [0 :: Int ..] $
             boards params $ startingBoard params basicProgram
 
 writeBoard :: String -> Board -> IO ()
-writeBoard s = writePng s . renderBoard
+writeBoard s = writePng s . renderBoard 5

@@ -10,8 +10,8 @@ import Infsabot.Base
 import Data.List(sortBy)
 import Data.Function(on)
 
-import Debug.Trace
-import Infsabot.Debug
+--import Debug.Trace
+--import Infsabot.Debug
 
 type RobotAndResult = ((Int, Int, Robot), RobotProgramResult)
 
@@ -20,11 +20,7 @@ boards params initialBoard = iterate (play params) initialBoard
 
 -- the main play function. This executes all robot actions and updates the board.
 play :: Parameters -> Board -> Board
-play p b
-    | trace (show (map printRobotAndAction actions)
-        ++ "\n\t"
-        ++ show (map printRobotAndAction resolvedAndSortedActions)) False = undefined
-    | otherwise =
+play p b =
 		-- apply actions
 		actionApplier .
 		-- apply all action costs

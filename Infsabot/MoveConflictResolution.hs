@@ -1,14 +1,19 @@
-module Infsabot.MoveConflictResolution (RobotAndAction, removeConflicting) where
+module Infsabot.MoveConflictResolution (
+    FinalLocations, Remove(..), RobotAndAction,
+    doConflict, removeConflicting, finalLocations, locationConflicts
+) where
 
 import Infsabot.Robot
 import Infsabot.RobotAction
 import Infsabot.Base
 
+--import Debug.Trace
+
 type RobotAndAction = ((Int, Int, Robot), RobotAction)
 
 type FinalLocations = [(Int, Int, Bool)]
 
-data Remove = Remove Bool Bool
+data Remove = Remove Bool Bool deriving (Show)
 
 --	Removes any moves that would result in two robots being in the same spot.
 --	Whichever move is a movement will be removed. If both are movements, both
@@ -26,26 +31,22 @@ removeConflicting (raa:raas)
     removeThis = any (\(Remove this _) -> this) restConflicts
     restConflicts =  map conflictsWithThis raas
         where
-        conflictsWithThis other = isConflict flThis (finalLocations other)
+        conflictsWithThis other = doConflict flThis (finalLocations other)
             where flThis = finalLocations raa
 
 merge :: Remove -> Remove -> Remove
-merge (Remove a b) (Remove c d) = Remove (a || b) (c || d)
+merge (Remove a b) (Remove c d) = Remove (a || c) (b || d)
 
-isConflict :: FinalLocations -> FinalLocations -> Remove
-isConflict [] _ = Remove False False
-isConflict (a:rest) other = merge (locationConflicts a other) (isConflict rest other)
+doConflict :: FinalLocations -> FinalLocations -> Remove
+doConflict [] _ = Remove False False
+doConflict (a:rest) other = merge (locationConflicts a other) (doConflict rest other)
 
 locationConflicts :: (Int, Int, Bool) -> FinalLocations -> Remove
 locationConflicts _ [] = Remove False False
 locationConflicts (x1, y1, keep1) ((x2, y2, keep2):rest)
-    | (x1, y2) == (x2, y2)
-        = case (keep1, keep2) of
-            (True, True)    -> merge (Remove False True) $ conflictsInRest
-            (True, False)   -> Remove False True
-            (False, True)   -> conflictsInRest
-            _               -> Remove True True
-    | otherwise     = Remove False False
+    | (x1, y1) == (x2, y2)
+        = merge (Remove (not keep1) (not keep2)) conflictsInRest
+    | otherwise     = conflictsInRest
     where
     conflictsInRest = locationConflicts (x1, y1, keep1) rest
 

@@ -7,7 +7,7 @@ import System.IO(readFile)
 import Data.List(elemIndex, isSuffixOf)
 
 import System.Exit
-import System.Cmd(system)
+import System.Process(system)
 
 import Test.HUnit(runTestTT, failures)
 
@@ -35,22 +35,24 @@ directory = "Infsabot"
 
 data WhatToDo = WhatToDo {
     performCommit :: Maybe String,
-    clean :: Bool
+    performDemo :: Bool,
+    performClean :: Bool
 } deriving(Show)
 
 main = do
     createDirectoryIfMissing True "gen"
+    createDirectoryIfMissing True "demo"
     args <- getArgs
     let whatToDo = readWhatToDo args
-    if clean whatToDo then
+    if performClean whatToDo then
         cleanUp
     else return ()
     buildAll
     echl "Running Quick Checks"
     checks
-    echl "Checks completed!"
-    --runTests
-    --demoes
+    echs "Checks completed!"
+    runTests
+    if performDemo whatToDo then demoes else return ()
     commit $ performCommit whatToDo
 
 cleanUp :: IO ()
@@ -100,7 +102,8 @@ readWhatToDo :: [String] -> WhatToDo
 readWhatToDo args
         = WhatToDo {
             performCommit = commit >>= (\x -> return $ args !! (x+1)),
-            clean = "-clean" `elem` args
+            performClean = "-clean" `elem` args,
+            performDemo = "-demo" `elem` args
         }
     where
     commit :: Maybe Int

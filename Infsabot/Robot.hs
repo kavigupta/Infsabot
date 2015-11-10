@@ -41,13 +41,4 @@ data Robot = Robot {
 		robotMemory :: InternalState,
         -- The messages this robot has on the stack
         robotMessages :: [(String, RDirection)]
-} deriving (Eq)
-
-instance Show (Robot) where
-    show x = "Team = " ++ show (robotTeam x)
-                ++ "Appearance = " ++ show (robotAppearance x)
-                ++ "; Material = " ++ show (robotMaterial x)
-                ++ "; Hitpoints = " ++ show (robotHitpoints x)
-                ++ "; Birthdate = " ++ show (robotBirthdate x)
-                ++ "; Memory = " ++ show (robotMemory x)
-                ++ "; Messages = " ++ show (robotMessages x)
+} deriving (Eq, Show)

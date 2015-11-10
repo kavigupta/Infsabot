@@ -10,22 +10,21 @@ import Infsabot.Robot
 import Infsabot.RobotStrategy
 import Infsabot.GamePlay(boards)
 import Infsabot.Parameters
-import Debug.Trace
-import Infsabot.Debug
+--import Debug.Trace
+--import Infsabot.Debug
 
 tests :: Test
 tests = TestList [symmetryTests]
 
 symmetryTests :: Test
 symmetryTests
-    | trace ("Boards = " ++ concat (map (\x -> show (map printRobot $ boardRobots x) ++ "\n") neededBoards)) False = undefined
-    | otherwise = TestLabel "Symmetry Tests" $ TestList
+        = TestLabel "Symmetry Tests" $ TestList
             $ map (\(n, t) -> TestLabel ("Turn " ++ show n) t)
             $ zip [0 ::Int ..]
             $ map (\b -> TestList [assertTeamsSymmetric b, assertBoardSymmetry b]) $ neededBoards
     where
     neededBoards = take nTurns $ boards params initialBoard
-    nTurns = 6
+    nTurns = 100
     params :: Parameters
     params = defaultParameters {paramBoardSize = 5, paramInitialMaterial = 1000}
     initialBoard :: Board
@@ -33,8 +32,7 @@ symmetryTests
 
 assertTeamsSymmetric :: Board -> Test
 assertTeamsSymmetric b
-    | trace ("Set = " ++ show (map printRobot as) ++ " ?= " ++ show (map printRobot adjustedBs)) False = undefined
-    | otherwise = TestList [equalLength, TestList $ map assertTeamSymmetry sortedAsBs]
+        = TestList [equalLength, TestList $ map assertTeamSymmetry sortedAsBs]
     where
     (as, bs) = partition teamIsA $ boardRobots b
     equalLength = TestCase $ assertEqual

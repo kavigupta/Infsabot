@@ -19,7 +19,7 @@ import Infsabot.Parameters
 type RobotProgram = KnownState -> RobotProgramResult
 
 instance Show (RobotProgram) where
-    show _ = "Program"
+    show _ = "basicProgram A"
 
 instance Eq (RobotProgram) where
     _ == _ = True
