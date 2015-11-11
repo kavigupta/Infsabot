@@ -20,7 +20,9 @@ boards params initialBoard = iterate (play params) initialBoard
 
 -- the main play function. This executes all robot actions and updates the board.
 play :: Parameters -> Board -> Board
-play p b =
+play p b
+--	| trace ("Actions = " ++ show actions) False = undefined
+ 	| otherwise =
 		-- apply actions
 		actionApplier .
 		-- apply all action costs
@@ -77,7 +79,7 @@ getAction p ((x, y, rob), fire@(Fire _ _)) b
 	fireAction toReceive
 			| newHP > 0 	= Just $ toReceive { robotHitpoints = newHP }
 			| otherwise		= Nothing
-		where newHP = robotHitpoints toReceive - hitpointsRemoved p (materialExpended fire)
+		where newHP = robotHitpoints toReceive - apply (hitpointsRemoved p) (materialExpended fire)
 getAction _ ((x, y, _), Dig) b
 		| mat == SpotMaterial		= updateSpot (x,y) SpotEmpty b
 		| otherwise					= b

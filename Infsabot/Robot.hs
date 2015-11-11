@@ -8,11 +8,15 @@ module Infsabot.Robot (
             robotMemory,
             robotHitpoints,
             robotMessages,
+        defaultRobot,
         GameSpot(GameSpot), toSeenSpot
     ) where
 
 import Infsabot.Base
 import Infsabot.RobotAction
+import qualified Data.Map as M
+import Infsabot.Parameters
+import Infsabot.Constants
 
 -- Represents a Spot on the Board as seen by a robot.
 -- This contains a Board Spot, which the Robot can always see, contains a robot's appearance iff there is a robot at that spot.
@@ -42,3 +46,15 @@ data Robot = Robot {
         -- The messages this robot has on the stack
         robotMessages :: [(String, RDirection)]
 } deriving (Eq, Show)
+
+defaultRobot :: Parameters -> Team -> RobotProgram -> Robot
+defaultRobot p team program = Robot {
+    robotProgram = program,
+    robotTeam = team,
+    robotAppearance = RobotAppearance {robotColor = colorDefaultOf team},
+    robotMaterial = paramInitialMaterial p,
+    robotHitpoints = paramInitialHP p,
+    robotBirthdate = 0,
+    robotMemory = M.empty,
+    robotMessages = []
+}

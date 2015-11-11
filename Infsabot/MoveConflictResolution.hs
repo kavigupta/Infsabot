@@ -1,6 +1,6 @@
 module Infsabot.MoveConflictResolution (
     FinalLocations, Remove(..), RobotAndAction,
-    doConflict, removeConflicting, finalLocations, locationConflicts
+    doConflict, removeConflicting, finalLocations, locationConflicts, removeAll
 ) where
 
 import Infsabot.Robot
@@ -15,24 +15,31 @@ type FinalLocations = [(Int, Int, Bool)]
 
 data Remove = Remove Bool Bool deriving (Show)
 
+type RAAWRemove  = (RobotAndAction, Bool)
+
 --	Removes any moves that would result in two robots being in the same spot.
 --	Whichever move is a movement will be removed. If both are movements, both
  	-- are removed
 removeConflicting :: [RobotAndAction] -> [RobotAndAction]
-removeConflicting [] = []
-removeConflicting (raa:raas)
-    | removeThis    = removeConflicting restNoConflicts
-    | otherwise     = raa:removeConflicting restNoConflicts
+removeConflicting raas = map fst $ filter (not . snd) $ removeAll $ map (\x -> (x, False)) raas
+
+removeAll :: [RAAWRemove] -> [RAAWRemove]
+removeAll [] = []
+removeAll (x:xs) = current : removeAll rest
     where
-    restNoConflicts
-        = map fst
-            $ filter (\(_, Remove _ removeOther) -> not removeOther)
-            $ zip raas restConflicts
-    removeThis = any (\(Remove this _) -> this) restConflicts
-    restConflicts =  map conflictsWithThis raas
+    (current, rest) = getRemoveStatus x xs
+
+getRemoveStatus :: RAAWRemove -> [RAAWRemove] -> (RAAWRemove, [RAAWRemove])
+getRemoveStatus (raa, initialRemove) raas
+        = ((raa, initialRemove || removeThis), others)
+    where
+    others = map (\((x, a), b) -> (x, a || b)) $ zip raas shouldRemove
+    shouldRemove = map (\(Remove _ other) -> other) $ restConflicts
+    removeThis = any (\(Remove this _) -> this) $ restConflicts
+    restConflicts :: [Remove]
+    restConflicts = map (conflictsWithFirst . fst) raas
         where
-        conflictsWithThis other = doConflict flThis (finalLocations other)
-            where flThis = finalLocations raa
+        conflictsWithFirst other = doConflict (finalLocations raa) (finalLocations other)
 
 merge :: Remove -> Remove -> Remove
 merge (Remove a b) (Remove c d) = Remove (a || c) (b || d)

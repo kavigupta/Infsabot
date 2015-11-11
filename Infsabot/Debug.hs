@@ -11,4 +11,4 @@ printAction s@(Spawn _ _ _ _ _) = "Spawn " ++ show (newDirection s)
 printAction x = show x
 
 printRobotAndAction :: ((Int, Int, Robot), RobotAction) -> String
-printRobotAndAction (x, y) = "["++printRobot x ++ ", " ++ printAction y++"]"
+printRobotAndAction (x, y) = "("++printRobot x ++ ", " ++ printAction y++")"

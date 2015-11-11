@@ -1,15 +1,15 @@
 module Infsabot.Base(
-		RDirection(N,E,W,S),
-			oppositeDirection,
-		Team(A,B),
-		BoardSpot(SpotEmpty, SpotMaterial),
-		Offset(Offset),
-			getOffset, applyOffset, addOffset, squareNorm, asSeen,
-		InternalState,
-		RobotAppearance(RobotAppearance), robotColor,
-		SeenSpot(SeenSpot),
-		unpack
-	) where
+                RDirection(N,E,W,S),
+                        oppositeDirection,
+                Team(A,B),
+                BoardSpot(SpotEmpty, SpotMaterial),
+                Offset(Offset),
+                        getOffset, applyOffset, addOffset, squareNorm, asSeen,
+                InternalState,
+                RobotAppearance(RobotAppearance), robotColor,
+                SeenSpot(SeenSpot),
+                unpack
+        ) where
 
 import qualified Data.Map as M
 import Codec.Picture (PixelRGB8)
@@ -22,7 +22,7 @@ data Team = A | B deriving (Show, Eq)
 
 -- A spot on the Board. This is either empty or contains material.
 data BoardSpot = SpotEmpty | SpotMaterial
-	deriving (Eq, Show)
+        deriving (Eq, Show)
 
 -- Represents an offset from the original position.
 newtype Offset = Offset Int
@@ -32,7 +32,7 @@ type InternalState = M.Map String String
 
 -- The robot's appearance. Currently just contains a color.
 data RobotAppearance = RobotAppearance {
-	robotColor :: PixelRGB8
+        robotColor :: PixelRGB8
 } deriving (Show, Eq)
 
 -- Represents a Spot on the Board as seen by a robot.
@@ -44,15 +44,18 @@ getOffset B N = (Offset 0, Offset (-1))
 getOffset B E = (Offset 1, Offset 0)
 getOffset A N = (Offset (-1), Offset 0)
 getOffset A E = (Offset 0, Offset 1)
-getOffset team dir = getOffset team $ oppositeDirection dir
+getOffset team dir = negateOff $ getOffset team $ oppositeDirection dir
 
 applyOffset :: (Offset, Offset) -> (Int, Int) -> (Int, Int)
 applyOffset (Offset offx, Offset offy) (x, y) = (x + offx, y + offy)
 
+negateOff :: (Offset, Offset) -> (Offset, Offset)
+negateOff (Offset offx, Offset offy) = (Offset (-offx), Offset (-offy))
+
 addOffset :: (Offset, Offset) -> (Offset, Offset) -> (Offset, Offset)
-addOffset 	(Offset offx1, Offset offy1)
-			(Offset offx2, Offset offy2)
-		= (Offset (offx1 + offx2), Offset (offy1 + offy2))
+addOffset         (Offset offx1, Offset offy1)
+                        (Offset offx2, Offset offy2)
+                = (Offset (offx1 + offx2), Offset (offy1 + offy2))
 
 oppositeDirection :: RDirection -> RDirection
 oppositeDirection N = S

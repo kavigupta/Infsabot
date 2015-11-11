@@ -1,10 +1,14 @@
-module Infsabot.Tools (shuffle) where
+module Infsabot.Tools (shuffle, allDifferent, sameElements) where
 
 import System.Random
 import Data.Array.ST hiding (newArray)
 import Control.Monad
 import Control.Monad.ST
 import Data.STRef
+import Data.List(sort, (\\))
+
+sameElements :: (Eq a) => [a] -> [a] -> Bool
+sameElements a b = length a == length b && (null $ a \\ b)
 
 shuffle :: Int -> [a] -> [a]
 shuffle seed lst = fst $ stdLibShuffle lst $ mkStdGen seed
@@ -31,3 +35,12 @@ stdLibShuffle xs gen = runST (do
     n = length xs
     newArray :: Int -> [a] -> ST s (STArray s Int a)
     newArray u =  newListArray (1,u)
+
+allDifferent :: (Ord a) => [a] -> Bool
+allDifferent us = allDiffSorted (sort us)
+    where
+    allDiffSorted [] = True
+    allDiffSorted [_] = True
+    allDiffSorted (x:y:xs)
+        | x == y    = False
+        | otherwise = allDiffSorted (y:xs)

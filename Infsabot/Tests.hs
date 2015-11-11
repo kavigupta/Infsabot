@@ -5,30 +5,55 @@ import Data.Function(on)
 import Data.List(partition, sortBy)
 
 import Infsabot.Base
+import Infsabot.Tools
 import Infsabot.Board
 import Infsabot.Robot
 import Infsabot.RobotStrategy
+import Infsabot.TestLibrary
+import Infsabot.RobotAction
+import Infsabot.MoveConflictResolution
+import Data.Map(fromList)
+import Codec.Picture
 import Infsabot.GamePlay(boards)
 import Infsabot.Parameters
+
 --import Debug.Trace
 --import Infsabot.Debug
 
 tests :: Test
-tests = TestList [symmetryTests]
+tests = TestList [generalGameTest, mcrEdgeCase]
 
-symmetryTests :: Test
-symmetryTests
+generalGameTest :: Test
+generalGameTest
         = TestLabel "Symmetry Tests" $ TestList
             $ map (\(n, t) -> TestLabel ("Turn " ++ show n) t)
             $ zip [0 ::Int ..]
-            $ map (\b -> TestList [assertTeamsSymmetric b, assertBoardSymmetry b]) $ neededBoards
+            $ map (\b -> TestList [
+                assertTeamsSymmetric b,
+                assertBoardSymmetry b,
+                assertRobotSourcesAgree b]) $ neededBoards
     where
     neededBoards = take nTurns $ boards params initialBoard
-    nTurns = 100
+    nTurns = 45
     params :: Parameters
-    params = defaultParameters {paramBoardSize = 5, paramInitialMaterial = 1000}
+    params = defaultParameters {paramBoardSize = 35, paramInitialMaterial = 1000}
     initialBoard :: Board
     initialBoard = startingBoard params basicProgram
+
+mcrEdgeCase :: Test
+mcrEdgeCase = TestCase $ assertBool "MCR Edge case"
+        $ propOrderIndependence removeConflicting [
+        	((8,9,Robot {robotProgram = basicProgram A, robotTeam = B, robotAppearance = RobotAppearance {robotColor = PixelRGB8 0 0 128}, robotMaterial = 1000, robotHitpoints = 100, robotBirthdate = 43, robotMemory = fromList [], robotMessages = []}),Spawn {newDirection = N, newProgram = basicProgram A, newAppearance = RobotAppearance {robotColor = PixelRGB8 0 0 128}, newMaterial = 333, newMemory = fromList []}),
+        	((9,8,Robot {robotProgram = basicProgram A, robotTeam = A, robotAppearance = RobotAppearance {robotColor = PixelRGB8 255 0 0}, robotMaterial = 1000, robotHitpoints = 100, robotBirthdate = 43, robotMemory = fromList [], robotMessages = []}),Spawn {newDirection = N, newProgram = basicProgram A, newAppearance = RobotAppearance {robotColor = PixelRGB8 255 0 0}, newMaterial = 333, newMemory = fromList []}),
+        	((8,10,Robot {robotProgram = basicProgram A, robotTeam = B, robotAppearance = RobotAppearance {robotColor = PixelRGB8 0 0 128}, robotMaterial = 412, robotHitpoints = 100, robotBirthdate = 31, robotMemory = fromList [], robotMessages = []}),MoveIn N),
+        	((10,8,Robot {robotProgram = basicProgram A, robotTeam = A, robotAppearance = RobotAppearance {robotColor = PixelRGB8 255 0 0}, robotMaterial = 412, robotHitpoints = 100, robotBirthdate = 31, robotMemory = fromList [], robotMessages = []}),MoveIn N)
+            ] 2
+
+assertRobotSourcesAgree :: Board -> Test
+assertRobotSourcesAgree b
+    = TestCase $
+        assertBool "Robot sources boardRobots and boardContents agree" $
+        sameElements (boardRobots b) (robotsOnBoard b)
 
 assertTeamsSymmetric :: Board -> Test
 assertTeamsSymmetric b
@@ -50,7 +75,7 @@ assertTeamSymmetry ((x1, y1, rob1), (x2, y2, rob2))
             ++ " appears to have no corresponding B robot"
     | otherwise
         = TestLabel ("The robots at "
-                ++ show (x1, y1) ++ " are not equivalent")
+                ++ show (x1, y1) ++ " are not equivalent;")
             $ TestList $ map getTests
                 $ zip assertLabels results
     where

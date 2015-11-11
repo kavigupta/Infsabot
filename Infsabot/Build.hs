@@ -36,7 +36,9 @@ directory = "Infsabot"
 data WhatToDo = WhatToDo {
     performCommit :: Maybe String,
     performDemo :: Bool,
-    performClean :: Bool
+    performClean :: Bool,
+    noChecks :: Bool,
+    noTests :: Bool
 } deriving(Show)
 
 main = do
@@ -58,6 +60,7 @@ main = do
 cleanUp :: IO ()
 cleanUp =
     do
+        system "rm -r demo"
         system "rm -r gen"
         system "rm -r bin"
         exitSuccess
@@ -103,7 +106,9 @@ readWhatToDo args
         = WhatToDo {
             performCommit = commit >>= (\x -> return $ args !! (x+1)),
             performClean = "-clean" `elem` args,
-            performDemo = "-demo" `elem` args
+            performDemo = "-demo" `elem` args,
+            noChecks = "-nochecks" `elem` args,
+            noTests = "-notests" `elem` args
         }
     where
     commit :: Maybe Int

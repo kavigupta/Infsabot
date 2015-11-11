@@ -9,7 +9,7 @@ import Infsabot.Board(Board, renderBoard, startingBoard)
 import Infsabot.RobotStrategy(basicProgram)
 
 demoes :: IO ()
-demoes = createDemoBoards 100
+demoes = createDemoBoards 35
 
 createDemoBoards :: Int -> IO ()
 createDemoBoards demoBoardSize
@@ -21,7 +21,7 @@ createDemoBoards demoBoardSize
     where
     params = defaultParameters {paramBoardSize = demoBoardSize, paramInitialMaterial=1000}
     selectedBoards
-        = take 500 $
+        = take 45 $
             zip [0 :: Int ..] $
             boards params $ startingBoard params basicProgram
 

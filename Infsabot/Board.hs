@@ -1,8 +1,9 @@
 module Infsabot.Board (
+		RAL,
 		BoardSpot,
-		Board,
+		Board(Board),
 			boardContents, boardRobots, boardSize, boardTime,
-			(!!!), setRobot, updateSpot, robotAlongPath,
+			(!!!), setRobot, robotAt, updateSpot, robotAlongPath,
 		startingBoard,
 		renderBoard
 	) where
@@ -15,7 +16,6 @@ import Infsabot.Base
 import Infsabot.Robot
 import Infsabot.RobotAction
 import Infsabot.Parameters
-import qualified Data.Map as M
 
 type RAL = RandomAccessList
 
@@ -88,16 +88,7 @@ startingBoard p programOf
 			if isPrime (x * x + y * y)
 				then GameSpot SpotMaterial Nothing
 				else GameSpot SpotEmpty Nothing
-	bot team = Robot{
-		robotProgram = programOf team,
-		robotTeam = team,
-		robotAppearance = RobotAppearance {robotColor = colorDefaultOf team},
-		robotMaterial = paramInitialMaterial p,
-		robotHitpoints = paramInitialHP p,
-		robotBirthdate = 0,
-		robotMemory = M.empty,
-		robotMessages = []
-	}
+	bot team = defaultRobot p team (programOf team)
 
 -- Sets the robot at the given spot to the given value, or deletes it.
 -- 		1. places the robot at the gamespot at the given coordinates

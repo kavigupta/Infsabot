@@ -1,4 +1,5 @@
 module Infsabot.Parameters(
+        LinearF(LinearF), apply,
         Parameters(Parameters),
             paramBoardSize,
             paramNoopCost,
@@ -15,6 +16,11 @@ module Infsabot.Parameters(
         defaultParameters
     ) where
 
+data LinearF a = LinearF a a deriving (Eq, Show)
+
+apply :: (Num a) => LinearF a -> a -> a
+apply (LinearF m b) x = m * x + b
+
 data Parameters = Parameters {
     paramBoardSize :: Int,
     paramNoopCost :: Int,
@@ -27,8 +33,8 @@ data Parameters = Parameters {
     lineOfSight :: Int,
     lineOfFire :: Int,
     lineOfMessageSending :: Int,
-    hitpointsRemoved :: Int -> Int
-}
+    hitpointsRemoved :: LinearF Int
+} deriving (Show)
 
 defaultParameters :: Parameters
 defaultParameters = Parameters {
@@ -43,5 +49,5 @@ defaultParameters = Parameters {
     lineOfSight = 5,
     lineOfFire = 3,
     lineOfMessageSending = 4,
-    hitpointsRemoved = \x -> x + 2
+    hitpointsRemoved = LinearF 1 2
 }
