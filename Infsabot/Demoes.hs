@@ -36,8 +36,8 @@ createDemoBoards demoBoardSize
         forM_ (tail selectedBoards) $ \(x, board) ->
             do
                 writeBoard ("demo/demo-moves-" ++ (showPadded x) ++ ".png") board
-        system $ ffmpeg ".mp4"
-        system $ ffmpeg ".gif"
+        system $ ffmpeg "mp4"
+        system $ ffmpeg "gif"
         return ()
     where
     params = defaultParameters {paramBoardSize = demoBoardSize, paramInitialMaterial=100}
