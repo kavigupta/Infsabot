@@ -43,7 +43,10 @@ data KnownState = KnownState {
     -- The robot's received messages as a list of pairs of
     -- message and direction received.
     stateMessages :: [(String, RDirection)]
-}
+} deriving (Show)
+
+instance Show ([RDirection] -> Maybe SeenSpot) where
+    show _ = "Classified"
 
 -- Represents an action a robot can take.
 -- If the action is impossible, nothing will occur
