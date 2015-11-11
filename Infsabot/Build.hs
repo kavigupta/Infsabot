@@ -37,23 +37,28 @@ data WhatToDo = WhatToDo {
     performCommit :: Maybe String,
     performDemo :: Bool,
     performClean :: Bool,
-    noChecks :: Bool,
-    noTests :: Bool
+    performChecks :: Bool,
+    performTests :: Bool
 } deriving(Show)
 
+defaultWhatToDo = WhatToDo {
+    performCommit = Nothing,
+    performDemo=False,
+    performClean=False,
+    performChecks=True,
+    performTests=True
+}
+
 main = do
+    whatToDo <- analyzeArguments
+    if performClean whatToDo then cleanUp else return ()
     createDirectoryIfMissing True "gen"
     createDirectoryIfMissing True "demo"
-    args <- getArgs
-    let whatToDo = readWhatToDo args
-    if performClean whatToDo then
-        cleanUp
-    else return ()
     buildAll
     echl "Running Quick Checks"
-    checks
+    if performChecks whatToDo then checks else return ()
     echs "Checks completed!"
-    runTests
+    if performTests whatToDo then runTests else return ()
     if performDemo whatToDo then demoes else return ()
     commit $ performCommit whatToDo
 
@@ -101,18 +106,39 @@ buildAll
                     pErrorClean
                 _ -> return ()
 
-readWhatToDo :: [String] -> WhatToDo
-readWhatToDo args
-        = WhatToDo {
-            performCommit = commit >>= (\x -> return $ args !! (x+1)),
-            performClean = "-clean" `elem` args,
-            performDemo = "-demo" `elem` args,
-            noChecks = "-nochecks" `elem` args,
-            noTests = "-notests" `elem` args
-        }
-    where
-    commit :: Maybe Int
-    commit = elemIndex "-commit" args
+analyzeArguments :: IO WhatToDo
+analyzeArguments
+    = do
+        args <- getArgs
+        case enforceConsistency (readWhatToDo args) of
+            Left err ->     echf err >>= const exitFailure
+            Right wtd ->    return wtd
+
+enforceConsistency :: Either String WhatToDo -> Either String WhatToDo
+enforceConsistency (Left err) = Left err
+enforceConsistency (Right wtd)
+    | performCommit wtd /= Nothing =
+        if not (performClean wtd)
+            && performDemo wtd
+            && performChecks wtd
+            && performTests wtd
+        then                    Right wtd
+        else                    Left "Invalid argument combination"
+    | otherwise = Right wtd
+readWhatToDo :: [String] -> Either String WhatToDo
+readWhatToDo [] = Right defaultWhatToDo
+readWhatToDo ["-commit"] = Left "Commit requires an argument"
+readWhatToDo ("-commit":msg:rest)
+    = readWhatToDo rest >>= \wtd -> return (wtd {performCommit = Just msg})
+readWhatToDo ("-demo":rest)
+    = readWhatToDo rest >>= \wtd -> return (wtd {performDemo=True})
+readWhatToDo ("-clean":rest)
+    = readWhatToDo rest >>= \wtd -> return (wtd {performClean=True})
+readWhatToDo ("-nochecks":rest)
+    = readWhatToDo rest >>= \wtd -> return (wtd {performChecks=False})
+readWhatToDo ("-notests":rest)
+    = readWhatToDo rest >>= \wtd -> return (wtd {performTests=False})
+readWhatToDo (unrec:rest) = Left $ "Unrecognized command " ++ show unrec
 
 commit :: Maybe String -> IO ()
 commit Nothing = return ()
