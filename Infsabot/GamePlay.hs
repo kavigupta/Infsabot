@@ -21,7 +21,8 @@ boards params initialBoard = iterate (play params) initialBoard
 -- the main play function. This executes all robot actions and updates the board.
 play :: Parameters -> Board -> Board
 play p b
---	| trace ("Actions = " ++ show actions) False = undefined
+--	| trace ("Actions = " ++ show (map printRobotAndAction actions) ++ "\n\t"
+--        ++ show (map printRobotAndAction resolvedAndSortedActions)) False = undefined
  	| otherwise =
 		-- apply actions
 		actionApplier .

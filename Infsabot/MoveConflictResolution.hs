@@ -20,8 +20,18 @@ type RAAWRemove  = (RobotAndAction, Bool)
 --	Removes any moves that would result in two robots being in the same spot.
 --	Whichever move is a movement will be removed. If both are movements, both
  	-- are removed
+
 removeConflicting :: [RobotAndAction] -> [RobotAndAction]
-removeConflicting raas = map fst $ filter (not . snd) $ removeAll $ map (\x -> (x, False)) raas
+removeConflicting raas
+        | raas == raas'   = raas
+        | otherwise     = removeConflicting raas'
+    where
+    raas' :: [RobotAndAction]
+    raas' = map downgrade $ removeAll $ map (\x -> (x, False)) raas
+        where
+        downgrade :: RAAWRemove -> RobotAndAction
+        downgrade ((xyrob, _), True) = (xyrob, Noop)
+        downgrade (raa, False) = raa
 
 removeAll :: [RAAWRemove] -> [RAAWRemove]
 removeAll [] = []

@@ -8,8 +8,26 @@ import Infsabot.GamePlay(boards)
 import Infsabot.Board(Board, renderBoard, startingBoard)
 import Infsabot.RobotStrategy(basicProgram)
 
+import System.Process(system)
+
+nBoards :: Int
+nBoards = 150
+
+boardSize :: Int
+boardSize = 70
+
+boardScalingFactor :: Int
+boardScalingFactor = 1000 `div` boardSize
+
+fps :: Int
+fps = 5
+
+showPadded :: Int -> String
+showPadded n = (take (length (show nBoards) - length str) $ repeat '0') ++ str
+    where str = show n
+
 demoes :: IO ()
-demoes = createDemoBoards 35
+demoes = createDemoBoards boardSize
 
 createDemoBoards :: Int -> IO ()
 createDemoBoards demoBoardSize
@@ -17,13 +35,16 @@ createDemoBoards demoBoardSize
         writeBoard "demo-starting-board.png" $ snd $ head selectedBoards
         forM_ (tail selectedBoards) $ \(x, board) ->
             do
-                writeBoard ("demo/demo-moves-" ++ (show x) ++ ".png") board
+                writeBoard ("demo/demo-moves-" ++ (showPadded x) ++ ".png") board
+        system $
+            "ffmpeg -f image2 -r " ++ show fps ++ " -pattern_type glob -i './demo/demo-moves-*.png'  demo/demo-moves.mp4 -y"
+        return ()
     where
-    params = defaultParameters {paramBoardSize = demoBoardSize, paramInitialMaterial=1000}
+    params = defaultParameters {paramBoardSize = demoBoardSize, paramInitialMaterial=100}
     selectedBoards
-        = take 45 $
+        = take nBoards $
             zip [0 :: Int ..] $
             boards params $ startingBoard params basicProgram
 
 writeBoard :: String -> Board -> IO ()
-writeBoard s = writePng s . renderBoard 5
+writeBoard s = writePng s . renderBoard boardScalingFactor

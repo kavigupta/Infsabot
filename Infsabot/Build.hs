@@ -68,6 +68,8 @@ cleanUp =
         system "rm -r demo"
         system "rm -r gen"
         system "rm -r bin"
+        -- remove deleted files from git
+        system "git ls-files --deleted -z | xargs -0 git rm --ignore-unmatch"
         exitSuccess
 
 runTests :: IO ()

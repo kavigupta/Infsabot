@@ -1,6 +1,10 @@
 # Infsabot
 Game involving Infinite State Automaton Robots
 
+<video width="400" height="400" controls="controls">
+<source src="./demo/demo-moves.mp4" type="video/mp4">
+</video>
+
 ## Board Setup
 
 The board is a square 2D board where every spot has one of two original states:
