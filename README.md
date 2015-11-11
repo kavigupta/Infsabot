@@ -1,9 +1,7 @@
 # Infsabot
 Game involving Infinite State Automaton Robots
 
-<video width="400" height="400" controls="controls">
-<source src="./demo/demo-moves.mp4" type="video/mp4">
-</video>
+<img src="./demo-moves.gif" alt="Initial game board 100x100" height="200" width="200">
 
 ## Board Setup
 

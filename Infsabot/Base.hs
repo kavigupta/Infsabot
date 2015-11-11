@@ -11,13 +11,13 @@ module Infsabot.Base(
                 unpack
         ) where
 
-import qualified Data.Map as M
+import Data.Map(Map)
 import Codec.Picture (PixelRGB8)
 
--- Represents one of the 4 potential directions
+-- Represents one of the 4 potential directions, relative to the Robot itself
 data RDirection = N | E | W | S deriving (Show, Eq)
 
--- Represents a Team. Currently, there are only two teams.
+-- Represents a Team
 data Team = A | B deriving (Show, Eq)
 
 -- A spot on the Board. This is either empty or contains material.
@@ -28,7 +28,7 @@ data BoardSpot = SpotEmpty | SpotMaterial
 newtype Offset = Offset Int
 
 -- The robot's internal state. This is represented by a Stringly-typed Map
-type InternalState = M.Map String String
+type InternalState = Map String String
 
 -- The robot's appearance. Currently just contains a color.
 data RobotAppearance = RobotAppearance {
@@ -36,9 +36,11 @@ data RobotAppearance = RobotAppearance {
 } deriving (Show, Eq)
 
 -- Represents a Spot on the Board as seen by a robot.
--- This contains a Board Spot, which the Robot can always see, contains a robot's appearance iff there is a robot at that spot.
+-- This contains a Board Spot, which the Robot can always see,
+--      contains a robot's appearance iff there is a robot at that spot.
 data SeenSpot = SeenSpot BoardSpot (Maybe RobotAppearance)
 
+-- Gets the coordinate pair of offsets representing the given Team's understanding of the given direction
 getOffset :: Team -> RDirection -> (Offset, Offset)
 getOffset B N = (Offset 0, Offset (-1))
 getOffset B E = (Offset 1, Offset 0)

@@ -36,8 +36,8 @@ createDemoBoards demoBoardSize
         forM_ (tail selectedBoards) $ \(x, board) ->
             do
                 writeBoard ("demo/demo-moves-" ++ (showPadded x) ++ ".png") board
-        system $
-            "ffmpeg -f image2 -r " ++ show fps ++ " -pattern_type glob -i './demo/demo-moves-*.png'  demo/demo-moves.mp4 -y"
+        system $ ffmpeg ".mp4"
+        system $ ffmpeg ".gif"
         return ()
     where
     params = defaultParameters {paramBoardSize = demoBoardSize, paramInitialMaterial=100}
@@ -48,3 +48,6 @@ createDemoBoards demoBoardSize
 
 writeBoard :: String -> Board -> IO ()
 writeBoard s = writePng s . renderBoard boardScalingFactor
+
+ffmpeg :: String -> String
+ffmpeg ext = "ffmpeg -f image2 -r " ++ show fps ++ " -pattern_type glob -i './demo/demo-moves-*.png'  demo/demo-moves."++ ext ++ " -y"
