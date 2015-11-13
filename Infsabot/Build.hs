@@ -12,7 +12,7 @@ import System.Process(system)
 import Test.HUnit(runTestTT, failures)
 
 import Infsabot.Demoes(demoes)
-import Infsabot.Tests(tests)
+import Infsabot.Tests(tests, stressTest)
 import Infsabot.QuickChecks(checks)
 import Infsabot.Board(Board(..), renderBoard)
 import Infsabot.Parameters
@@ -38,7 +38,8 @@ data WhatToDo = WhatToDo {
     performDemo :: Bool,
     performClean :: Bool,
     performChecks :: Bool,
-    performTests :: Bool
+    performTests :: Bool,
+    performStressTest :: Bool
 } deriving(Show)
 
 defaultWhatToDo = WhatToDo {
@@ -46,7 +47,8 @@ defaultWhatToDo = WhatToDo {
     performDemo=False,
     performClean=False,
     performChecks=True,
-    performTests=True
+    performTests=True,
+    performStressTest=False
 }
 
 main = do
@@ -61,6 +63,7 @@ main = do
     if performTests whatToDo then runTests else return ()
     if performDemo whatToDo then demoes else return ()
     commit $ performCommit whatToDo
+    if performStressTest whatToDo then stressTest else return ()
 
 cleanUp :: IO ()
 cleanUp =
@@ -140,7 +143,8 @@ readWhatToDo ("-nochecks":rest)
     = readWhatToDo rest >>= \wtd -> return (wtd {performChecks=False})
 readWhatToDo ("-notests":rest)
     = readWhatToDo rest >>= \wtd -> return (wtd {performTests=False})
-readWhatToDo (unrec:rest) = Left $ "Unrecognized command " ++ show unrec
+readWhatToDo ("-stress":rest) = readWhatToDo rest >>= \wtd -> return (wtd {performStressTest=True})
+readWhatToDo (unrec:_) = Left $ "Unrecognized command " ++ show unrec
 
 commit :: Maybe String -> IO ()
 commit Nothing = return ()

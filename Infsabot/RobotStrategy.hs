@@ -49,19 +49,21 @@ basicProgram team state
         direction
             = case modulus of
                 0 -> N
-                1 -> N
+                1 -> E
                 2 -> N
                 3 -> E
                 4 -> E
                 5 -> E
                 6 -> W
                 7 -> S
-    enemyLoc = enemyRobot [N, S, E, W]
+    enemyLoc = (enemyRobot $ concat $ map duplicator [N, S, E, W]) >>= (return . head)
         where
-        enemyRobot :: [RDirection] -> Maybe RDirection
+        duplicator :: RDirection -> [[RDirection]]
+        duplicator x = [[x], [x,x]]
+        enemyRobot :: [[RDirection]] -> Maybe [RDirection]
         enemyRobot [] = Nothing
         enemyRobot (u:us)
-            = case peekAtSpot state [u] of
+            = case peekAtSpot state u of
                 Just (SeenSpot _ (Just rob))
                     -> if rob /= ourAppearance then Just u else enemyRobot us
                 _

@@ -1,0 +1,43 @@
+	Fri Nov 13 00:44 2015 Time and Allocation Profiling Report  (Final)
+
+	   Build +RTS -xc -p -RTS -stress -nochecks -notests -commit Added stress testing to files for the purpose of profiling
+
+	total time  =        0.00 secs   (0 ticks @ 1000 us, 1 processor)
+	total alloc =      85,832 bytes  (excludes profiling overheads)
+
+COST CENTRE        MODULE           %time %alloc
+
+CAF                GHC.IO.Handle.FD   0.0   40.5
+CAF                GHC.IO.Encoding    0.0    3.9
+analyzeArguments   Infsabot.Build     0.0   29.5
+echf               Infsabot.Build     0.0   14.1
+readWhatToDo       Infsabot.Build     0.0    5.9
+enforceConsistency Infsabot.Build     0.0    2.5
+
+
+                                                                 individual     inherited
+COST CENTRE            MODULE                  no.     entries  %time %alloc   %time %alloc
+
+MAIN                   MAIN                    142           0    0.0    0.4     0.0  100.0
+ CAF                   Infsabot.Build          283           0    0.0    0.7     0.0   54.1
+  noColor              Infsabot.Build          299           1    0.0    0.4     0.0    0.4
+  errColor             Infsabot.Build          298           1    0.0    0.6     0.0    0.6
+  defaultWhatToDo      Infsabot.Build          294           1    0.0    0.0     0.0    0.0
+  analyzeArguments     Infsabot.Build          285           1    0.0    0.0     0.0    0.0
+  main                 Infsabot.Build          284           1    0.0    0.0     0.0   52.5
+   analyzeArguments    Infsabot.Build          286           0    0.0   29.4     0.0   52.4
+    echf               Infsabot.Build          297           1    0.0   14.1     0.0   14.1
+    readWhatToDo       Infsabot.Build          288           5    0.0    5.9     0.0    6.3
+     readWhatToDo.\    Infsabot.Build          292           1    0.0    0.1     0.0    0.1
+     readWhatToDo.\    Infsabot.Build          291           1    0.0    0.1     0.0    0.1
+     readWhatToDo.\    Infsabot.Build          290           1    0.0    0.1     0.0    0.1
+     readWhatToDo.\    Infsabot.Build          289           1    0.0    0.1     0.0    0.1
+    enforceConsistency Infsabot.Build          287           1    0.0    2.5     0.0    2.5
+     performDemo       Infsabot.Build          296           1    0.0    0.0     0.0    0.0
+     performClean      Infsabot.Build          295           1    0.0    0.0     0.0    0.0
+     performCommit     Infsabot.Build          293           1    0.0    0.0     0.0    0.0
+ CAF                   GHC.IO.Encoding         197           0    0.0    3.9     0.0    3.9
+ CAF                   GHC.IO.Handle.FD        196           0    0.0   40.5     0.0   40.5
+ CAF                   System.Exit             188           0    0.0    0.0     0.0    0.0
+ CAF                   GHC.Conc.Signal         186           0    0.0    0.8     0.0    0.8
+ CAF                   GHC.IO.Encoding.Iconv   182           0    0.0    0.3     0.0    0.3

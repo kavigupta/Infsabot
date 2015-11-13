@@ -20,6 +20,6 @@ except Exception as e:
 
 if PROFILING:
     args.remove("-prof")
-    args += ["+RTS", "-xc", "-RTS"]
+    args += ["+RTS", "-xc", "-p", "-RTS"]
 
 call(["./bin/Build"] + args)

@@ -38,7 +38,7 @@ data Parameters = Parameters {
 
 defaultParameters :: Parameters
 defaultParameters = Parameters {
-    paramBoardSize = 500,
+    paramBoardSize = 75,
     paramNoopCost = 1,
     paramMoveCost = 5,
     paramDigCost = 10,

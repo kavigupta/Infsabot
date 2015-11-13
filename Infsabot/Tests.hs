@@ -1,4 +1,4 @@
-module Infsabot.Tests (tests) where
+module Infsabot.Tests (tests, stressTest) where
 
 import Test.HUnit
 import Data.Function(on)
@@ -19,6 +19,14 @@ import Infsabot.Parameters
 
 --import Debug.Trace
 --import Infsabot.Debug
+
+stressTest :: IO ()
+stressTest = do
+    writePng "temp.png" . renderBoard 1
+        $ (boards
+                defaultParameters
+                $ startingBoard defaultParameters basicProgram)
+            !! 200
 
 tests :: Test
 tests = TestList [generalGameTest, mcrEdgeCase]
