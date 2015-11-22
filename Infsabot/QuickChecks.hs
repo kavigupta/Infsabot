@@ -1,6 +1,6 @@
 {-# Language TemplateHaskell #-}
 {-# Language FlexibleInstances #-}
-module Infsabot.QuickChecks (checks) where
+module Infsabot.QuickChecks (checks, propConflictsResolved, propOrderIndependence) where
 
 import Infsabot.Tools
 
@@ -23,6 +23,9 @@ import Data.DeriveTH(derive, makeArbitrary)
 --import Debug.Trace
 import Test.QuickCheck hiding (shuffle)
 
+doChecks :: (Testable prop) => Int -> prop -> IO ()
+doChecks n = quickCheckWith $ stdArgs { maxSuccess = n }
+
 checks :: IO ()
 checks =
     do
@@ -39,26 +42,24 @@ rListBoardCorr p b = sameElements (boardRobots nextb) (robotsOnBoard nextb)
 -- Move Conflict Resolution tests Follow
 
 mcrChecks :: [IO ()]
-mcrChecks = [quickCheck propConflictOrderIndependence, quickCheck $ propOrderIndependence removeConflicting, quickCheck propConflictsResolved]
+mcrChecks = [
+    doChecks 5000 propConflictOrderIndependence,
+    doChecks 100000 propNoChangeInLength,
+    doChecks 5000 $ propOrderIndependence removeConflicting,
+    doChecks 50000 $ \x -> uncurry (==>) $ propConflictsResolved x]
 
-propConflictsResolved :: [RobotAndAction] -> Property
-propConflictsResolved acts
-    = allDifferent (map getLocation acts)
-        ==> allDifferent finalLocs
+propConflictOrderIndependence :: (RAAFL, RAAFL) -> Property
+propConflictOrderIndependence (x, y) = location x /= location y
+        ==> a == c && b == d
     where
-    finalLocs :: [(Int, Int)]
-    finalLocs = concat $ map (map loc . finalLocations) $ removeConflicting acts
-        where
-        loc :: (Int, Int, Bool) -> (Int, Int)
-        loc (x, y, _) = (x, y)
-    getLocation :: RobotAndAction -> (Int, Int)
-    getLocation ((x, y, _), _) = (x, y)
+    (a, b) = conflictsBetween x y
+    (d, c) = conflictsBetween y x
 
-propConflictOrderIndependence :: (FinalLocations, FinalLocations) -> Bool
-propConflictOrderIndependence (x, y) = a == c && b == d
-    where
-    (Remove a b) = doConflict x y
-    (Remove d c) = doConflict y x
+propNoChangeInLength :: [RobotAndAction] -> Bool
+propNoChangeInLength raas = length raas == length (removeConflicting raas)
+
+location :: RAAFL -> (Int, Int)
+location (((x, y, _), _), _) = (x, y)
 
 $( derive makeArbitrary ''RDirection )
 $( derive makeArbitrary ''RobotAction )
@@ -66,6 +67,7 @@ $( derive makeArbitrary ''Team )
 $( derive makeArbitrary ''RobotAppearance )
 $( derive makeArbitrary ''PixelRGB8 )
 $( derive makeArbitrary ''GameSpot )
+$( derive makeArbitrary ''FinalLocs )
 $( derive makeArbitrary ''BoardSpot )
 $( derive makeArbitrary ''LinearF )
 $( derive makeArbitrary ''Parameters )

@@ -1,12 +1,12 @@
-module Infsabot.RobotStrategy(movementOnlyProgram, basicProgram)
+module Infsabot.RobotStrategy(basicProgram2, basicProgram)
     where
 
 import Infsabot.Base
 import Infsabot.Constants
 import Infsabot.RobotAction
 
-movementOnlyProgram :: Team -> RobotProgram
-movementOnlyProgram team state
+basicProgram :: Team -> RobotProgram
+basicProgram team state
     | mat == SpotMaterial
         = (Dig, stateMemory state)
     | stateAge state `mod` 9 /= 0
@@ -32,8 +32,8 @@ movementOnlyProgram team state
         newMemory = stateMemory state
     }
 
-basicProgram :: Team -> RobotProgram
-basicProgram team state
+basicProgram2 :: Team -> RobotProgram
+basicProgram2 asdf state
     | mat == SpotMaterial
         = (Dig, stateMemory state)
     | enemyLoc /= Nothing
@@ -72,10 +72,10 @@ basicProgram team state
         = case peekAtSpot state [] of
             Nothing -> SpotEmpty
             Just (SeenSpot current _) -> current
-    ourAppearance = RobotAppearance {robotColor = colorDefaultOf team}
+    ourAppearance = RobotAppearance {robotColor = colorDefaultOf asdf}
     createSpawn dir = Spawn {
         newDirection = dir,
-        newProgram = basicProgram team,
+        newProgram = basicProgram asdf,
         newAppearance = ourAppearance,
         newMaterial = material state `div` 3,
         newMemory = stateMemory state

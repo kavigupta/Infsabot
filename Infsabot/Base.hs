@@ -25,7 +25,7 @@ data BoardSpot = SpotEmpty | SpotMaterial
         deriving (Eq, Show)
 
 -- Represents an offset from the original position.
-newtype Offset = Offset Int
+newtype Offset = Offset Int deriving Eq
 
 -- The robot's internal state. This is represented by a Stringly-typed Map
 type InternalState = Map String String

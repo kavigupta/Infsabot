@@ -1,4 +1,4 @@
-module Infsabot.Tools (shuffle, allDifferent, sameElements) where
+module Infsabot.Tools (shuffle, allDifferent, sameElements, (!-!)) where
 
 import System.Random
 import Data.Array.ST hiding (newArray)
@@ -44,3 +44,8 @@ allDifferent us = allDiffSorted (sort us)
     allDiffSorted (x:y:xs)
         | x == y    = False
         | otherwise = allDiffSorted (y:xs)
+
+(!-!) :: [[a]] -> Int -> [a]
+[] !-! _ = []
+(x:_) !-! 0 = x
+(_:xs) !-! n = xs !-! (n - 1)

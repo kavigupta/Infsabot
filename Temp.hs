@@ -8,27 +8,36 @@ import Codec.Picture
 import Infsabot.MoveConflictResolution
 import Infsabot.Debug
 import Infsabot.QuickChecks
-
+import Test.QuickCheck.Property(exhaustive)
 
 tests :: [RobotAndAction]
-tests = [
+tests =[((-12,45,Robot {robotProgram = basicProgram A, robotTeam = B, robotAppearance = RobotAppearance {robotColor = PixelRGB8 61 19 106}, robotMaterial = 29, robotHitpoints = 40, robotBirthdate = 62, robotMemory = fromList [], robotMessages = []}),Spawn {newDirection = E, newProgram = basicProgram A, newAppearance = RobotAppearance {robotColor = PixelRGB8 35 173 225}, newMaterial = 5, newMemory = fromList []}),((-11,45,Robot {robotProgram = basicProgram A, robotTeam = B, robotAppearance = RobotAppearance {robotColor = PixelRGB8 198 148 144}, robotMaterial = 6, robotHitpoints = 34, robotBirthdate = 34, robotMemory = fromList [], robotMessages = []}),MoveIn W)]
 
-	((1,0,Robot {robotProgram = basicProgram B, robotTeam = B, robotAppearance = RobotAppearance {robotColor = PixelRGB8 0 0 128}, robotMaterial = 50, robotHitpoints = 100, robotBirthdate = 0, robotMemory = fromList [], robotMessages = []}),
-        MoveIn S),
 
-	((0,1,Robot {robotProgram = basicProgram B, robotTeam = B, robotAppearance = RobotAppearance {robotColor = PixelRGB8 0 0 128}, robotMaterial = 50, robotHitpoints = 100, robotBirthdate = 0, robotMemory = fromList [], robotMessages = []}),
-        MoveIn E),
 
-	((2,1,Robot {robotProgram = basicProgram A, robotTeam = A, robotAppearance = RobotAppearance {robotColor = PixelRGB8 0 0 128}, robotMaterial = 50, robotHitpoints = 100, robotBirthdate = 0, robotMemory = fromList [], robotMessages = []}),
-        MoveIn N)]
-
-otherTests :: [RobotAndAction]
-otherTests = [
-	((8,9,Robot {robotProgram = basicProgram A, robotTeam = B, robotAppearance = RobotAppearance {robotColor = PixelRGB8 0 0 128}, robotMaterial = 1000, robotHitpoints = 100, robotBirthdate = 43, robotMemory = fromList [], robotMessages = []}),Spawn {newDirection = N, newProgram = basicProgram A, newAppearance = RobotAppearance {robotColor = PixelRGB8 0 0 128}, newMaterial = 333, newMemory = fromList []}),
-	((9,8,Robot {robotProgram = basicProgram A, robotTeam = A, robotAppearance = RobotAppearance {robotColor = PixelRGB8 255 0 0}, robotMaterial = 1000, robotHitpoints = 100, robotBirthdate = 43, robotMemory = fromList [], robotMessages = []}),Spawn {newDirection = N, newProgram = basicProgram A, newAppearance = RobotAppearance {robotColor = PixelRGB8 255 0 0}, newMaterial = 333, newMemory = fromList []}),
-	((8,10,Robot {robotProgram = basicProgram A, robotTeam = B, robotAppearance = RobotAppearance {robotColor = PixelRGB8 0 0 128}, robotMaterial = 412, robotHitpoints = 100, robotBirthdate = 31, robotMemory = fromList [], robotMessages = []}),MoveIn N),
-	((10,8,Robot {robotProgram = basicProgram A, robotTeam = A, robotAppearance = RobotAppearance {robotColor = PixelRGB8 255 0 0}, robotMaterial = 412, robotHitpoints = 100, robotBirthdate = 31, robotMemory = fromList [], robotMessages = []}),MoveIn N)
+{-}[
+	((9,21,Robot {robotProgram = basicProgram A, robotTeam = B, robotAppearance = RobotAppearance {robotColor = PixelRGB8 0 0 128}, robotMaterial = 400, robotHitpoints = 100, robotBirthdate = 2, robotMemory = fromList [], robotMessages = []}),MoveIn E),
+	((21,9,Robot {robotProgram = basicProgram A, robotTeam = A, robotAppearance = RobotAppearance {robotColor = PixelRGB8 255 0 0}, robotMaterial = 400, robotHitpoints = 100, robotBirthdate = 2, robotMemory = fromList [], robotMessages = []}),MoveIn E),
+	((9,20,Robot {robotProgram = basicProgram A, robotTeam = B, robotAppearance = RobotAppearance {robotColor = PixelRGB8 0 0 128}, robotMaterial = 996, robotHitpoints = 100, robotBirthdate = 19, robotMemory = fromList [], robotMessages = []}),MoveIn N),
+    ((20,9,Robot {robotProgram = basicProgram A, robotTeam = A, robotAppearance = RobotAppearance {robotColor = PixelRGB8 255 0 0}, robotMaterial = 996, robotHitpoints = 100, robotBirthdate = 19, robotMemory = fromList [], robotMessages = []}),MoveIn N),
+	((21,10,Robot {robotProgram = basicProgram A, robotTeam = A, robotAppearance = RobotAppearance {robotColor = PixelRGB8 255 0 0}, robotMaterial = 238, robotHitpoints = 100, robotBirthdate = 0, robotMemory = fromList [], robotMessages = []}),Spawn {newDirection = E, newProgram = basicProgram A, newAppearance = RobotAppearance {robotColor = PixelRGB8 255 0 0}, newMaterial = 79, newMemory = fromList []}),
+	((10,21,Robot {robotProgram = basicProgram A, robotTeam = B, robotAppearance = RobotAppearance {robotColor = PixelRGB8 0 0 128}, robotMaterial = 238, robotHitpoints = 100, robotBirthdate = 0, robotMemory = fromList [], robotMessages = []}),Spawn {newDirection = E, newProgram = basicProgram A, newAppearance = RobotAppearance {robotColor = PixelRGB8 0 0 128}, newMaterial = 79, newMemory = fromList []}),
+	((19,8,Robot {robotProgram = basicProgram A, robotTeam = A, robotAppearance = RobotAppearance {robotColor = PixelRGB8 255 0 0}, robotMaterial = 999, robotHitpoints = 100, robotBirthdate = 26, robotMemory = fromList [], robotMessages = []}),MoveIn E),
+	((8,19,Robot {robotProgram = basicProgram A, robotTeam = B, robotAppearance = RobotAppearance {robotColor = PixelRGB8 0 0 128}, robotMaterial = 999, robotHitpoints = 100, robotBirthdate = 26, robotMemory = fromList [], robotMessages = []}),MoveIn E),
+	--
+	((7,19,Robot {robotProgram = basicProgram A, robotTeam = B, robotAppearance = RobotAppearance {robotColor = PixelRGB8 0 0 128}, robotMaterial = 408, robotHitpoints = 100, robotBirthdate = 16, robotMemory = fromList [], robotMessages = []}),MoveIn E),
+	((19,7,Robot {robotProgram = basicProgram A, robotTeam = A, robotAppearance = RobotAppearance {robotColor = PixelRGB8 255 0 0}, robotMaterial = 408, robotHitpoints = 100, robotBirthdate = 16, robotMemory = fromList [], robotMessages = []}),MoveIn E)
     ]
+-}
 
-otter :: [(RobotAndAction, Bool)]
-otter = map (\x -> (x, False)) otherTests
+
+{-[
+    ((1,3,Robot {robotProgram = basicProgram A, robotTeam = B, robotAppearance = RobotAppearance {robotColor = PixelRGB8 0 0 128}, robotMaterial = 635, robotHitpoints = 100, robotBirthdate = 1, robotMemory = fromList [], robotMessages = []}),MoveIn E),
+    ((3,1,Robot {robotProgram = basicProgram A, robotTeam = A, robotAppearance = RobotAppearance {robotColor = PixelRGB8 255 0 0}, robotMaterial = 635, robotHitpoints = 100, robotBirthdate = 1, robotMemory = fromList [], robotMessages = []}),MoveIn E),
+    ((2,3,Robot {robotProgram = basicProgram A, robotTeam = B, robotAppearance = RobotAppearance {robotColor = PixelRGB8 0 0 128}, robotMaterial = 636, robotHitpoints = 100, robotBirthdate = 3, robotMemory = fromList [], robotMessages = []}),MoveIn E),
+    ((3,2,Robot {robotProgram = basicProgram A, robotTeam = A, robotAppearance = RobotAppearance {robotColor = PixelRGB8 255 0 0}, robotMaterial = 636, robotHitpoints = 100, robotBirthdate = 3, robotMemory = fromList [], robotMessages = []}),MoveIn E)]
+-}
+{-[((-52,0,Robot {robotProgram = basicProgram A, robotTeam = A, robotAppearance = RobotAppearance {robotColor = PixelRGB8 94 250 23}, robotMaterial = 35, robotHitpoints = 42, robotBirthdate = 48, robotMemory = fromList [], robotMessages = []}),Spawn {newDirection = E, newProgram = basicProgram A, newAppearance = RobotAppearance {robotColor = PixelRGB8 42 190 236}, newMaterial = -68, newMemory = fromList []}),
+    ((-52,-2,Robot {robotProgram = basicProgram A, robotTeam = B, robotAppearance = RobotAppearance {robotColor = PixelRGB8 242 34 8}, robotMaterial = 30, robotHitpoints = 16, robotBirthdate = 39, robotMemory = fromList [], robotMessages = []}),Noop),
+    ((-51,0,Robot {robotProgram = basicProgram A, robotTeam = B, robotAppearance = RobotAppearance {robotColor = PixelRGB8 174 233 27}, robotMaterial = 13, robotHitpoints = 38, robotBirthdate = 43, robotMemory = fromList [], robotMessages = []}),MoveIn W)]
+-}
