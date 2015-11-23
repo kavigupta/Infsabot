@@ -1,8 +1,6 @@
 module Infsabot.Tests (tests, stressTest) where
 
 import Test.HUnit
-import Data.Function(on)
-import Data.List(partition, sortBy)
 
 import Infsabot.Base
 import Infsabot.Tools
@@ -18,7 +16,6 @@ import Infsabot.GamePlay(boards)
 import Infsabot.Parameters
 
 --import Debug.Trace
-import Infsabot.Debug
 
 stressTest :: IO ()
 stressTest = do
@@ -86,49 +83,9 @@ assertRobotSourcesAgree b
 
 assertTeamsSymmetric :: Board -> Test
 assertTeamsSymmetric b
-        = TestList [equalLength, TestList $ map assertTeamSymmetry sortedAsBs]
-    where
-    (as, bs) = partition teamIsA $ boardRobots b
-    equalLength = TestCase $ assertEqual
-        ("Equal numbers of robots\n\t"
-            ++ show (map printRobot as)
-            ++ "\n\t"
-            ++ show (map printRobot bs))
-        (length as) (length bs)
-    adjustedBs = map (\(x, y, rob) -> (y, x, rob)) bs
-    sorter =  sortBy (compare `on` getCoordinates)
-    sortedAsBs = zip (sorter as) (sorter adjustedBs)
+        = toTestCase $ teamSymmetric $ boardRobots b
 
-assertTeamSymmetry :: ((Int, Int, Robot), (Int, Int, Robot)) -> Test
-assertTeamSymmetry ((x1, y1, rob1), (x2, y2, rob2))
-    | x1 /= x2 || y1 /= y2
-        = TestCase . assertFailure
-            $  "The Team A robot at "
-            ++ show (x1, y1)
-            ++ " appears to have no corresponding B robot"
-    | otherwise
-        = TestLabel ("The robots at "
-                ++ show (x1, y1) ++ " are not equivalent;")
-            $ TestList $ map getTests
-                $ zip assertLabels results
-    where
-        getTests :: (String, Bool) -> Test
-        getTests (label, result) = TestCase $ assertBool label result
-        results :: [Bool]
-        results = map (\u -> u rob1 rob2) assertions
-        assertions :: [Robot -> Robot -> Bool]
-        assertions = [assertEquivalence robotMaterial,
-                        assertEquivalence robotHitpoints,
-                        assertEquivalence robotBirthdate,
-                        assertEquivalence robotMemory,
-                        assertEquivalence robotMessages]
-        assertLabels = map ("Different "++) [
-                "material",
-                "hitpoints",
-                "birthdate",
-                "memory",
-                "messages"
-            ]
+
 assertBoardSymmetry :: Board -> Test
 assertBoardSymmetry b = TestList $ map symmetric $ zip [0.. boardSize b - 1] [0..boardSize b - 1]
     where
@@ -141,11 +98,3 @@ assertBoardSymmetry b = TestList $ map symmetric $ zip [0.. boardSize b - 1] [0.
             (GameSpot regular _) <- b !!! (x, y)
             (GameSpot other _) <- b !!! (y, x)
             return $ regular == other
-getCoordinates :: (Int, Int, Robot) -> (Int, Int)
-getCoordinates (x, y, _) = (x, y)
-
-teamIsA :: (Int, Int, Robot) -> Bool
-teamIsA (_, _, rob) = robotTeam rob == A
-
-assertEquivalence :: (Eq a) => (Robot -> a) -> Robot -> Robot -> Bool
-assertEquivalence = on (==)

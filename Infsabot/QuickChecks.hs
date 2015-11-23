@@ -44,9 +44,14 @@ rListBoardCorr p b = sameElements (boardRobots nextb) (robotsOnBoard nextb)
 mcrChecks :: [IO ()]
 mcrChecks = [
     doChecks 5000 propConflictOrderIndependence,
-    doChecks 100000 propNoChangeInLength,
-    doChecks 5000 $ propOrderIndependence removeConflicting,
+    doChecks 1000 propNoChangeInLength,
+    doChecks 5000 $ propSymmeteryPreserving,
     doChecks 50000 $ \x -> uncurry (==>) $ propConflictsResolved x]
+
+propSymmeteryPreserving :: [RobotAndAction] -> Bool
+propSymmeteryPreserving raas
+    = teamSymmetric
+            (removeConflicting $ makeSymmetric raas) == TRSuccess
 
 propConflictOrderIndependence :: (RAAFL, RAAFL) -> Property
 propConflictOrderIndependence (x, y) = location x /= location y

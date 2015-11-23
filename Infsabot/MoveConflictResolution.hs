@@ -160,10 +160,17 @@ removeLocal (current:l, c, r)
             "\n\tRemove Curr " ++ show removeCurrent ++
             "\n\tEffect this " ++ show (Effect redoThisV redoThisH)
             ) False = undefined
-        | otherwise = ((lprev ++ [noopifyIf current removeCurrent] ++ lnext',
-            cprev ++ cnext',
-            rprev ++ rnext'),
-            combine (Effect redoThisV redoThisH) nexteffect)
+        | redoNextV =
+            let (a, b) = removeLocal
+                    (lprev ++ [noopifyIf current removeCurrent] ++ lnext',
+                    cprev ++ cnext',
+                    rprev ++ rnext')
+            in (a,
+                combine b $ combine (Effect redoThisV redoThisH) nexteffect)
+        | otherwise = ((lprev ++ [noopifyIf current removeCurrent] ++ mLnext,
+            cprev ++ mCnext,
+            rprev ++ mRnext),
+            combine (Effect redoThisV redoThisH) (Effect redoNextV redoNextH))
     where
     ((lprev, cprev, rprev),
         (lnext, cnext, rnext),
@@ -171,15 +178,10 @@ removeLocal (current:l, c, r)
         Effect redoThisV redoThisH)
             = removeLcl current (l, c, r)
     ((lnext', cnext', rnext'), nexteffect)
-            | redoNextV
-                = removeLocal (mLnext, mCnext, mRnext)
-            | otherwise
-                = ((mLnext, mCnext, mRnext),
-                    Effect redoNextV redoNextH)
-        where
-        ((mLnext, mCnext, mRnext),
-            Effect redoNextV redoNextH)
-                = removeLocal (lnext, cnext, rnext)
+        = removeLocal (mLnext, mCnext, mRnext)
+    ((mLnext, mCnext, mRnext),
+        Effect redoNextV redoNextH)
+            = removeLocal (lnext, cnext, rnext)
 
 {-
     Removes conflicts with the given Robot and Action in the three columns.
