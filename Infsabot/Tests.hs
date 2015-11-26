@@ -39,9 +39,9 @@ generalGameTest
                 assertRobotSourcesAgree b]) $ neededBoards
     where
     neededBoards = take nTurns $ boards params initialBoard
-    nTurns = 30
+    nTurns = 100
     params :: Parameters
-    params = defaultParameters {paramBoardSize = 100, paramInitialMaterial = 1000}
+    params = defaultParameters {paramBoardSize = 200, paramInitialMaterial = 1000}
     initialBoard :: Board
     initialBoard = startingBoard params basicProgram
 

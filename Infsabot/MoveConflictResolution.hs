@@ -104,20 +104,28 @@ type RAAFL = (RobotAndAction, FinalLocs)
 type RAA3Col = ([RAAFL], [RAAFL], [RAAFL])
 
 removeConflicting :: [RobotAndAction] -> [RobotAndAction]
-removeConflicting = map fst . concat . fst . columnSweeper . organizeRobots
+removeConflicting = map fst . concat . completeColumnSweeper . organizeRobots
+
+
+completeColumnSweeper :: [[RAAFL]] -> [[RAAFL]]
+completeColumnSweeper d
+        | redoH         = completeColumnSweeper new
+        | otherwise     = new
+    where
+    (new, redoH) = columnSweeper d
 
 {- Returns the swept rest of the results, along with a boolean flag indicating
     whether a recalculation would be necessary.-}
 columnSweeper :: [[RAAFL]] -> ([[RAAFL]], Bool)
 columnSweeper [] = ([], False)
 columnSweeper cols_
-        | trace ("a', b', c' = " ++ show (a', b', c)) False = undefined
-        | resweepNext   = columnSweeper (a':bccols')
+        | trace ("a', b', c' = " ++ show (a', b', c')) False = undefined
+        | resweepNext   = let (u, v) = columnSweeper (a':bccols') in (u, v || resweepThis)
         | otherwise = (a':bccols', resweepThis)
     where
     cols = drop 3 cols_
     (a, b, c) = (cols_ !-! 0, cols_ !-! 1, cols_ !-! 2)
-    ((a', b', c'), Effect _ resweepThis) = removeLocalCompletely (a, b, c)
+    ((a', b', c'), resweepThis) = removeLocalCompletely (a, b, c)
     (bccols', resweepNext) = columnSweeper (filter (not . null) $ b':c':cols)
 
 
@@ -128,10 +136,10 @@ data Effect = Effect Bool Bool deriving (Show)
 combine :: Effect -> Effect -> Effect
 combine (Effect a b) (Effect c d) = Effect (a || c) (b || d)
 
-removeLocalCompletely :: RAA3Col -> (RAA3Col, Effect)
+removeLocalCompletely :: RAA3Col -> (RAA3Col, Bool)
 removeLocalCompletely d
-        | redoV     = removeLocalCompletely new
-        | otherwise = (new, Effect redoV redoH)
+        | redoV     = let (u, v) = removeLocalCompletely new in (u, v || redoH)
+        | otherwise = (new, redoH)
     where
     (new, Effect redoV redoH) = removeLocal d
 
@@ -158,31 +166,30 @@ removeLocal (current:l, c, r)
             ++ "\n\t" ++ displayRAAL cnext
             ++ "\n\t" ++ displayRAAL rnext ++
             "\n\tRemove Curr " ++ show removeCurrent ++
-            "\n\tEffect this " ++ show (Effect redoThisV redoThisH)
+            "\n\tEffect this " ++ show effect''
             ) False = undefined
-        | redoNextV =
-            let (a, b) = removeLocal
-                    (lprev ++ [noopifyIf current removeCurrent] ++ lnext',
-                    cprev ++ cnext',
-                    rprev ++ rnext')
-            in (a,
-                combine b $ combine (Effect redoThisV redoThisH) nexteffect)
-        | otherwise = ((lprev ++ [noopifyIf current removeCurrent] ++ mLnext,
-            cprev ++ mCnext,
-            rprev ++ mRnext),
-            combine (Effect redoThisV redoThisH) (Effect redoNextV redoNextH))
+        | otherwise =  ((l'', c'', r''), effect'')
     where
+    -- remove any local conflicts
     ((lprev, cprev, rprev),
         (lnext, cnext, rnext),
         removeCurrent,
-        Effect redoThisV redoThisH)
+        effect)
             = removeLcl current (l, c, r)
-    ((lnext', cnext', rnext'), nexteffect)
-        = removeLocal (mLnext, mCnext, mRnext)
+    -- Remove any future conflicts
     ((mLnext, mCnext, mRnext),
         Effect redoNextV redoNextH)
             = removeLocal (lnext, cnext, rnext)
-
+    l' = lprev ++ [noopifyIf current removeCurrent] ++ mLnext
+    c' = cprev ++ mCnext
+    r' = rprev ++ mRnext
+    effect' = combine effect (Effect False redoNextH)
+    (l'', c'', r'', effect'')
+        | redoNextV
+            = let ((newL', newC', newR'), secondEffect) = removeLocal(l', c', r')
+                in (newL', newC', newR', combine effect' secondEffect)
+        | otherwise
+            = (l', c', r', effect')
 {-
     Removes conflicts with the given Robot and Action in the three columns.
     Returns

@@ -43,10 +43,10 @@ rListBoardCorr p b = sameElements (boardRobots nextb) (robotsOnBoard nextb)
 
 mcrChecks :: [IO ()]
 mcrChecks = [
-    doChecks 5000 propConflictOrderIndependence,
-    doChecks 1000 propNoChangeInLength,
-    doChecks 5000 $ propSymmeteryPreserving,
-    doChecks 50000 $ \x -> uncurry (==>) $ propConflictsResolved x]
+    putStrLn "Conflict Order Independence" >> doChecks 5000 propConflictOrderIndependence,
+    putStrLn "No Change In Length" >> doChecks 1000 propNoChangeInLength,
+    putStrLn "Symmetery Preserving" >> doChecks 5000 propSymmeteryPreserving,
+    putStrLn "Conflicts Resolved" >> doChecks 50000 (\x -> uncurry (==>) $ propConflictsResolved x)]
 
 propSymmeteryPreserving :: [RobotAndAction] -> Bool
 propSymmeteryPreserving raas

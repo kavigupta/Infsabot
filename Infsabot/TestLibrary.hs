@@ -87,16 +87,15 @@ instance TeamedComparable Team where
 
 instance TeamedComparable RDirection where
     areSymm (x, y)
-        | getOffset A x == getOffset B y    = TRSuccess
+        | x == y    = TRSuccess
         | otherwise
             = TRFailure $ "The directions "
                 ++ show x
                 ++ " and "
                 ++ show y
                 ++ " do not correspond."
-    symmetricOf S = E
-    symmetricOf E = S
-    symmetricOf x = oppositeDirection . symmetricOf . oppositeDirection $ x
+    symmetricOf x = x
+    --symmetricOf x = oppositeDirection . symmetricOf . oppositeDirection $ x
 
 scalarSymm :: (Eq a, Show a) => (a, a) -> TestResult String
 scalarSymm (x, y)

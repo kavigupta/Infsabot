@@ -12,8 +12,14 @@ import Infsabot.QuickChecks
 import Test.QuickCheck.Property(exhaustive)
 
 tests :: [RobotAndAction]
-tests =  [((-6,14,Robot {robotProgram = basicProgram A, robotTeam = A, robotAppearance = RobotAppearance {robotColor = PixelRGB8 19 4 9}, robotMaterial = 4, robotHitpoints = 9, robotBirthdate = 6, robotMemory = fromList [], robotMessages = []}),Noop),((-5,14,Robot {robotProgram = basicProgram A, robotTeam = B, robotAppearance = RobotAppearance {robotColor = PixelRGB8 5 26 16}, robotMaterial = 6, robotHitpoints = 11, robotBirthdate = 1, robotMemory = fromList [], robotMessages = []}),Spawn {newDirection = N, newProgram = basicProgram A, newAppearance = RobotAppearance {robotColor = PixelRGB8 11 32 25}, newMaterial = 11, newMemory = fromList []})]
+tests = makeSymmetric [((-50,1,Robot {robotProgram = basicProgram A, robotTeam = B, robotAppearance = RobotAppearance {robotColor = PixelRGB8 66 168 195}, robotMaterial = 63, robotHitpoints = 63, robotBirthdate = 41, robotMemory = fromList [], robotMessages = []}),Spawn {newDirection = S, newProgram = basicProgram A, newAppearance = RobotAppearance {robotColor = PixelRGB8 159 139 144}, newMaterial = 41, newMemory = fromList []}),((-50,2,Robot {robotProgram = basicProgram A, robotTeam = B, robotAppearance = RobotAppearance {robotColor = PixelRGB8 0 195 63}, robotMaterial = 61, robotHitpoints = 3, robotBirthdate = 9, robotMemory = fromList [], robotMessages = []}),MoveIn N)]
 
+{-makeSymmetric [
+	((-1,8,Robot {robotProgram = basicProgram A, robotTeam = A, robotAppearance = RobotAppearance {robotColor = PixelRGB8 0 2 3}, robotMaterial = 3, robotHitpoints = 4, robotBirthdate = 4, robotMemory = fromList [], robotMessages = []}),Fire {fireDirection = W, materialExpended = -1}),
+	((-1,7,Robot {robotProgram = basicProgram A, robotTeam = B, robotAppearance = RobotAppearance {robotColor = PixelRGB8 0 2 1}, robotMaterial = 4, robotHitpoints = 5, robotBirthdate = 5, robotMemory = fromList [], robotMessages = []}),MoveIn S),
+	((-2,7,Robot {robotProgram = basicProgram A, robotTeam = A, robotAppearance = RobotAppearance {robotColor = PixelRGB8 7 7 8}, robotMaterial = 5, robotHitpoints = 2, robotBirthdate = 8, robotMemory = fromList [], robotMessages = []}),Spawn {newDirection = S, newProgram = basicProgram A, newAppearance = RobotAppearance {robotColor = PixelRGB8 6 7 7}, newMaterial = -4, newMemory = fromList []})
+	]
+-}
 
 {-
 	[((-3,19,Robot {robotProgram = basicProgram A, robotTeam = A, robotAppearance = RobotAppearance {robotColor = PixelRGB8 160 148 172}, robotMaterial = 36, robotHitpoints = 21, robotBirthdate = 14, robotMemory = fromList [], robotMessages = []}),MoveIn S),((-2,19,Robot {robotProgram = basicProgram A, robotTeam = B, robotAppearance = RobotAppearance {robotColor = PixelRGB8 36 49 200}, robotMaterial = 25, robotHitpoints = 17, robotBirthdate = 1, robotMemory = fromList [], robotMessages = []}),Noop),((-3,18,Robot {robotProgram = basicProgram A, robotTeam = A, robotAppearance = RobotAppearance {robotColor = PixelRGB8 43 202 119}, robotMaterial = 24, robotHitpoints = 26, robotBirthdate = 8, robotMemory = fromList [], robotMessages = []}),MoveIn E)]
