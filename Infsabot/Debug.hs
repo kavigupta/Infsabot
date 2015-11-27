@@ -7,7 +7,6 @@ import qualified Debug.Trace as T
 isDEBUG :: Bool
 isDEBUG = False
 
-
 trace :: String -> a -> a
 trace msg x
     | isDEBUG       = T.trace msg x

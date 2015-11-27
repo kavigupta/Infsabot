@@ -17,7 +17,7 @@ import Infsabot.QuickChecks(checks)
 import Infsabot.Board(Board(..), renderBoard)
 import Infsabot.Parameters
 
-import Control.Monad(forM_)
+import Control.Monad(forM_, when)
 
 import Codec.Picture(writePng)
 
@@ -39,7 +39,8 @@ data WhatToDo = WhatToDo {
     performClean :: Bool,
     performChecks :: Bool,
     performTests :: Bool,
-    performStressTest :: Bool
+    performStressTest :: Bool,
+    performBuild :: Bool
 } deriving(Show)
 
 defaultWhatToDo = WhatToDo {
@@ -48,22 +49,23 @@ defaultWhatToDo = WhatToDo {
     performClean=False,
     performChecks=True,
     performTests=True,
-    performStressTest=False
+    performStressTest=False,
+    performBuild=True
 }
 
 main = do
     whatToDo <- analyzeArguments
-    if performClean whatToDo then cleanUp else return ()
+    when (performClean whatToDo) cleanUp
     createDirectoryIfMissing True "gen"
     createDirectoryIfMissing True "demo"
-    buildAll
+    when (performBuild whatToDo) buildAll
     echl "Running Quick Checks"
-    if performChecks whatToDo then checks else return ()
+    when (performChecks whatToDo) checks
     echs "Checks completed!"
-    if performTests whatToDo then runTests else return ()
-    if performDemo whatToDo then demoes else return ()
+    when (performTests whatToDo) runTests
+    when (performDemo whatToDo) demoes
     commit $ performCommit whatToDo
-    if performStressTest whatToDo then stressTest else return ()
+    when (performStressTest whatToDo) stressTest
 
 cleanUp :: IO ()
 cleanUp =
@@ -115,13 +117,12 @@ analyzeArguments :: IO WhatToDo
 analyzeArguments
     = do
         args <- getArgs
-        case enforceConsistency (readWhatToDo args) of
+        case readWhatToDo args >>= enforceConsistency of
             Left err ->     echf err >>= const exitFailure
             Right wtd ->    return wtd
 
-enforceConsistency :: Either String WhatToDo -> Either String WhatToDo
-enforceConsistency (Left err) = Left err
-enforceConsistency (Right wtd)
+enforceConsistency :: WhatToDo -> Either String WhatToDo
+enforceConsistency wtd
     | performCommit wtd /= Nothing =
         if not (performClean wtd)
             && performDemo wtd
@@ -139,6 +140,8 @@ readWhatToDo ("-demo":rest)
     = readWhatToDo rest >>= \wtd -> return (wtd {performDemo=True})
 readWhatToDo ("-clean":rest)
     = readWhatToDo rest >>= \wtd -> return (wtd {performClean=True})
+readWhatToDo ("-nobuild":rest)
+    = readWhatToDo rest >>= \wtd -> return (wtd {performBuild=False})
 readWhatToDo ("-nochecks":rest)
     = readWhatToDo rest >>= \wtd -> return (wtd {performChecks=False})
 readWhatToDo ("-notests":rest)

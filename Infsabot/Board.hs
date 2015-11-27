@@ -16,6 +16,7 @@ import Infsabot.Base
 import Infsabot.Robot
 import Infsabot.RobotAction
 import Infsabot.Parameters
+import qualified Data.Map as M
 
 type RAL = RandomAccessList
 
@@ -36,7 +37,7 @@ data Board = Board {
 	-- In the form of a RAL of RALs of GameSpots, forming a Matrix
 	boardContents :: RAL (RAL GameSpot),
 	-- The robots on the Board
-	boardRobots :: [(Int, Int, Robot)],
+	boardRobots :: M.Map (Int, Int) Robot,
 	-- The size of the Board
 	boardSize :: Int,
 	-- The Current Time of the Board

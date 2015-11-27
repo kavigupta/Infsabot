@@ -196,13 +196,10 @@ propOrderIndependence f xs seed = sameElements originalOut shuffleOut
 
 propConflictsResolved :: [RobotAndAction] -> (Bool, Bool)
 propConflictsResolved acts
-    = (allDifferent (map getLocation acts) ,allDifferent finalLocs)
+    = (allDifferent (map getLocation acts), allDifferent finalLocs)
     where
     finalLocs :: [(Int, Int)]
-    finalLocs = concat $ map (map loc . finalLocations) $ removeConflicting acts
-        where
-        loc :: (Int, Int, Bool) -> (Int, Int)
-        loc (x, y, _) = (x, y)
+    finalLocs = concat $ map (finalLocsToList . finalLocations2) $ removeConflicting acts
     getLocation :: RobotAndAction -> (Int, Int)
     getLocation ((x, y, _), _) = (x, y)
 

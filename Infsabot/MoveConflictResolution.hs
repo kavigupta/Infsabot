@@ -1,6 +1,6 @@
 module Infsabot.MoveConflictResolution (
     FinalLocations, Remove(..), RobotAndAction,
-    removeConflicting, removeConflicting2, finalLocations2, finalLocations, conflictsBetween,
+    removeConflicting, finalLocations2, finalLocsToList, conflictsBetween,
     propOrganizeRobotsSame, RAAFL, FinalLocs(FinalLocs), organizeRobots, firstConflicts
 ) where
 
@@ -10,6 +10,7 @@ import Infsabot.Base
 
 import Data.List(groupBy, sortBy)
 import Data.Function(on)
+import Data.Monoid(Monoid, mempty, mappend, mconcat)
 
 import Infsabot.Tools(sameElements, (!-!))
 
@@ -20,70 +21,6 @@ type RobotAndAction = ((Int, Int, Robot), RobotAction)
 type FinalLocations = [(Int, Int, Bool)]
 
 data Remove = Remove Bool Bool deriving (Show)
-
-type RAAWRemove  = (RobotAndAction, Bool)
-
---	Removes any moves that would result in two robots being in the same spot.
---	Whichever move is a movement will be removed. If both are movements, both
- 	-- are removed
-
-removeConflicting2 :: [RobotAndAction] -> [RobotAndAction]
-removeConflicting2 raas
-        | raas == raas'   = raas
-        | otherwise     = removeConflicting raas'
-    where
-    raas' :: [RobotAndAction]
-    raas' = map downgrade $ removeAll $ map (\x -> (x, False)) raas
-        where
-        downgrade :: RAAWRemove -> RobotAndAction
-        downgrade ((xyrob, _), True) = (xyrob, Noop)
-        downgrade (raa, False) = raa
-
-removeAll :: [RAAWRemove] -> [RAAWRemove]
-removeAll [] = []
-removeAll (x:xs) = current : removeAll rest
-    where
-    (current, rest) = getRemoveStatus x xs
-
-getRemoveStatus :: RAAWRemove -> [RAAWRemove] -> (RAAWRemove, [RAAWRemove])
-getRemoveStatus (raa, initialRemove) raas
-        = ((raa, initialRemove || removeThis), others)
-    where
-    others = map (\((x, a), b) -> (x, a || b)) $ zip raas shouldRemove
-    shouldRemove = map (\(Remove _ other) -> other) $ restConflicts
-    removeThis = any (\(Remove this _) -> this) $ restConflicts
-    restConflicts :: [Remove]
-    restConflicts = map (conflictsWithFirst . fst) raas
-        where
-        conflictsWithFirst other = doConflict (finalLocations raa) (finalLocations other)
-
-merge :: Remove -> Remove -> Remove
-merge (Remove a b) (Remove c d) = Remove (a || c) (b || d)
-
-doConflict :: FinalLocations -> FinalLocations -> Remove
-doConflict [] _ = Remove False False
-doConflict (a:rest) other = merge (locationConflicts a other) (doConflict rest other)
-
-locationConflicts :: (Int, Int, Bool) -> FinalLocations -> Remove
-locationConflicts _ [] = Remove False False
-locationConflicts (x1, y1, keep1) ((x2, y2, keep2):rest)
-    | (x1, y1) == (x2, y2)
-        = merge (Remove (not keep1) (not keep2)) conflictsInRest
-    | otherwise     = conflictsInRest
-    where
-    conflictsInRest = locationConflicts (x1, y1, keep1) rest
-
-finalLocations :: RobotAndAction -> FinalLocations
-finalLocations ((x,y,rob), act) = locs act
-    where
-    locs (MoveIn dir)
-        = let (newx, newy) = applyOffset (getOffset (robotTeam rob) dir) (x,y)
-            in [(newx, newy, False)]
-    locs spawn@(Spawn _ _ _ _ _)
-        = let (newx, newy) = applyOffset (getOffset (robotTeam rob) $ newDirection spawn) (x,y)
-            in [(newx, newy, False), (x, y, True)]
-    locs Die = []
-    locs _ = [(x,y, True)]
 
 {-
     New logic for Move Conflict Resolution.
@@ -99,13 +36,18 @@ finalLocations ((x,y,rob), act) = locs act
 
 data FinalLocs = FinalLocs (Maybe (Int, Int)) (Maybe (Int, Int)) deriving (Eq, Show)
 
+finalLocsToList :: FinalLocs -> [(Int, Int)]
+finalLocsToList (FinalLocs x y) = tl x ++ tl y
+    where
+    tl Nothing = []
+    tl (Just l) = [l]
+
 type RAAFL = (RobotAndAction, FinalLocs)
 
 type RAA3Col = ([RAAFL], [RAAFL], [RAAFL])
 
 removeConflicting :: [RobotAndAction] -> [RobotAndAction]
 removeConflicting = map fst . concat . completeColumnSweeper . organizeRobots
-
 
 completeColumnSweeper :: [[RAAFL]] -> [[RAAFL]]
 completeColumnSweeper d
@@ -131,10 +73,11 @@ columnSweeper cols_
 
 {- First element: whether a downward move was nullified, requiring a single element redo.
    Second element: whether a rightward move was nullified, requiring a column redo-}
-data Effect = Effect Bool Bool deriving (Show)
+data Effect = Effect Bool Bool deriving (Show, Eq)
 
-combine :: Effect -> Effect -> Effect
-combine (Effect a b) (Effect c d) = Effect (a || c) (b || d)
+instance Monoid Effect where
+    mempty = Effect False False
+    mappend (Effect a b) (Effect c d) = Effect (a || c) (b || d)
 
 removeLocalCompletely :: RAA3Col -> (RAA3Col, Bool)
 removeLocalCompletely d
@@ -183,11 +126,11 @@ removeLocal (current:l, c, r)
     l' = lprev ++ [noopifyIf current removeCurrent] ++ mLnext
     c' = cprev ++ mCnext
     r' = rprev ++ mRnext
-    effect' = combine effect (Effect False redoNextH)
+    effect' = effect `mappend` (Effect False redoNextH)
     (l'', c'', r'', effect'')
         | redoNextV
             = let ((newL', newC', newR'), secondEffect) = removeLocal(l', c', r')
-                in (newL', newC', newR', combine effect' secondEffect)
+                in (newL', newC', newR', effect' `mappend` secondEffect)
         | otherwise
             = (l', c', r', effect')
 {-
@@ -210,21 +153,26 @@ removeLcl current (l, c, r)
     confL = map (conflictsBetween current) lneigh
     confC = map (conflictsBetween current) cneigh
     confR = map (conflictsBetween current) rneigh
-    luse' = zipWith noopifyIf lneigh (map snd confL)
-    cuse' = zipWith noopifyIf cneigh (map snd confC)
-    ruse' = zipWith noopifyIf rneigh (map snd confR)
+    confOtherL = map snd confL
+    confOtherC = map snd confC
+    confOtherR = map snd confR
+    luse' = zipWith noopifyIf lneigh confOtherL
+    cuse' = zipWith noopifyIf cneigh confOtherC
+    ruse' = zipWith noopifyIf rneigh confOtherR
+    effOther = mconcat $ (map mconcat)
+        [zipWith effectOf confOtherL (map fst lneigh),
+            zipWith effectOf confOtherC (map fst cneigh),
+            zipWith effectOf confOtherR (map fst rneigh)]
     confThis = any (any fst) [confL, confC, confR]
-    confOther = any (any snd) [confL, confC, confR]
-    effect
-        | confThis || confOther  = effectOf . fst $ current
-        | otherwise = Effect False False
+    effect = (effectOf confThis . fst $ current) `mappend` effOther
+    --effect = effectOf confThis (fst current) `mappend` (if not confOther then Effect False False else Effect True True)
 
-effectOf :: RobotAndAction -> Effect
-effectOf ((_, _, rob), MoveIn dir)
-    | offset == (Offset 0, Offset 1)   = Effect True True
-    | offset == (Offset 1, Offset 0)   = Effect True True
-        where offset = getOffset (robotTeam rob) dir
-effectOf _ = Effect True True
+effectOf :: Bool -> RobotAndAction -> Effect
+effectOf True ((_, _, rob), MoveIn dir)
+    | x /= 0    = Effect False True
+    | y /= 0    = Effect True False
+        where (Offset x, Offset y) = getOffset (robotTeam rob) dir
+effectOf _ _ = Effect False False
 
 noopifyIf :: RAAFL -> Bool -> RAAFL
 noopifyIf x True = noopify x
