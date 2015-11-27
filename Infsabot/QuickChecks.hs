@@ -14,7 +14,7 @@ import Infsabot.MoveConflictResolution
 import Infsabot.Parameters
 import Infsabot.TestLibrary
 import Infsabot.GamePlay
-import Data.Map(fromList, Map)
+import Data.Map(fromList, Map, toList)
 import Control.Monad(forM_, liftM)
 
 import qualified Data.RandomAccessList as DRal
@@ -36,7 +36,7 @@ checks =
 -- GamePlay checks follow
 
 rListBoardCorr :: Parameters -> Board -> Bool
-rListBoardCorr p b = sameElements (boardRobots nextb) (robotsOnBoard nextb)
+rListBoardCorr p b = sameElements (map (\((x, y), r) -> (x, y, r)) $ toList $ boardRobots nextb) (robotsOnBoard nextb)
     where nextb = boards p b !! 1
 
 -- Move Conflict Resolution tests Follow
@@ -82,8 +82,8 @@ instance Arbitrary Board where
             size <- choose (1, 30)
             time <- choose (1, 100)
             contents <- arbitraryBoard size
-            let robots = robotsOnBoard $ Board {boardSize = size, boardTime = time, boardRobots = [], boardContents = contents}
-            return $ Board {boardSize = size, boardTime = time, boardRobots = robots, boardContents = contents}
+            let robots = robotsOnBoard $ Board {boardSize = size, boardTime = time, boardRobots = fromList [], boardContents = contents}
+            return $ Board {boardSize = size, boardTime = time, boardRobots = fromList $ map (\(x, y, r) -> ((x, y), r)) robots, boardContents = contents}
         where
         arbitraryBoard :: Int -> Gen (RAL (RAL GameSpot))
         arbitraryBoard size = liftM DRal.fromList $ arbitraryBoardL size

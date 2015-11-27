@@ -10,7 +10,7 @@ import Infsabot.RobotStrategy
 import Infsabot.TestLibrary
 import Infsabot.RobotAction
 import Infsabot.MoveConflictResolution
-import Data.Map(fromList)
+import Data.Map(fromList, toList)
 import Codec.Picture
 import Infsabot.GamePlay(boards)
 import Infsabot.Parameters
@@ -79,11 +79,11 @@ assertRobotSourcesAgree :: Board -> Test
 assertRobotSourcesAgree b
     = TestCase $
         assertBool "Robot sources boardRobots and boardContents agree" $
-        sameElements (boardRobots b) (robotsOnBoard b)
+        sameElements (toList $ boardRobots b) (map (\(x, y, r) -> ((x, y), r)) $ robotsOnBoard b)
 
 assertTeamsSymmetric :: Board -> Test
 assertTeamsSymmetric b
-        = toTestCase $ teamSymmetric $ boardRobots b
+        = toTestCase $ teamSymmetric $ map (\((x, y), r) -> (x, y, r)) $ toList $ boardRobots b
 
 
 assertBoardSymmetry :: Board -> Test

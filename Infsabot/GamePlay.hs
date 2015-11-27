@@ -9,6 +9,7 @@ import Infsabot.MoveConflictResolution
 import Infsabot.Base
 import Data.List(sortBy)
 import Data.Function(on)
+import qualified Data.Map as M
 
 import Infsabot.Debug
 
@@ -144,9 +145,9 @@ applyActionCosts params raas = foldr (.) id $ map applyActionCost raas
 
 -- Gets a list of robots and their program results
 getRobotResults :: Parameters -> Board -> [RobotAndResult]
-getRobotResults p b = map getRobotResult $ boardRobots b
+getRobotResults p b = map getRobotResult $ M.toList $ boardRobots b
 	where
-	getRobotResult (x, y, rob) = ((x, y, rob), robotProgram rob state)
+	getRobotResult ((x, y), rob) = ((x, y, rob), robotProgram rob state)
 	   where state = getKnownState p (robotTeam rob) b (x, y, rob)
 
 -- Gets the known state for the given robot

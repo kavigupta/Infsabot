@@ -75,7 +75,7 @@ startingBoard p programOf
 		setRobot (paramBoardSize p - 1, 0, Just $ bot A) $
 		Board {
 			boardContents 	= startingSpots,
-			boardRobots 	= [],
+			boardRobots 	= M.fromList [],
 			boardSize 		= paramBoardSize p,
 			boardTime 		= 0
 		}
@@ -101,11 +101,10 @@ setRobot (x, y, rob) b = delRobot $ b !!! (x, y)
 	delRobot (Just (GameSpot oldMaterial _))
 			= newB {boardRobots = newRobots rob}
 		where
-		pointNEQ (x2,y2,_) = (x, y) /= (x2, y2)
 		newB = b !-> (x, y) $ GameSpot oldMaterial rob
-		oldRemoved = Prelude.filter pointNEQ $ boardRobots newB
+		oldRemoved = M.delete (x, y) $ boardRobots newB
 		newRobots Nothing = oldRemoved
-		newRobots (Just robot) = (x, y, robot) : oldRemoved
+		newRobots (Just robot) = M.insert (x, y) robot oldRemoved
 
 --Updates the given spot to the new value
 updateSpot :: (Int, Int) -> BoardSpot -> Board -> Board
