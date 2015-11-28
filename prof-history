@@ -1,4 +1,8 @@
-Fixed issues; seems to be working.
-removeConflicting                           Infsabot.MoveConflictResolution      329           0    0.1    0.1    72.1   64.9
-Not sure about the efficiency fix I just did
-removeConflicting                           Infsabot.MoveConflictResolution      329           0    0.0    0.1    71.8   64.4
+Original
+getNeighborhood                    Infsabot.MoveConflictResolution      472      268774    2.0    3.3     9.6   11.1
+
+getNeighborhood                  Infsabot.MoveConflictResolution      471      268774    1.9    3.3    10.0   11.1
+
+getNeighborhood                  Infsabot.MoveConflictResolution      471      268774    1.5    3.5     8.2    9.6
+
+getNeighborhood                  Infsabot.MoveConflictResolution      471      268774    2.2    3.6     9.4    9.5

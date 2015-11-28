@@ -1,4 +1,4 @@
-module Infsabot.Tools (shuffle, allDifferent, sameElements, (!-!)) where
+module Infsabot.Tools (shuffle, allDifferent, sameElements, (!-!), spanNeq, propspanNeqWorks) where
 
 import System.Random
 import Data.Array.ST hiding (newArray)
@@ -6,6 +6,22 @@ import Control.Monad
 import Control.Monad.ST
 import Data.STRef
 import Data.List(sort, (\\))
+
+
+propspanNeqWorks :: Eq a => (a -> Bool) -> a -> [a] -> Bool
+propspanNeqWorks f x xs = spanNeq f x xs == let (a, b) = span f xs in (filter (/= x) a, b)
+
+spanNeq :: Eq a => (a -> Bool) -> a -> [a] -> ([a], [a])
+spanNeq _ _ [] = ([], [])
+spanNeq f y (x:xs)
+    | f x
+        = if x == y
+            then span f xs
+            else
+                let (a, b) = spanNeq f y xs
+                in (x:a, b)
+    | otherwise
+        = ([], x:xs)
 
 sameElements :: (Eq a) => [a] -> [a] -> Bool
 sameElements a b = length a == length b && (null $ a \\ b)

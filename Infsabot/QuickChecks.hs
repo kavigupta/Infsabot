@@ -23,6 +23,9 @@ import Data.DeriveTH(derive, makeArbitrary)
 --import Debug.Trace
 import Test.QuickCheck hiding (shuffle)
 
+checkCount :: Int
+checkCount = 4000
+
 doChecks :: (Testable prop) => Int -> prop -> IO ()
 doChecks n = quickCheckWith $ stdArgs { maxSuccess = n }
 
@@ -43,10 +46,10 @@ rListBoardCorr p b = sameElements (map (\((x, y), r) -> (x, y, r)) $ toList $ bo
 
 mcrChecks :: [IO ()]
 mcrChecks = [
-    putStrLn "Conflict Order Independence" >> doChecks 5000 propConflictOrderIndependence,
-    putStrLn "No Change In Length" >> doChecks 1000 propNoChangeInLength,
-    putStrLn "Symmetery Preserving" >> doChecks 5000 propSymmeteryPreserving,
-    putStrLn "Conflicts Resolved" >> doChecks 50000 (\x -> uncurry (==>) $ propConflictsResolved x)]
+    putStrLn "Conflict Order Independence" >> doChecks (5 * checkCount) propConflictOrderIndependence,
+    putStrLn "No Change In Length" >> doChecks checkCount propNoChangeInLength,
+    putStrLn "Symmetery Preserving" >> doChecks (5 * checkCount) propSymmeteryPreserving,
+    putStrLn "Conflicts Resolved" >> doChecks (50 * checkCount) (\x -> uncurry (==>) $ propConflictsResolved x)]
 
 propSymmeteryPreserving :: [RobotAndAction] -> Bool
 propSymmeteryPreserving raas

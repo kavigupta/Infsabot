@@ -1,33 +1,36 @@
-	Fri Nov 27 00:04 2015 Time and Allocation Profiling Report  (Final)
+	Fri Nov 27 19:20 2015 Time and Allocation Profiling Report  (Final)
 
-	   Build +RTS -xc -p -RTS -nochecks -notests -nobuild -stress
+	   Build +RTS -xc -p -RTS -notests -nochecks -nobuild -stress
 
-	total time  =        4.88 secs   (4880 ticks @ 1000 us, 1 processor)
-	total alloc = 3,882,708,472 bytes  (excludes profiling overheads)
+	total time  =        4.98 secs   (4977 ticks @ 1000 us, 1 processor)
+	total alloc = 4,309,446,296 bytes  (excludes profiling overheads)
 
 COST CENTRE                  MODULE                          %time %alloc
 
-inNeighborhood               Infsabot.MoveConflictResolution   9.7   13.9
-removeLocal                  Infsabot.MoveConflictResolution   9.6   10.7
-removeLcl                    Infsabot.MoveConflictResolution   7.7    9.5
-getNeighborhood              Infsabot.MoveConflictResolution   6.9    8.8
-removeLcl.effOther           Infsabot.MoveConflictResolution   6.9   10.2
-getRelPosition               Infsabot.MoveConflictResolution   5.5    0.0
-mappend                      Infsabot.MoveConflictResolution   3.6    4.4
-.!.                          Infsabot.Board                    3.5    7.2
-getNeighborhood.(...)        Infsabot.MoveConflictResolution   3.1    2.7
-firstConflicts               Infsabot.MoveConflictResolution   3.0    0.6
-columnSweeper.(...)          Infsabot.MoveConflictResolution   2.5    2.4
-getNeighborhood.(...)        Infsabot.MoveConflictResolution   2.5    1.9
+removeLocal                  Infsabot.MoveConflictResolution  10.4   10.5
+removeLcl                    Infsabot.MoveConflictResolution   8.7    9.4
+removeLcl.effOther           Infsabot.MoveConflictResolution   7.4   10.0
+inNeighborhood               Infsabot.MoveConflictResolution   7.2    9.9
+getNeighborhood              Infsabot.MoveConflictResolution   6.5   12.0
+spanNeq                      Infsabot.Tools                    5.0    4.0
+mappend                      Infsabot.MoveConflictResolution   5.0    4.3
+getNeighborhood.isBefore     Infsabot.MoveConflictResolution   2.9    3.1
+firstConflicts               Infsabot.MoveConflictResolution   2.8    0.6
+columnSweeper.(...)          Infsabot.MoveConflictResolution   2.7    2.3
+.!.                          Infsabot.Board                    2.5    6.5
 removeLcl.confThis           Infsabot.MoveConflictResolution   2.2    0.6
-conflictsBetween             Infsabot.MoveConflictResolution   1.8    1.9
-columnSweeper                Infsabot.MoveConflictResolution   1.5    1.4
-!->.newx                     Infsabot.Board                    1.4    2.0
-removeLocal.l'               Infsabot.MoveConflictResolution   1.2    1.1
-!->.newcontents              Infsabot.Board                    1.1    2.1
-setRobot.delRobot.oldRemoved Infsabot.Board                    1.1    0.8
-removeLcl.confC              Infsabot.MoveConflictResolution   0.9    1.6
-setRobot.delRobot            Infsabot.Board                    0.4    1.1
+conflictsBetween             Infsabot.MoveConflictResolution   2.1    1.9
+getNeighborhood.(...)        Infsabot.MoveConflictResolution   2.0    1.5
+columnSweeper                Infsabot.MoveConflictResolution   1.8    1.3
+getNeighborhood.isDuring     Infsabot.MoveConflictResolution   1.3    1.4
+getNeighborhood.before       Infsabot.MoveConflictResolution   1.2    0.0
+!->.newx                     Infsabot.Board                    1.2    1.8
+setRobot.delRobot.oldRemoved Infsabot.Board                    1.1    0.7
+getNeighborhood.during       Infsabot.MoveConflictResolution   1.1    0.0
+!->.newcontents              Infsabot.Board                    0.9    1.9
+removeLocal.l'               Infsabot.MoveConflictResolution   0.8    1.0
+removeLcl.confC              Infsabot.MoveConflictResolution   0.8    1.5
+setRobot.delRobot            Infsabot.Board                    0.3    1.0
 
 
                                                                                                          individual     inherited
@@ -63,17 +66,17 @@ MAIN                                              MAIN                          
      readWhatToDo.\                               Infsabot.Build                       292           1    0.0    0.0     0.0    0.0
  CAF                                              Infsabot.Tests                       285           0    0.0    0.0   100.0  100.0
   stressTest                                      Infsabot.Tests                       312           1    0.0    0.0   100.0  100.0
-   startingBoard                                  Infsabot.Board                       341           1    0.0    0.0     0.7    0.6
+   startingBoard                                  Infsabot.Board                       341           1    0.0    0.0     0.5    0.5
     startingBoard.bot                             Infsabot.Board                       375           2    0.0    0.0     0.0    0.0
      defaultRobot                                 Infsabot.Robot                       376           2    0.0    0.0     0.0    0.0
       paramInitialMaterial                        Infsabot.Parameters                  413           2    0.0    0.0     0.0    0.0
-    startingBoard.startingSpots                   Infsabot.Board                       352           1    0.0    0.0     0.7    0.6
-     startingBoard.startingSpots.ys               Infsabot.Board                       354          75    0.0    0.0     0.7    0.6
-      startingBoard.startingSpots.initialColor    Infsabot.Board                       356        5625    0.1    0.0     0.7    0.5
-       isPrime                                    Infsabot.MathTools                   357        5625    0.3    0.3     0.6    0.5
+    startingBoard.startingSpots                   Infsabot.Board                       352           1    0.0    0.0     0.5    0.5
+     startingBoard.startingSpots.ys               Infsabot.Board                       354          75    0.0    0.0     0.5    0.5
+      startingBoard.startingSpots.initialColor    Infsabot.Board                       356        5625    0.0    0.0     0.5    0.5
+       isPrime                                    Infsabot.MathTools                   357        5625    0.1    0.3     0.5    0.5
         isPrime.\                                 Infsabot.MathTools                   360       70603    0.1    0.1     0.1    0.1
-        isPrime.sqrtX                             Infsabot.MathTools                   359        5622    0.0    0.0     0.0    0.0
-        isPrime.maxFactor                         Infsabot.MathTools                   358        5622    0.1    0.1     0.1    0.1
+        isPrime.sqrtX                             Infsabot.MathTools                   359        5622    0.1    0.0     0.1    0.0
+        isPrime.maxFactor                         Infsabot.MathTools                   358        5622    0.2    0.1     0.2    0.1
       paramBoardSize                              Infsabot.Parameters                  355          75    0.0    0.0     0.0    0.0
      paramBoardSize                               Infsabot.Parameters                  353           1    0.0    0.0     0.0    0.0
     paramBoardSize                                Infsabot.Parameters                  347           3    0.0    0.0     0.0    0.0
@@ -97,497 +100,486 @@ MAIN                                              MAIN                          
          boardContents                            Infsabot.Board                       366           2    0.0    0.0     0.0    0.0
         inBoard                                   Infsabot.Board                       363           2    0.0    0.0     0.0    0.0
          boardSize                                Infsabot.Board                       364           4    0.0    0.0     0.0    0.0
-   boards                                         Infsabot.GamePlay                    322           1    0.0    0.0    98.9   98.9
-    play                                          Infsabot.GamePlay                    323         200    0.0    0.0    98.9   98.9
-     applyTimeTick                                Infsabot.GamePlay                    548         200    0.0    0.0     0.0    0.0
-      boardTime                                   Infsabot.Board                       598         193    0.0    0.0     0.0    0.0
-     play.hardDriveUpdater                        Infsabot.GamePlay                    541         200    0.0    0.0     0.0    0.0
-     play.actionCostApplier                       Infsabot.GamePlay                    533         200    0.0    0.0     2.9    5.0
-      applyActionCosts                            Infsabot.GamePlay                    534         200    0.1    0.1     2.9    5.0
-       applyActionCosts.applyActionCost           Infsabot.GamePlay                    535       19476    0.0    0.1     2.8    4.9
-        applyActionCosts.applyActionCost.cost     Infsabot.GamePlay                    604       12152    0.0    0.0     0.0    0.0
-         actionCost                               Infsabot.RobotAction                 605       12152    0.0    0.0     0.0    0.0
-          paramNoopCost                           Infsabot.Parameters                  718        9822    0.0    0.0     0.0    0.0
-          paramDigCost                            Infsabot.Parameters                  683         512    0.0    0.0     0.0    0.0
-          paramNewRobotCost                       Infsabot.Parameters                  607        1818    0.0    0.0     0.0    0.0
-          newMaterial                             Infsabot.RobotAction                 606        1818    0.0    0.0     0.0    0.0
-        applyActionCosts.applyActionCost.newRobot Infsabot.GamePlay                    601       12152    0.1    0.0     0.1    0.0
-         robotMaterial                            Infsabot.Robot                       603       12152    0.0    0.0     0.0    0.0
-        setRobot                                  Infsabot.Board                       536       19476    0.0    0.1     2.7    4.8
-         !!!                                      Infsabot.Board                       538       19476    0.0    0.1     0.6    1.5
-          boardContents                           Infsabot.Board                       558       19476    0.0    0.0     0.0    0.0
-          .!.                                     Infsabot.Board                       557           0    0.5    1.3     0.5    1.3
-          inBoard                                 Infsabot.Board                       539       19476    0.1    0.1     0.1    0.1
-           boardSize                              Infsabot.Board                       540       38952    0.0    0.0     0.0    0.0
-         setRobot.delRobot                        Infsabot.Board                       537       19476    0.1    0.4     2.1    3.3
-          setRobot.delRobot.oldRemoved            Infsabot.Board                       586       19476    0.4    0.3     0.4    0.3
-           boardRobots                            Infsabot.Board                       587       19476    0.0    0.0     0.0    0.0
-          setRobot.delRobot.newRobots             Infsabot.Board                       585       19476    0.3    0.2     0.3    0.2
-          setRobot.delRobot.newB                  Infsabot.Board                       563       19476    0.0    0.0     1.3    2.4
-           !->                                    Infsabot.Board                       564       19476    0.0    0.1     1.3    2.3
-            !->.oldx                              Infsabot.Board                       579       19476    0.0    0.0     0.3    0.7
-             boardContents                        Infsabot.Board                       581       19476    0.0    0.0     0.0    0.0
-             .!.                                  Infsabot.Board                       580           0    0.3    0.7     0.3    0.7
-            !->.newx                              Infsabot.Board                       578       19476    0.5    0.7     0.5    0.7
-            !->.newcontents                       Infsabot.Board                       567       19476    0.3    0.7     0.3    0.7
-             boardContents                        Infsabot.Board                       568       19476    0.0    0.0     0.0    0.0
-            inBoard                               Infsabot.Board                       565       19476    0.1    0.1     0.1    0.1
-             boardSize                            Infsabot.Board                       566       38952    0.0    0.0     0.0    0.0
-     play.(...)                                   Infsabot.GamePlay                    337         200    0.0    0.0     5.0    7.4
-      getRobotResults                             Infsabot.GamePlay                    339         200    0.1    0.1     1.5    2.4
-       getRobotResults.getRobotResult             Infsabot.GamePlay                    373       19476    0.0    0.1     1.4    2.3
+   boards                                         Infsabot.GamePlay                    322           1    0.0    0.0    99.2   99.0
+    play                                          Infsabot.GamePlay                    323         200    0.0    0.0    99.2   99.0
+     applyTimeTick                                Infsabot.GamePlay                    549         200    0.0    0.0     0.0    0.0
+      boardTime                                   Infsabot.Board                       599         193    0.0    0.0     0.0    0.0
+     play.hardDriveUpdater                        Infsabot.GamePlay                    542         200    0.0    0.0     0.0    0.0
+     play.actionCostApplier                       Infsabot.GamePlay                    534         200    0.0    0.0     2.7    4.5
+      applyActionCosts                            Infsabot.GamePlay                    535         200    0.1    0.1     2.7    4.5
+       applyActionCosts.applyActionCost           Infsabot.GamePlay                    536       19476    0.0    0.1     2.6    4.5
+        applyActionCosts.applyActionCost.cost     Infsabot.GamePlay                    605       12152    0.0    0.0     0.0    0.0
+         actionCost                               Infsabot.RobotAction                 606       12152    0.0    0.0     0.0    0.0
+          paramNoopCost                           Infsabot.Parameters                  704        9822    0.0    0.0     0.0    0.0
+          paramDigCost                            Infsabot.Parameters                  679         512    0.0    0.0     0.0    0.0
+          paramNewRobotCost                       Infsabot.Parameters                  608        1818    0.0    0.0     0.0    0.0
+          newMaterial                             Infsabot.RobotAction                 607        1818    0.0    0.0     0.0    0.0
+        applyActionCosts.applyActionCost.newRobot Infsabot.GamePlay                    602       12152    0.1    0.0     0.1    0.0
+         robotMaterial                            Infsabot.Robot                       604       12152    0.0    0.0     0.0    0.0
+        setRobot                                  Infsabot.Board                       537       19476    0.1    0.0     2.5    4.4
+         !!!                                      Infsabot.Board                       539       19476    0.1    0.1     0.4    1.3
+          boardContents                           Infsabot.Board                       559       19476    0.0    0.0     0.0    0.0
+          .!.                                     Infsabot.Board                       558           0    0.2    1.2     0.2    1.2
+          inBoard                                 Infsabot.Board                       540       19476    0.1    0.1     0.1    0.1
+           boardSize                              Infsabot.Board                       541       38952    0.0    0.0     0.0    0.0
+         setRobot.delRobot                        Infsabot.Board                       538       19476    0.1    0.4     2.0    3.0
+          setRobot.delRobot.oldRemoved            Infsabot.Board                       587       19476    0.3    0.2     0.3    0.2
+           boardRobots                            Infsabot.Board                       588       19476    0.0    0.0     0.0    0.0
+          setRobot.delRobot.newRobots             Infsabot.Board                       586       19476    0.4    0.2     0.4    0.2
+          setRobot.delRobot.newB                  Infsabot.Board                       564       19476    0.0    0.0     1.2    2.1
+           !->                                    Infsabot.Board                       565       19476    0.0    0.1     1.2    2.1
+            !->.oldx                              Infsabot.Board                       580       19476    0.0    0.0     0.2    0.6
+             boardContents                        Infsabot.Board                       582       19476    0.0    0.0     0.0    0.0
+             .!.                                  Infsabot.Board                       581           0    0.2    0.6     0.2    0.6
+            !->.newx                              Infsabot.Board                       579       19476    0.5    0.6     0.5    0.6
+            !->.newcontents                       Infsabot.Board                       568       19476    0.3    0.7     0.3    0.7
+             boardContents                        Infsabot.Board                       569       19476    0.0    0.0     0.0    0.0
+            inBoard                               Infsabot.Board                       566       19476    0.1    0.1     0.1    0.1
+             boardSize                            Infsabot.Board                       567       38952    0.0    0.0     0.0    0.0
+     play.(...)                                   Infsabot.GamePlay                    337         200    0.0    0.0     4.8    6.7
+      getRobotResults                             Infsabot.GamePlay                    339         200    0.1    0.1     1.8    2.2
+       getRobotResults.getRobotResult             Infsabot.GamePlay                    373       19476    0.1    0.1     1.6    2.1
         getRobotResults.getRobotResult.state      Infsabot.GamePlay                    383       19476    0.0    0.0     0.1    0.2
-         getKnownState                            Infsabot.GamePlay                    384       19476    0.0    0.2     0.0    0.2
+         getKnownState                            Infsabot.GamePlay                    384       19476    0.0    0.1     0.1    0.1
           robotMaterial                           Infsabot.Robot                       412        2880    0.0    0.0     0.0    0.0
           robotBirthdate                          Infsabot.Robot                       407       18964    0.0    0.0     0.0    0.0
           boardTime                               Infsabot.Board                       406       18964    0.0    0.0     0.0    0.0
-        startingBoard                             Infsabot.Board                       377           0    0.0    0.0     1.4    2.0
-         startingBoard.bot                        Infsabot.Board                       378           0    0.0    0.0     1.4    2.0
-          basicProgram                            Infsabot.RobotStrategy               379       19476    0.2    0.1     1.4    2.0
-           basicProgram.createSpawn               Infsabot.RobotStrategy               409        2880    0.0    0.0     0.0    0.0
+        startingBoard                             Infsabot.Board                       377           0    0.0    0.0     1.4    1.8
+         startingBoard.bot                        Infsabot.Board                       378           0    0.0    0.0     1.4    1.8
+          basicProgram                            Infsabot.RobotStrategy               379       19476    0.1    0.1     1.4    1.8
+           basicProgram.createSpawn               Infsabot.RobotStrategy               409        2880    0.1    0.0     0.1    0.0
             material                              Infsabot.RobotAction                 411        2880    0.0    0.0     0.0    0.0
-           stateAge                               Infsabot.RobotAction                 405       37928    0.0    0.0     0.0    0.0
-           basicProgram.mat                       Infsabot.RobotStrategy               381       19476    0.0    0.0     1.1    1.9
-            getRobotResults.getRobotResult.state  Infsabot.GamePlay                    385           0    0.0    0.0     1.1    1.9
-             getKnownState                        Infsabot.GamePlay                    386           0    0.0    0.0     1.1    1.9
-              getKnownState.peekFn                Infsabot.GamePlay                    387       19476    0.1    0.1     1.1    1.9
-               toSeenSpot                         Infsabot.Robot                       398       19476    0.1    0.0     0.1    0.0
+           stateAge                               Infsabot.RobotAction                 405       37928    0.1    0.0     0.1    0.0
+           basicProgram.mat                       Infsabot.RobotStrategy               381       19476    0.1    0.0     1.1    1.7
+            getRobotResults.getRobotResult.state  Infsabot.GamePlay                    385           0    0.0    0.0     1.0    1.7
+             getKnownState                        Infsabot.GamePlay                    386           0    0.0    0.0     1.0    1.7
+              getKnownState.peekFn                Infsabot.GamePlay                    387       19476    0.1    0.1     1.0    1.7
+               toSeenSpot                         Infsabot.Robot                       398       19476    0.0    0.0     0.0    0.0
                robotTeam                          Infsabot.Robot                       395       19476    0.0    0.0     0.0    0.0
                asSeen                             Infsabot.Base                        394       19476    0.0    0.0     0.0    0.0
-               applyOffset                        Infsabot.Base                        393       19476    0.1    0.1     0.1    0.1
-               !!!                                Infsabot.Board                       392       19476    0.0    0.1     0.7    1.5
+               applyOffset                        Infsabot.Base                        393       19476    0.0    0.1     0.0    0.1
+               !!!                                Infsabot.Board                       392       19476    0.1    0.1     0.7    1.3
                 boardContents                     Infsabot.Board                       400       19476    0.0    0.0     0.0    0.0
-                .!.                               Infsabot.Board                       399           0    0.7    1.3     0.7    1.3
-                inBoard                           Infsabot.Board                       396       19476    0.0    0.1     0.0    0.1
+                .!.                               Infsabot.Board                       399           0    0.5    1.2     0.5    1.2
+                inBoard                           Infsabot.Board                       396       19476    0.1    0.1     0.1    0.1
                  boardSize                        Infsabot.Board                       397       38952    0.0    0.0     0.0    0.0
-               getKnownState.peekFn.offs          Infsabot.GamePlay                    390       19476    0.1    0.1     0.1    0.1
+               getKnownState.peekFn.offs          Infsabot.GamePlay                    390       19476    0.0    0.1     0.0    0.1
                getKnownState.peekFn.withinRange   Infsabot.GamePlay                    388       19476    0.0    0.1     0.1    0.1
                 lineOfSight                       Infsabot.Parameters                  391       38952    0.0    0.0     0.0    0.0
                 squareNorm                        Infsabot.Base                        389       19476    0.1    0.0     0.1    0.0
             peekAtSpot                            Infsabot.RobotAction                 382       19476    0.0    0.0     0.0    0.0
-           ==                                     Infsabot.Base                        380       19476    0.0    0.0     0.0    0.0
-        robotProgram                              Infsabot.Robot                       374       19476    0.0    0.0     0.0    0.0
+           ==                                     Infsabot.Base                        380       19476    0.1    0.0     0.1    0.0
+        robotProgram                              Infsabot.Robot                       374       19476    0.1    0.0     0.1    0.0
        boardRobots                                Infsabot.Board                       340         200    0.0    0.0     0.0    0.0
-      updateAllHardDrives                         Infsabot.GamePlay                    338         200    0.2    0.1     3.5    5.0
-       updateAllHardDrives.updateHardDrive        Infsabot.GamePlay                    542       19476    0.0    0.0     3.3    4.9
-        setRobot                                  Infsabot.Board                       543       19476    0.0    0.1     3.2    4.9
-         !!!                                      Infsabot.Board                       545       19476    0.0    0.1     0.9    1.5
-          boardContents                           Infsabot.Board                       550       19476    0.0    0.0     0.0    0.0
-          .!.                                     Infsabot.Board                       549           0    0.9    1.3     0.9    1.3
-          inBoard                                 Infsabot.Board                       546       19476    0.0    0.1     0.0    0.1
-           boardSize                              Infsabot.Board                       547       38952    0.0    0.0     0.0    0.0
-         setRobot.delRobot                        Infsabot.Board                       544       19476    0.1    0.4     2.3    3.3
-          setRobot.delRobot.oldRemoved            Infsabot.Board                       589       19476    0.4    0.3     0.4    0.3
-           boardRobots                            Infsabot.Board                       590       19476    0.0    0.0     0.0    0.0
-          setRobot.delRobot.newRobots             Infsabot.Board                       588       19476    0.2    0.2     0.2    0.2
-          setRobot.delRobot.newB                  Infsabot.Board                       551       19476    0.0    0.0     1.5    2.4
-           !->                                    Infsabot.Board                       552       19476    0.0    0.1     1.5    2.3
-            !->.oldx                              Infsabot.Board                       560       19476    0.0    0.0     0.4    0.7
-             boardContents                        Infsabot.Board                       562       19476    0.0    0.0     0.0    0.0
-             .!.                                  Infsabot.Board                       561           0    0.4    0.7     0.4    0.7
-            !->.newx                              Infsabot.Board                       559       19476    0.6    0.7     0.6    0.7
-            !->.newcontents                       Infsabot.Board                       555       19476    0.5    0.7     0.5    0.7
-             boardContents                        Infsabot.Board                       556       19476    0.0    0.0     0.0    0.0
-            inBoard                               Infsabot.Board                       553       19476    0.0    0.1     0.0    0.1
-             boardSize                            Infsabot.Board                       554       38952    0.0    0.0     0.0    0.0
+      updateAllHardDrives                         Infsabot.GamePlay                    338         200    0.0    0.1     3.0    4.5
+       updateAllHardDrives.updateHardDrive        Infsabot.GamePlay                    543       19476    0.0    0.0     3.0    4.4
+        setRobot                                  Infsabot.Board                       544       19476    0.0    0.0     3.0    4.4
+         !!!                                      Infsabot.Board                       546       19476    0.0    0.1     0.7    1.3
+          boardContents                           Infsabot.Board                       551       19476    0.0    0.0     0.0    0.0
+          .!.                                     Infsabot.Board                       550           0    0.6    1.2     0.6    1.2
+          inBoard                                 Infsabot.Board                       547       19476    0.0    0.1     0.1    0.1
+           boardSize                              Infsabot.Board                       548       38952    0.1    0.0     0.1    0.0
+         setRobot.delRobot                        Infsabot.Board                       545       19476    0.1    0.4     2.2    3.0
+          setRobot.delRobot.oldRemoved            Infsabot.Board                       590       19476    0.5    0.3     0.5    0.3
+           boardRobots                            Infsabot.Board                       591       19476    0.0    0.0     0.0    0.0
+          setRobot.delRobot.newRobots             Infsabot.Board                       589       19476    0.4    0.2     0.4    0.2
+          setRobot.delRobot.newB                  Infsabot.Board                       552       19476    0.0    0.0     1.2    2.1
+           !->                                    Infsabot.Board                       553       19476    0.0    0.1     1.2    2.1
+            !->.oldx                              Infsabot.Board                       561       19476    0.0    0.0     0.2    0.6
+             boardContents                        Infsabot.Board                       563       19476    0.0    0.0     0.0    0.0
+             .!.                                  Infsabot.Board                       562           0    0.2    0.6     0.2    0.6
+            !->.newx                              Infsabot.Board                       560       19476    0.3    0.6     0.3    0.6
+            !->.newcontents                       Infsabot.Board                       556       19476    0.4    0.7     0.5    0.7
+             boardContents                        Infsabot.Board                       557       19476    0.0    0.0     0.0    0.0
+            inBoard                               Infsabot.Board                       554       19476    0.1    0.1     0.1    0.1
+             boardSize                            Infsabot.Board                       555       38952    0.0    0.0     0.0    0.0
        updateAllHardDrives.removeState            Infsabot.GamePlay                    372       19476    0.0    0.0     0.0    0.0
      play.actions                                 Infsabot.GamePlay                    336         200    0.0    0.0     0.0    0.0
-     play.resolvedAndSortedActions                Infsabot.GamePlay                    327         200    0.6    0.6    88.5   82.4
-      orderOfOperations                           Infsabot.RobotAction                 518      218604    0.0    0.0     0.0    0.0
-      possibleAction                              Infsabot.GamePlay                    371       34996    0.1    0.1     0.1    0.1
-       possibleAction.tryNoop                     Infsabot.GamePlay                    685        2478    0.0    0.0     0.0    0.0
-       possibleAction.downgrade                   Infsabot.GamePlay                    684       16400    0.0    0.1     0.0    0.1
-        newMaterial                               Infsabot.RobotAction                 722       13042    0.0    0.0     0.0    0.0
+     play.resolvedAndSortedActions                Infsabot.GamePlay                    327         200    0.6    0.6    89.4   84.1
+      orderOfOperations                           Infsabot.RobotAction                 519      218604    0.0    0.0     0.0    0.0
+      possibleAction                              Infsabot.GamePlay                    371       34996    0.0    0.1     0.1    0.1
+       possibleAction.tryNoop                     Infsabot.GamePlay                    681        2478    0.0    0.0     0.0    0.0
+       possibleAction.downgrade                   Infsabot.GamePlay                    680       16400    0.0    0.0     0.0    0.0
+        newMaterial                               Infsabot.RobotAction                 711       13042    0.0    0.0     0.0    0.0
        robotMaterial                              Infsabot.Robot                       415       34996    0.0    0.0     0.0    0.0
        actionCost                                 Infsabot.RobotAction                 408       34996    0.0    0.0     0.0    0.0
-        paramNoopCost                             Infsabot.Parameters                  686        2478    0.0    0.0     0.0    0.0
-        paramDigCost                              Infsabot.Parameters                  651         512    0.0    0.0     0.0    0.0
-        paramMoveCost                             Infsabot.Parameters                  602       16084    0.0    0.0     0.0    0.0
+        paramNoopCost                             Infsabot.Parameters                  682        2478    0.0    0.0     0.0    0.0
+        paramDigCost                              Infsabot.Parameters                  649         512    0.0    0.0     0.0    0.0
+        paramMoveCost                             Infsabot.Parameters                  603       16084    0.0    0.0     0.0    0.0
         paramNewRobotCost                         Infsabot.Parameters                  414       15922    0.0    0.0     0.0    0.0
         newMaterial                               Infsabot.RobotAction                 410       15922    0.0    0.0     0.0    0.0
-      removeConflicting                           Infsabot.MoveConflictResolution      329           0    0.0    0.1    87.8   81.6
-       organizeRobots                             Infsabot.MoveConflictResolution      335           0    0.5    0.4     0.9    0.6
-        organizeRobots.yc                         Infsabot.MoveConflictResolution      608       26710    0.1    0.0     0.1    0.0
-        organizeRobots.\                          Infsabot.MoveConflictResolution      466       19476    0.0    0.0     0.3    0.2
-         finalLocations2                          Infsabot.MoveConflictResolution      623       19108    0.0    0.0     0.3    0.2
-          finalLocations2.locs                    Infsabot.MoveConflictResolution      624       19108    0.1    0.1     0.3    0.2
-           finalLocations2.locs.newy              Infsabot.MoveConflictResolution      707        1986    0.0    0.0     0.0    0.0
-           finalLocations2.locs.newy              Infsabot.MoveConflictResolution      652       10513    0.0    0.0     0.0    0.0
-           finalLocations2.locs.(...)             Infsabot.MoveConflictResolution      632       13332    0.1    0.0     0.2    0.1
-            robotTeam                             Infsabot.Robot                       635       13332    0.0    0.0     0.0    0.0
-            getOffset                             Infsabot.Base                        634       13332    0.0    0.0     0.0    0.0
-            applyOffset                           Infsabot.Base                        633       13332    0.1    0.0     0.1    0.0
-           finalLocations2.locs.newx              Infsabot.MoveConflictResolution      631       13332    0.0    0.0     0.0    0.0
-           finalLocations2.locs.(...)             Infsabot.MoveConflictResolution      626        2748    0.0    0.0     0.0    0.0
-            newDirection                          Infsabot.RobotAction                 630        2748    0.0    0.0     0.0    0.0
-            robotTeam                             Infsabot.Robot                       629        2748    0.0    0.0     0.0    0.0
-            getOffset                             Infsabot.Base                        628        2748    0.0    0.0     0.0    0.0
-            applyOffset                           Infsabot.Base                        627        2748    0.0    0.0     0.0    0.0
-           finalLocations2.locs.newx              Infsabot.MoveConflictResolution      625        2748    0.0    0.0     0.0    0.0
+      removeConflicting                           Infsabot.MoveConflictResolution      329           0    0.1    0.1    88.6   83.4
+       organizeRobots                             Infsabot.MoveConflictResolution      335           0    0.5    0.3     0.9    0.5
+        organizeRobots.yc                         Infsabot.MoveConflictResolution      609       26710    0.0    0.0     0.0    0.0
+        organizeRobots.\                          Infsabot.MoveConflictResolution      440       19476    0.0    0.0     0.3    0.2
+         finalLocations2                          Infsabot.MoveConflictResolution      616       19108    0.0    0.0     0.3    0.2
+          finalLocations2.locs                    Infsabot.MoveConflictResolution      617       19108    0.1    0.1     0.3    0.2
+           finalLocations2.locs.newy              Infsabot.MoveConflictResolution      694        1986    0.0    0.0     0.0    0.0
+           finalLocations2.locs.newy              Infsabot.MoveConflictResolution      650       10513    0.0    0.0     0.0    0.0
+           finalLocations2.locs.(...)             Infsabot.MoveConflictResolution      624        2748    0.0    0.0     0.0    0.0
+            newDirection                          Infsabot.RobotAction                 628        2748    0.0    0.0     0.0    0.0
+            robotTeam                             Infsabot.Robot                       627        2748    0.0    0.0     0.0    0.0
+            getOffset                             Infsabot.Base                        626        2748    0.0    0.0     0.0    0.0
+            applyOffset                           Infsabot.Base                        625        2748    0.0    0.0     0.0    0.0
+           finalLocations2.locs.newx              Infsabot.MoveConflictResolution      623        2748    0.0    0.0     0.0    0.0
+           finalLocations2.locs.(...)             Infsabot.MoveConflictResolution      619       13332    0.0    0.0     0.2    0.1
+            robotTeam                             Infsabot.Robot                       622       13332    0.1    0.0     0.1    0.0
+            getOffset                             Infsabot.Base                        621       13332    0.0    0.0     0.0    0.0
+            applyOffset                           Infsabot.Base                        620       13332    0.1    0.0     0.1    0.0
+           finalLocations2.locs.newx              Infsabot.MoveConflictResolution      618       13332    0.0    0.0     0.0    0.0
         organizeRobots.xc                         Infsabot.MoveConflictResolution      370       77128    0.1    0.0     0.1    0.0
-       completeColumnSweeper                      Infsabot.MoveConflictResolution      330         314    0.0    0.0    86.8   81.0
-        completeColumnSweeper.new                 Infsabot.MoveConflictResolution      509         314    0.0    0.0     0.0    0.0
-        completeColumnSweeper.(...)               Infsabot.MoveConflictResolution      332         314    0.0    0.0    86.8   81.0
-         columnSweeper                            Infsabot.MoveConflictResolution      333       64433    1.5    1.4    86.8   81.0
-          columnSweeper.u                         Infsabot.MoveConflictResolution      717        2263    0.0    0.0     0.0    0.0
-          columnSweeper.(...)                     Infsabot.MoveConflictResolution      715        2263    0.0    0.0     0.0    0.0
-          columnSweeper.v                         Infsabot.MoveConflictResolution      714        2263    0.0    0.0     0.0    0.0
-          columnSweeper.bccols'                   Infsabot.MoveConflictResolution      517       61856    0.1    0.0     0.1    0.0
-          columnSweeper.a'                        Infsabot.MoveConflictResolution      510       61856    0.1    0.0     0.1    0.0
-          columnSweeper.resweepThis               Infsabot.MoveConflictResolution      506       61633    0.1    0.0     0.1    0.0
-          columnSweeper.cols                      Infsabot.MoveConflictResolution      505       61856    0.2    0.0     0.2    0.0
-          columnSweeper.c'                        Infsabot.MoveConflictResolution      494       61856    0.0    0.0     0.0    0.0
-          columnSweeper.c                         Infsabot.MoveConflictResolution      476       61856    0.0    0.0     0.0    0.0
-          columnSweeper.b                         Infsabot.MoveConflictResolution      462       61856    0.0    0.0     0.0    0.0
-          columnSweeper.(...)                     Infsabot.MoveConflictResolution      426       61856    0.1    0.0     0.9    0.2
-           !-!                                    Infsabot.Tools                       427      368565    0.8    0.2     0.8    0.2
-          columnSweeper.a                         Infsabot.MoveConflictResolution      425       61856    0.0    0.0     0.0    0.0
-          columnSweeper.(...)                     Infsabot.MoveConflictResolution      420       61856    0.0    0.1    81.5   77.1
-           removeLocalCompletely                  Infsabot.MoveConflictResolution      421       62757    0.4    0.4    81.4   77.0
-            removeLocalCompletely.v               Infsabot.MoveConflictResolution      713         858    0.0    0.0     0.0    0.0
-            removeLocalCompletely.(...)           Infsabot.MoveConflictResolution      712         901    0.0    0.0     0.0    0.0
-            removeLocalCompletely.u               Infsabot.MoveConflictResolution      711         901    0.0    0.0     0.0    0.0
-            removeLocalCompletely.redoH           Infsabot.MoveConflictResolution      507       62456    0.1    0.0     0.1    0.0
-            removeLocalCompletely.new             Infsabot.MoveConflictResolution      483       62757    0.1    0.0     0.1    0.0
-            removeLocalCompletely.(...)           Infsabot.MoveConflictResolution      423       62757    0.0    0.0    80.9   76.6
-             removeLocal                          Infsabot.MoveConflictResolution      424      333995    9.6   10.7    80.8   76.6
-              removeLocal.removeCurrent           Infsabot.MoveConflictResolution      520      268774    0.3    0.0     0.3    0.0
-              removeLocal.mLnext                  Infsabot.MoveConflictResolution      516      268774    0.2    0.0     0.2    0.0
-              removeLocal.lprev                   Infsabot.MoveConflictResolution      513      268774    0.2    0.0     0.2    0.0
-              removeLocal.l'                      Infsabot.MoveConflictResolution      512      268774    1.2    1.1     1.4    1.1
-               noopifyIf                          Infsabot.MoveConflictResolution      519      268774    0.1    0.0     0.2    0.0
-                noopify                           Infsabot.MoveConflictResolution      699        3803    0.0    0.0     0.0    0.0
-                 finalLocations2                  Infsabot.MoveConflictResolution      703        3781    0.0    0.0     0.0    0.0
-                  finalLocations2.locs            Infsabot.MoveConflictResolution      704        3781    0.0    0.0     0.0    0.0
-                 noopify.newRobAct                Infsabot.MoveConflictResolution      700        3803    0.0    0.0     0.0    0.0
-              removeLocal.l''                     Infsabot.MoveConflictResolution      511      268774    0.2    0.0     0.2    0.0
-              removeLocal.redoNextH               Infsabot.MoveConflictResolution      508      250595    0.2    0.0     0.2    0.0
-              removeLocal.rnext                   Infsabot.MoveConflictResolution      501      268774    0.1    0.0     0.1    0.0
-              removeLocal.mRnext                  Infsabot.MoveConflictResolution      500      268774    0.2    0.0     0.2    0.0
-              removeLocal.rprev                   Infsabot.MoveConflictResolution      497      268774    0.2    0.0     0.2    0.0
-              removeLocal.r'                      Infsabot.MoveConflictResolution      496      268774    0.5    0.2     0.5    0.2
-              removeLocal.r''                     Infsabot.MoveConflictResolution      495      268774    0.1    0.0     0.1    0.0
-              removeLocal.cnext                   Infsabot.MoveConflictResolution      490      268774    0.1    0.0     0.1    0.0
-              removeLocal.mCnext                  Infsabot.MoveConflictResolution      489      268774    0.1    0.0     0.1    0.0
-              removeLocal.cprev                   Infsabot.MoveConflictResolution      486      268774    0.1    0.0     0.1    0.0
-              removeLocal.c'                      Infsabot.MoveConflictResolution      485      268774    0.4    0.2     0.4    0.2
-              removeLocal.c''                     Infsabot.MoveConflictResolution      484      268774    0.1    0.0     0.1    0.0
-              removeLocal.effect                  Infsabot.MoveConflictResolution      448      268774    0.1    0.0     0.1    0.0
-              removeLocal.effect'                 Infsabot.MoveConflictResolution      446      268774    0.1    0.2     0.9    0.8
-               mappend                            Infsabot.MoveConflictResolution      447      268774    0.7    0.6     0.7    0.6
-              removeLocal.(...)                   Infsabot.MoveConflictResolution      434      268774    0.1    0.2    65.0   63.1
-               removeLcl                          Infsabot.MoveConflictResolution      435      268774    7.7    9.5    64.9   62.8
-                removeLcl.lprev                   Infsabot.MoveConflictResolution      514      268774    0.2    0.0     0.2    0.0
-                removeLcl.rrest                   Infsabot.MoveConflictResolution      503      268774    0.0    0.0     0.0    0.0
-                removeLcl.ruse'                   Infsabot.MoveConflictResolution      502      268774    0.3    0.2     0.4    0.2
-                 noopifyIf                        Infsabot.MoveConflictResolution      721       84578    0.0    0.0     0.0    0.0
-                  noopify                         Infsabot.MoveConflictResolution      727         273    0.0    0.0     0.0    0.0
-                   finalLocations2                Infsabot.MoveConflictResolution      729         273    0.0    0.0     0.0    0.0
-                    finalLocations2.locs          Infsabot.MoveConflictResolution      730         273    0.0    0.0     0.0    0.0
-                   noopify.newRobAct              Infsabot.MoveConflictResolution      728         273    0.0    0.0     0.0    0.0
-                removeLcl.rprev                   Infsabot.MoveConflictResolution      498      268774    0.2    0.0     0.2    0.0
-                removeLcl.crest                   Infsabot.MoveConflictResolution      492      268774    0.0    0.0     0.0    0.0
-                removeLcl.cuse'                   Infsabot.MoveConflictResolution      491      268774    0.7    0.9     0.8    0.9
-                 noopifyIf                        Infsabot.MoveConflictResolution      644      317917    0.1    0.0     0.1    0.0
-                  noopify                         Infsabot.MoveConflictResolution      701        3600    0.0    0.0     0.0    0.0
-                   finalLocations2                Infsabot.MoveConflictResolution      705        3587    0.0    0.0     0.0    0.0
-                    finalLocations2.locs          Infsabot.MoveConflictResolution      706        3587    0.0    0.0     0.0    0.0
-                   noopify.newRobAct              Infsabot.MoveConflictResolution      702        3600    0.0    0.0     0.0    0.0
-                removeLcl.cprev                   Infsabot.MoveConflictResolution      487      268774    0.1    0.0     0.1    0.0
-                removeLcl.confOtherR              Infsabot.MoveConflictResolution      482      268774    0.3    0.2     0.3    0.2
-                removeLcl.confOtherC              Infsabot.MoveConflictResolution      481      268774    0.6    0.7     0.6    0.7
-                removeLcl.confOtherL              Infsabot.MoveConflictResolution      479      268774    0.6    0.4     0.6    0.4
-                removeLcl.effOther                Infsabot.MoveConflictResolution      477      268774    6.9   10.2     9.7   13.7
-                 effectOf                         Infsabot.MoveConflictResolution      636      579963    0.3    0.4     0.4    0.4
-                  effectOf.y                      Infsabot.MoveConflictResolution      695        2021    0.0    0.0     0.0    0.0
-                  effectOf.(...)                  Infsabot.MoveConflictResolution      692        3820    0.0    0.0     0.0    0.0
-                   robotTeam                      Infsabot.Robot                       694        3820    0.0    0.0     0.0    0.0
-                   getOffset                      Infsabot.Base                        693        3820    0.0    0.0     0.0    0.0
-                  effectOf.x                      Infsabot.MoveConflictResolution      691        3820    0.0    0.0     0.0    0.0
-                 mappend                          Infsabot.MoveConflictResolution      478     1386285    2.4    3.1     2.4    3.1
-                removeLcl.(...)                   Infsabot.MoveConflictResolution      470      268774    0.1    0.0    10.3    9.3
-                 getNeighborhood                  Infsabot.MoveConflictResolution      471      268774    1.8    2.8    10.2    9.3
-                  getNeighborhood.after           Infsabot.MoveConflictResolution      504      268774    0.3    0.0     0.3    0.0
-                  getNeighborhood.before          Infsabot.MoveConflictResolution      499      268774    0.3    0.0     0.3    0.0
-                  getNeighborhood.(...)           Infsabot.MoveConflictResolution      475      268774    0.9    0.8     4.6    3.7
-                   getNeighborhood.(...).\        Infsabot.MoveConflictResolution      617      399988    0.3    0.3     3.7    2.9
-                    getRelPosition                Infsabot.MoveConflictResolution      619      399988    1.3    0.0     3.3    2.5
-                     inNeighborhood               Infsabot.MoveConflictResolution      620      399988    1.9    2.5     1.9    2.5
-                    ==                            Infsabot.MoveConflictResolution      618      399988    0.1    0.0     0.1    0.0
-                  getNeighborhood.duringafter     Infsabot.MoveConflictResolution      474      268774    0.1    0.0     0.1    0.0
-                  getNeighborhood.(...)           Infsabot.MoveConflictResolution      473      268774    0.5    0.6     2.8    2.9
-                   getNeighborhood.(...).\        Infsabot.MoveConflictResolution      653      314250    0.3    0.3     2.3    2.3
-                    getRelPosition                Infsabot.MoveConflictResolution      655      314250    0.8    0.0     2.0    2.0
-                     inNeighborhood               Infsabot.MoveConflictResolution      656      314250    1.2    2.0     1.2    2.0
-                    ==                            Infsabot.MoveConflictResolution      654      314250    0.1    0.0     0.1    0.0
-                  getNeighborhood.during          Infsabot.MoveConflictResolution      472      268774    0.2    0.0     0.2    0.0
-                removeLcl.rneigh                  Infsabot.MoveConflictResolution      469      268774    0.1    0.0     0.1    0.0
-                removeLcl.confR                   Infsabot.MoveConflictResolution      468      268774    0.4    0.5     1.4    0.9
-                 conflictsBetween                 Infsabot.MoveConflictResolution      719       84578    0.3    0.3     1.0    0.4
-                  firstConflicts                  Infsabot.MoveConflictResolution      720      167552    0.7    0.1     0.7    0.1
-                removeLcl.(...)                   Infsabot.MoveConflictResolution      456      268774    0.1    0.0    13.4   12.0
-                 getNeighborhood                  Infsabot.MoveConflictResolution      457      268774    2.6    3.1    13.3   12.0
-                  getNeighborhood.after           Infsabot.MoveConflictResolution      493      268774    0.3    0.0     0.3    0.0
-                  getNeighborhood.before          Infsabot.MoveConflictResolution      488      268774    0.3    0.0     0.3    0.0
-                  getNeighborhood.(...)           Infsabot.MoveConflictResolution      461      268774    1.1    0.8     4.3    3.8
-                   getNeighborhood.(...).\        Infsabot.MoveConflictResolution      463      414620    0.5    0.3     3.2    2.9
-                    getRelPosition                Infsabot.MoveConflictResolution      465      414620    0.9    0.0     2.5    2.6
-                     inNeighborhood               Infsabot.MoveConflictResolution      467      414620    1.7    2.6     1.7    2.6
-                    ==                            Infsabot.MoveConflictResolution      464      414620    0.1    0.0     0.1    0.0
-                  getNeighborhood.duringafter     Infsabot.MoveConflictResolution      460      268774    0.3    0.0     0.3    0.0
-                  getNeighborhood.(...)           Infsabot.MoveConflictResolution      459      268774    1.5    1.3     5.3    5.1
-                   getNeighborhood.(...).\        Infsabot.MoveConflictResolution      637      517716    0.3    0.4     3.8    3.8
-                    getRelPosition                Infsabot.MoveConflictResolution      639      517716    1.0    0.0     3.3    3.3
-                     inNeighborhood               Infsabot.MoveConflictResolution      640      517716    2.3    3.3     2.3    3.3
-                    ==                            Infsabot.MoveConflictResolution      638      517716    0.2    0.0     0.2    0.0
-                  getNeighborhood.during          Infsabot.MoveConflictResolution      458      268774    0.1    0.0     0.1    0.0
-                removeLcl.cneigh                  Infsabot.MoveConflictResolution      455      268774    0.0    0.0     0.0    0.0
-                removeLcl.confC                   Infsabot.MoveConflictResolution      454      268774    0.9    1.6     3.3    2.9
-                 conflictsBetween                 Infsabot.MoveConflictResolution      641      317917    0.9    1.0     2.4    1.4
-                  firstConflicts                  Infsabot.MoveConflictResolution      642      633889    1.5    0.3     1.5    0.3
-                removeLcl.confL                   Infsabot.MoveConflictResolution      453      268774    0.4    0.9     1.8    1.7
-                 conflictsBetween                 Infsabot.MoveConflictResolution      621      177468    0.6    0.6     1.4    0.8
-                  firstConflicts                  Infsabot.MoveConflictResolution      622      354765    0.8    0.2     0.8    0.2
-                removeLcl.confThis                Infsabot.MoveConflictResolution      452      268774    2.2    0.6     2.2    0.6
-                removeLcl.effect                  Infsabot.MoveConflictResolution      449      268774    0.8    0.7     1.6    1.5
-                 effectOf                         Infsabot.MoveConflictResolution      451      268774    0.3    0.2     0.3    0.2
-                  effectOf.y                      Infsabot.MoveConflictResolution      710        1560    0.0    0.0     0.0    0.0
-                  effectOf.(...)                  Infsabot.MoveConflictResolution      688        3342    0.0    0.0     0.0    0.0
-                   robotTeam                      Infsabot.Robot                       690        3342    0.0    0.0     0.0    0.0
-                   getOffset                      Infsabot.Base                        689        3342    0.0    0.0     0.0    0.0
-                  effectOf.x                      Infsabot.MoveConflictResolution      687        3342    0.0    0.0     0.0    0.0
-                 mappend                          Infsabot.MoveConflictResolution      450      268774    0.5    0.6     0.5    0.6
-                removeLcl.lrest                   Infsabot.MoveConflictResolution      444      268774    0.0    0.0     0.0    0.0
-                removeLcl.(...)                   Infsabot.MoveConflictResolution      438      268774    0.1    0.0     9.7    7.8
-                 getNeighborhood                  Infsabot.MoveConflictResolution      439      268774    2.5    2.9     9.5    7.8
-                  getNeighborhood.before          Infsabot.MoveConflictResolution      515      268774    0.3    0.0     0.3    0.0
-                  getNeighborhood.after           Infsabot.MoveConflictResolution      445      268774    0.2    0.0     0.2    0.0
-                  getNeighborhood.(...)           Infsabot.MoveConflictResolution      443      268774    0.4    0.3     2.5    1.7
-                   getNeighborhood.(...).\        Infsabot.MoveConflictResolution      609      203553    0.2    0.2     2.1    1.4
-                    getRelPosition                Infsabot.MoveConflictResolution      611      203553    0.6    0.0     1.9    1.3
-                     inNeighborhood               Infsabot.MoveConflictResolution      612      203553    1.3    1.3     1.3    1.3
-                    ==                            Infsabot.MoveConflictResolution      610      203553    0.0    0.0     0.0    0.0
-                  getNeighborhood.duringafter     Infsabot.MoveConflictResolution      442      268774    0.1    0.0     0.1    0.0
-                  getNeighborhood.(...)           Infsabot.MoveConflictResolution      441      268774    1.1    0.9     3.7    3.2
-                   getNeighborhood.(...).\        Infsabot.MoveConflictResolution      613      337047    0.2    0.3     2.6    2.4
-                    getRelPosition                Infsabot.MoveConflictResolution      615      337047    0.9    0.0     2.2    2.1
-                     inNeighborhood               Infsabot.MoveConflictResolution      616      337047    1.3    2.1     1.3    2.1
-                    ==                            Infsabot.MoveConflictResolution      614      337047    0.2    0.0     0.2    0.0
-                  getNeighborhood.during          Infsabot.MoveConflictResolution      440      268774    0.2    0.0     0.2    0.0
-                removeLcl.lneigh                  Infsabot.MoveConflictResolution      437      268774    0.1    0.0     0.1    0.0
-                removeLcl.luse'                   Infsabot.MoveConflictResolution      436      268774    0.4    0.5     0.5    0.5
-                 noopifyIf                        Infsabot.MoveConflictResolution      643      177468    0.1    0.0     0.1    0.0
-                  noopify                         Infsabot.MoveConflictResolution      723         548    0.0    0.0     0.0    0.0
-                   finalLocations2                Infsabot.MoveConflictResolution      725         548    0.0    0.0     0.0    0.0
-                    finalLocations2.locs          Infsabot.MoveConflictResolution      726         548    0.0    0.0     0.0    0.0
-                   noopify.newRobAct              Infsabot.MoveConflictResolution      724         548    0.0    0.0     0.0    0.0
-              removeLocal.lnext                   Infsabot.MoveConflictResolution      433      268774    0.1    0.0     0.1    0.0
-              removeLocal.(...)                   Infsabot.MoveConflictResolution      432      268774    0.0    0.2     0.0    0.2
-              removeLocal.redoNextV               Infsabot.MoveConflictResolution      431      268774    0.1    0.0     0.1    0.0
-              removeLocal.(...)                   Infsabot.MoveConflictResolution      430      268774    0.2    0.3     0.2    0.3
-               removeLocal.(...).newL'            Infsabot.MoveConflictResolution      716        2464    0.0    0.0     0.0    0.0
-               removeLocal.(...).newR'            Infsabot.MoveConflictResolution      709        2464    0.0    0.0     0.0    0.0
-               removeLocal.(...).newC'            Infsabot.MoveConflictResolution      708        2464    0.0    0.0     0.0    0.0
-               removeLocal.(...).(...)            Infsabot.MoveConflictResolution      698        2464    0.0    0.0     0.0    0.0
-               removeLocal.(...).secondEffect     Infsabot.MoveConflictResolution      697        2464    0.0    0.0     0.0    0.0
-               mappend                            Infsabot.MoveConflictResolution      696        2464    0.0    0.0     0.0    0.0
-              removeLocal.effect''                Infsabot.MoveConflictResolution      429      268774    0.1    0.0     0.1    0.0
-              trace                               Infsabot.Debug                       428      268774    0.2    0.0     0.2    0.0
-            removeLocalCompletely.redoV           Infsabot.MoveConflictResolution      422       62757    0.0    0.0     0.0    0.0
-          columnSweeper.b'                        Infsabot.MoveConflictResolution      419       61856    0.0    0.0     0.0    0.0
-          columnSweeper.(...)                     Infsabot.MoveConflictResolution      418       61856    2.5    2.4     2.5    2.4
-          columnSweeper.resweepNext               Infsabot.MoveConflictResolution      417       61856    0.0    0.0     0.0    0.0
-          trace                                   Infsabot.Debug                       416       61856    0.0    0.0     0.0    0.0
+       completeColumnSweeper                      Infsabot.MoveConflictResolution      330         314    0.0    0.0    87.6   82.9
+        completeColumnSweeper.new                 Infsabot.MoveConflictResolution      510         314    0.0    0.0     0.0    0.0
+        completeColumnSweeper.(...)               Infsabot.MoveConflictResolution      332         314    0.0    0.0    87.6   82.9
+         columnSweeper                            Infsabot.MoveConflictResolution      333       69402    1.8    1.3    87.6   82.9
+          columnSweeper.u                         Infsabot.MoveConflictResolution      703        2486    0.0    0.0     0.0    0.0
+          columnSweeper.(...)                     Infsabot.MoveConflictResolution      701        2486    0.0    0.0     0.0    0.0
+          columnSweeper.v                         Infsabot.MoveConflictResolution      700        2486    0.0    0.0     0.0    0.0
+          columnSweeper.bccols'                   Infsabot.MoveConflictResolution      518       66602    0.1    0.0     0.1    0.0
+          columnSweeper.a'                        Infsabot.MoveConflictResolution      511       66602    0.1    0.0     0.1    0.0
+          columnSweeper.resweepThis               Infsabot.MoveConflictResolution      507       66377    0.0    0.0     0.0    0.0
+          columnSweeper.cols                      Infsabot.MoveConflictResolution      506       66602    0.2    0.0     0.2    0.0
+          columnSweeper.c'                        Infsabot.MoveConflictResolution      495       66602    0.0    0.0     0.0    0.0
+          columnSweeper.c                         Infsabot.MoveConflictResolution      477       66602    0.0    0.0     0.0    0.0
+          columnSweeper.b                         Infsabot.MoveConflictResolution      465       66602    0.0    0.0     0.0    0.0
+          columnSweeper.(...)                     Infsabot.MoveConflictResolution      426       66602    0.2    0.0     0.9    0.2
+           !-!                                    Infsabot.Tools                       427      396818    0.8    0.2     0.8    0.2
+          columnSweeper.a                         Infsabot.MoveConflictResolution      425       66602    0.0    0.0     0.0    0.0
+          columnSweeper.(...)                     Infsabot.MoveConflictResolution      420       66602    0.1    0.0    81.6   79.1
+           removeLocalCompletely                  Infsabot.MoveConflictResolution      421       67690    0.6    0.4    81.5   79.0
+            removeLocalCompletely.v               Infsabot.MoveConflictResolution      699        1015    0.0    0.0     0.0    0.0
+            removeLocalCompletely.(...)           Infsabot.MoveConflictResolution      698        1088    0.0    0.0     0.0    0.0
+            removeLocalCompletely.u               Infsabot.MoveConflictResolution      697        1088    0.0    0.0     0.0    0.0
+            removeLocalCompletely.redoH           Infsabot.MoveConflictResolution      508       67340    0.0    0.0     0.0    0.0
+            removeLocalCompletely.new             Infsabot.MoveConflictResolution      484       67690    0.0    0.0     0.0    0.0
+            removeLocalCompletely.(...)           Infsabot.MoveConflictResolution      423       67690    0.0    0.0    80.9   78.7
+             removeLocal                          Infsabot.MoveConflictResolution      424      364042   10.4   10.5    80.9   78.7
+              removeLocal.removeCurrent           Infsabot.MoveConflictResolution      521      293113    0.2    0.0     0.2    0.0
+              removeLocal.mLnext                  Infsabot.MoveConflictResolution      517      293113    0.3    0.0     0.3    0.0
+              removeLocal.lprev                   Infsabot.MoveConflictResolution      514      293113    0.2    0.0     0.2    0.0
+              removeLocal.l'                      Infsabot.MoveConflictResolution      513      293113    0.8    1.0     1.1    1.1
+               noopifyIf                          Infsabot.MoveConflictResolution      520      293113    0.2    0.0     0.2    0.0
+                noopify                           Infsabot.MoveConflictResolution      686        3803    0.0    0.0     0.0    0.0
+                 finalLocations2                  Infsabot.MoveConflictResolution      688        3781    0.0    0.0     0.0    0.0
+                  finalLocations2.locs            Infsabot.MoveConflictResolution      689        3781    0.0    0.0     0.0    0.0
+                 noopify.newRobAct                Infsabot.MoveConflictResolution      687        3803    0.0    0.0     0.0    0.0
+              removeLocal.l''                     Infsabot.MoveConflictResolution      512      293113    0.2    0.0     0.2    0.0
+              removeLocal.redoNextH               Infsabot.MoveConflictResolution      509      269118    0.2    0.0     0.2    0.0
+              removeLocal.rnext                   Infsabot.MoveConflictResolution      502      293113    0.2    0.0     0.2    0.0
+              removeLocal.mRnext                  Infsabot.MoveConflictResolution      501      293113    0.2    0.0     0.2    0.0
+              removeLocal.rprev                   Infsabot.MoveConflictResolution      498      293113    0.1    0.0     0.1    0.0
+              removeLocal.r'                      Infsabot.MoveConflictResolution      497      293113    0.3    0.2     0.3    0.2
+              removeLocal.r''                     Infsabot.MoveConflictResolution      496      293113    0.1    0.0     0.1    0.0
+              removeLocal.cnext                   Infsabot.MoveConflictResolution      491      293113    0.1    0.0     0.1    0.0
+              removeLocal.mCnext                  Infsabot.MoveConflictResolution      490      293113    0.3    0.0     0.3    0.0
+              removeLocal.cprev                   Infsabot.MoveConflictResolution      487      293113    0.1    0.0     0.1    0.0
+              removeLocal.c'                      Infsabot.MoveConflictResolution      486      293113    0.5    0.2     0.5    0.2
+              removeLocal.c''                     Infsabot.MoveConflictResolution      485      293113    0.1    0.0     0.1    0.0
+              removeLocal.effect                  Infsabot.MoveConflictResolution      450      293113    0.1    0.0     0.1    0.0
+              removeLocal.effect'                 Infsabot.MoveConflictResolution      448      293113    0.2    0.2     1.2    0.8
+               mappend                            Infsabot.MoveConflictResolution      449      293113    1.0    0.6     1.0    0.6
+              removeLocal.(...)                   Infsabot.MoveConflictResolution      434      293113    0.0    0.2    64.5   65.3
+               removeLcl                          Infsabot.MoveConflictResolution      435      293113    8.7    9.4    64.5   65.1
+                removeLcl.lprev                   Infsabot.MoveConflictResolution      515      293113    0.2    0.0     0.2    0.0
+                removeLcl.rrest                   Infsabot.MoveConflictResolution      504      293113    0.0    0.0     0.0    0.0
+                removeLcl.ruse'                   Infsabot.MoveConflictResolution      503      293113    0.4    0.2     0.4    0.2
+                 noopifyIf                        Infsabot.MoveConflictResolution      709       92504    0.0    0.0     0.0    0.0
+                  noopify                         Infsabot.MoveConflictResolution      716         273    0.0    0.0     0.0    0.0
+                   finalLocations2                Infsabot.MoveConflictResolution      718         273    0.0    0.0     0.0    0.0
+                    finalLocations2.locs          Infsabot.MoveConflictResolution      719         273    0.0    0.0     0.0    0.0
+                   noopify.newRobAct              Infsabot.MoveConflictResolution      717         273    0.0    0.0     0.0    0.0
+                removeLcl.rprev                   Infsabot.MoveConflictResolution      499      293113    0.1    0.0     0.1    0.0
+                removeLcl.crest                   Infsabot.MoveConflictResolution      493      293113    0.1    0.0     0.1    0.0
+                removeLcl.cuse'                   Infsabot.MoveConflictResolution      492      293113    0.8    0.8     1.1    0.9
+                 noopifyIf                        Infsabot.MoveConflictResolution      641      347630    0.3    0.0     0.3    0.0
+                  noopify                         Infsabot.MoveConflictResolution      690        3600    0.0    0.0     0.0    0.0
+                   finalLocations2                Infsabot.MoveConflictResolution      692        3587    0.0    0.0     0.0    0.0
+                    finalLocations2.locs          Infsabot.MoveConflictResolution      693        3587    0.0    0.0     0.0    0.0
+                   noopify.newRobAct              Infsabot.MoveConflictResolution      691        3600    0.0    0.0     0.0    0.0
+                removeLcl.cprev                   Infsabot.MoveConflictResolution      488      293113    0.1    0.0     0.1    0.0
+                removeLcl.confOtherR              Infsabot.MoveConflictResolution      483      293113    0.3    0.2     0.3    0.2
+                removeLcl.confOtherC              Infsabot.MoveConflictResolution      482      293113    0.6    0.7     0.6    0.7
+                removeLcl.confOtherL              Infsabot.MoveConflictResolution      480      293113    0.4    0.4     0.4    0.4
+                removeLcl.effOther                Infsabot.MoveConflictResolution      478      293113    7.4   10.0    10.8   13.4
+                 effectOf                         Infsabot.MoveConflictResolution      634      633781    0.3    0.4     0.3    0.4
+                 mappend                          Infsabot.MoveConflictResolution      479     1513120    3.2    3.1     3.2    3.1
+                removeLcl.(...)                   Infsabot.MoveConflictResolution      470      293113    0.0    0.0     8.7    9.7
+                 getNeighborhood                  Infsabot.MoveConflictResolution      471      293113    1.9    3.7     8.6    9.7
+                  getNeighborhood.after           Infsabot.MoveConflictResolution      505      293113    0.3    0.0     0.3    0.0
+                  getNeighborhood.before          Infsabot.MoveConflictResolution      500      293113    0.5    0.0     0.5    0.0
+                  getNeighborhood.(...)           Infsabot.MoveConflictResolution      476      293113    0.8    0.7     2.6    2.9
+                   getNeighborhood.isBefore       Infsabot.MoveConflictResolution      632      437072    1.2    1.2     1.9    2.2
+                    inNeighborhood                Infsabot.MoveConflictResolution      633      175797    0.7    1.0     0.7    1.0
+                  getNeighborhood.duringafter     Infsabot.MoveConflictResolution      475      293113    0.2    0.0     0.2    0.0
+                  getNeighborhood.(...)           Infsabot.MoveConflictResolution      473      293113    0.1    0.0     2.9    3.2
+                   spanNeq                        Infsabot.Tools                       474      385617    0.9    0.8     2.8    3.2
+                    spanNeq.b                     Infsabot.Tools                       710       92504    0.1    0.0     0.1    0.0
+                    spanNeq.(...)                 Infsabot.Tools                       708       92504    0.0    0.0     0.0    0.0
+                    spanNeq.a                     Infsabot.Tools                       707       92504    0.0    0.0     0.0    0.0
+                    getNeighborhood.isDuring      Infsabot.MoveConflictResolution      651      342912    0.3    0.4     1.7    2.4
+                     inNeighborhood               Infsabot.MoveConflictResolution      652      342912    1.4    2.0     1.4    2.0
+                  getNeighborhood.during          Infsabot.MoveConflictResolution      472      293113    0.3    0.0     0.3    0.0
+                removeLcl.rneigh                  Infsabot.MoveConflictResolution      469      293113    0.0    0.0     0.0    0.0
+                removeLcl.confR                   Infsabot.MoveConflictResolution      468      293113    0.4    0.5     1.0    0.9
+                 conflictsBetween                 Infsabot.MoveConflictResolution      705       92504    0.3    0.3     0.7    0.4
+                  firstConflicts                  Infsabot.MoveConflictResolution      706      183404    0.4    0.1     0.4    0.1
+                removeLcl.(...)                   Infsabot.MoveConflictResolution      458      293113    0.0    0.0    12.7   14.0
+                 getNeighborhood                  Infsabot.MoveConflictResolution      459      293113    2.3    4.4    12.6   14.0
+                  getNeighborhood.after           Infsabot.MoveConflictResolution      494      293113    0.2    0.0     0.2    0.0
+                  getNeighborhood.before          Infsabot.MoveConflictResolution      489      293113    0.4    0.0     0.4    0.0
+                  getNeighborhood.(...)           Infsabot.MoveConflictResolution      464      293113    0.9    0.7     3.2    3.7
+                   getNeighborhood.isBefore       Infsabot.MoveConflictResolution      466      453102    1.2    1.5     2.3    3.0
+                    inNeighborhood                Infsabot.MoveConflictResolution      467      279258    1.1    1.6     1.1    1.6
+                  getNeighborhood.duringafter     Infsabot.MoveConflictResolution      463      293113    0.1    0.0     0.1    0.0
+                  getNeighborhood.(...)           Infsabot.MoveConflictResolution      461      293113    0.1    0.0     5.9    5.9
+                   spanNeq                        Infsabot.Tools                       462      640743    2.4    2.0     5.8    5.9
+                    spanNeq.b                     Infsabot.Tools                       642      347630    0.2    0.0     0.2    0.0
+                    spanNeq.(...)                 Infsabot.Tools                       640      347630    0.0    0.0     0.0    0.0
+                    spanNeq.a                     Infsabot.Tools                       639      347630    0.2    0.0     0.2    0.0
+                    getNeighborhood.isDuring      Infsabot.MoveConflictResolution      635      565486    0.6    0.6     2.9    3.9
+                     inNeighborhood               Infsabot.MoveConflictResolution      636      565486    2.3    3.3     2.3    3.3
+                  getNeighborhood.during          Infsabot.MoveConflictResolution      460      293113    0.5    0.0     0.5    0.0
+                removeLcl.cneigh                  Infsabot.MoveConflictResolution      457      293113    0.0    0.0     0.0    0.0
+                removeLcl.confC                   Infsabot.MoveConflictResolution      456      293113    0.8    1.5     3.6    2.9
+                 conflictsBetween                 Infsabot.MoveConflictResolution      637      347630    1.2    1.0     2.8    1.4
+                  firstConflicts                  Infsabot.MoveConflictResolution      638      693315    1.6    0.3     1.6    0.3
+                removeLcl.confL                   Infsabot.MoveConflictResolution      455      293113    1.0    0.9     2.4    1.7
+                 conflictsBetween                 Infsabot.MoveConflictResolution      614      193647    0.5    0.6     1.4    0.8
+                  firstConflicts                  Infsabot.MoveConflictResolution      615      387123    0.9    0.2     0.9    0.2
+                removeLcl.confThis                Infsabot.MoveConflictResolution      454      293113    2.2    0.6     2.2    0.6
+                removeLcl.effect                  Infsabot.MoveConflictResolution      451      293113    0.9    0.7     2.1    1.5
+                 effectOf                         Infsabot.MoveConflictResolution      453      293113    0.4    0.2     0.4    0.2
+                 mappend                          Infsabot.MoveConflictResolution      452      293113    0.8    0.6     0.8    0.6
+                removeLcl.lrest                   Infsabot.MoveConflictResolution      446      293113    0.0    0.0     0.0    0.0
+                removeLcl.(...)                   Infsabot.MoveConflictResolution      438      293113    0.1    0.0     8.3    8.3
+                 getNeighborhood                  Infsabot.MoveConflictResolution      439      293113    2.3    4.0     8.2    8.3
+                  getNeighborhood.before          Infsabot.MoveConflictResolution      516      293113    0.3    0.0     0.3    0.0
+                  getNeighborhood.after           Infsabot.MoveConflictResolution      447      293113    0.2    0.0     0.2    0.0
+                  getNeighborhood.(...)           Infsabot.MoveConflictResolution      445      293113    0.4    0.2     0.9    0.6
+                   getNeighborhood.isBefore       Infsabot.MoveConflictResolution      610      222184    0.5    0.4     0.5    0.4
+                  getNeighborhood.duringafter     Infsabot.MoveConflictResolution      444      293113    0.1    0.0     0.1    0.0
+                  getNeighborhood.(...)           Infsabot.MoveConflictResolution      442      293113    0.1    0.0     4.1    3.7
+                   spanNeq                        Infsabot.Tools                       443      486760    1.7    1.2     4.0    3.7
+                    spanNeq.b                     Infsabot.Tools                       631      193647    0.2    0.0     0.2    0.0
+                    spanNeq.(...)                 Infsabot.Tools                       630      193647    0.0    0.0     0.0    0.0
+                    spanNeq.a                     Infsabot.Tools                       629      193647    0.1    0.0     0.1    0.0
+                    getNeighborhood.isDuring      Infsabot.MoveConflictResolution      611      367716    0.4    0.4     2.0    2.5
+                     inNeighborhood               Infsabot.MoveConflictResolution      612      367716    1.6    2.0     1.6    2.0
+                  getNeighborhood.during          Infsabot.MoveConflictResolution      441      293113    0.3    0.0     0.3    0.0
+                removeLcl.lneigh                  Infsabot.MoveConflictResolution      437      293113    0.0    0.0     0.0    0.0
+                removeLcl.luse'                   Infsabot.MoveConflictResolution      436      293113    0.4    0.5     0.6    0.5
+                 noopifyIf                        Infsabot.MoveConflictResolution      613      193647    0.1    0.0     0.1    0.0
+                  noopify                         Infsabot.MoveConflictResolution      712         548    0.0    0.0     0.0    0.0
+                   finalLocations2                Infsabot.MoveConflictResolution      714         548    0.0    0.0     0.0    0.0
+                    finalLocations2.locs          Infsabot.MoveConflictResolution      715         548    0.0    0.0     0.0    0.0
+                   noopify.newRobAct              Infsabot.MoveConflictResolution      713         548    0.0    0.0     0.0    0.0
+              removeLocal.lnext                   Infsabot.MoveConflictResolution      433      293113    0.1    0.0     0.1    0.0
+              removeLocal.(...)                   Infsabot.MoveConflictResolution      432      293113    0.0    0.2     0.0    0.2
+              removeLocal.redoNextV               Infsabot.MoveConflictResolution      431      293113    0.1    0.0     0.1    0.0
+              removeLocal.(...)                   Infsabot.MoveConflictResolution      430      293113    0.3    0.3     0.3    0.3
+               removeLocal.(...).newL'            Infsabot.MoveConflictResolution      702        3239    0.0    0.0     0.0    0.0
+               removeLocal.(...).newR'            Infsabot.MoveConflictResolution      696        3239    0.0    0.0     0.0    0.0
+               removeLocal.(...).newC'            Infsabot.MoveConflictResolution      695        3239    0.0    0.0     0.0    0.0
+               removeLocal.(...).(...)            Infsabot.MoveConflictResolution      685        3239    0.0    0.0     0.0    0.0
+               removeLocal.(...).secondEffect     Infsabot.MoveConflictResolution      684        3239    0.0    0.0     0.0    0.0
+               mappend                            Infsabot.MoveConflictResolution      683        3239    0.0    0.0     0.0    0.0
+              removeLocal.effect''                Infsabot.MoveConflictResolution      429      293113    0.1    0.0     0.1    0.0
+              trace                               Infsabot.Debug                       428      293113    0.1    0.0     0.1    0.0
+            removeLocalCompletely.redoV           Infsabot.MoveConflictResolution      422       67690    0.0    0.0     0.0    0.0
+          columnSweeper.b'                        Infsabot.MoveConflictResolution      419       66602    0.1    0.0     0.1    0.0
+          columnSweeper.(...)                     Infsabot.MoveConflictResolution      418       66602    2.7    2.3     2.7    2.3
+          columnSweeper.resweepNext               Infsabot.MoveConflictResolution      417       66602    0.0    0.0     0.0    0.0
+          trace                                   Infsabot.Debug                       416       66602    0.0    0.0     0.0    0.0
         completeColumnSweeper.redoH               Infsabot.MoveConflictResolution      331         314    0.0    0.0     0.0    0.0
-     play.actionApplier                           Infsabot.GamePlay                    326         200    0.1    0.1     2.5    4.1
-      getAction                                   Infsabot.GamePlay                    521       19476    0.1    0.1     2.5    4.0
-       updateSpot                                 Infsabot.Board                       666         512    0.0    0.0     0.1    0.1
-        robotAt                                   Infsabot.Board                       676         512    0.0    0.0     0.1    0.0
-         robotAt.\                                Infsabot.Board                       682         512    0.0    0.0     0.0    0.0
-         !!!                                      Infsabot.Board                       677         512    0.0    0.0     0.1    0.0
-          boardContents                           Infsabot.Board                       681         512    0.0    0.0     0.0    0.0
-          .!.                                     Infsabot.Board                       680           0    0.0    0.0     0.0    0.0
-          inBoard                                 Infsabot.Board                       678         512    0.0    0.0     0.0    0.0
-           boardSize                              Infsabot.Board                       679        1024    0.0    0.0     0.0    0.0
-        !->                                       Infsabot.Board                       667         512    0.0    0.0     0.1    0.1
-         !->.oldx                                 Infsabot.Board                       673         512    0.0    0.0     0.0    0.0
-          boardContents                           Infsabot.Board                       675         512    0.0    0.0     0.0    0.0
-          .!.                                     Infsabot.Board                       674           0    0.0    0.0     0.0    0.0
-         !->.newx                                 Infsabot.Board                       672         512    0.0    0.0     0.0    0.0
-         !->.newcontents                          Infsabot.Board                       670         512    0.0    0.0     0.0    0.0
+     play.actionApplier                           Infsabot.GamePlay                    326         200    0.0    0.1     2.4    3.7
+      getAction                                   Infsabot.GamePlay                    522       19476    0.1    0.1     2.3    3.6
+       updateSpot                                 Infsabot.Board                       662         512    0.0    0.0     0.1    0.1
+        robotAt                                   Infsabot.Board                       672         512    0.0    0.0     0.0    0.0
+         robotAt.\                                Infsabot.Board                       678         512    0.0    0.0     0.0    0.0
+         !!!                                      Infsabot.Board                       673         512    0.0    0.0     0.0    0.0
+          boardContents                           Infsabot.Board                       677         512    0.0    0.0     0.0    0.0
+          .!.                                     Infsabot.Board                       676           0    0.0    0.0     0.0    0.0
+          inBoard                                 Infsabot.Board                       674         512    0.0    0.0     0.0    0.0
+           boardSize                              Infsabot.Board                       675        1024    0.0    0.0     0.0    0.0
+        !->                                       Infsabot.Board                       663         512    0.0    0.0     0.0    0.1
+         !->.oldx                                 Infsabot.Board                       669         512    0.0    0.0     0.0    0.0
           boardContents                           Infsabot.Board                       671         512    0.0    0.0     0.0    0.0
-         inBoard                                  Infsabot.Board                       668         512    0.0    0.0     0.0    0.0
-          boardSize                               Infsabot.Board                       669        1024    0.0    0.0     0.0    0.0
-       getAction.(...)                            Infsabot.GamePlay                    659         512    0.0    0.0     0.0    0.0
-        !!!                                       Infsabot.Board                       661         512    0.0    0.0     0.0    0.0
-         boardContents                            Infsabot.Board                       665         512    0.0    0.0     0.0    0.0
-         .!.                                      Infsabot.Board                       664           0    0.0    0.0     0.0    0.0
-         inBoard                                  Infsabot.Board                       662         512    0.0    0.0     0.0    0.0
-          boardSize                               Infsabot.Board                       663        1024    0.0    0.0     0.0    0.0
-        unpack                                    Infsabot.Base                        660         512    0.0    0.0     0.0    0.0
-       getAction.mat                              Infsabot.GamePlay                    658         512    0.0    0.0     0.0    0.0
-       ==                                         Infsabot.Base                        657         512    0.0    0.0     0.0    0.0
-       getAction.newy                             Infsabot.GamePlay                    650        6444    0.0    0.0     0.0    0.0
-       getAction.(...)                            Infsabot.GamePlay                    646        6444    0.0    0.0     0.1    0.0
-        robotTeam                                 Infsabot.Robot                       649        6444    0.0    0.0     0.0    0.0
-        getOffset                                 Infsabot.Base                        648        6444    0.0    0.0     0.0    0.0
-        applyOffset                               Infsabot.Base                        647        6444    0.1    0.0     0.1    0.0
-       getAction.newx                             Infsabot.GamePlay                    645        6444    0.0    0.0     0.0    0.0
-       getAction.newRobot                         Infsabot.GamePlay                    591        1638    0.0    0.0     0.0    0.0
-        paramInitialMaterial                      Infsabot.Parameters                  600        1638    0.0    0.0     0.0    0.0
-        boardTime                                 Infsabot.Board                       599        1638    0.0    0.0     0.0    0.0
-        robotTeam                                 Infsabot.Robot                       593        1638    0.0    0.0     0.0    0.0
-        newProgram                                Infsabot.RobotAction                 592        1638    0.0    0.0     0.0    0.0
-       getAction.newy                             Infsabot.GamePlay                    569        1818    0.0    0.0     0.0    0.0
-       getAction.(...)                            Infsabot.GamePlay                    527        1818    0.0    0.0     0.0    0.0
-        newDirection                              Infsabot.RobotAction                 531        1818    0.0    0.0     0.0    0.0
-        robotTeam                                 Infsabot.Robot                       530        1818    0.0    0.0     0.0    0.0
-        getOffset                                 Infsabot.Base                        529        1818    0.0    0.0     0.0    0.0
-        applyOffset                               Infsabot.Base                        528        1818    0.0    0.0     0.0    0.0
-       getAction.newx                             Infsabot.GamePlay                    526        1818    0.0    0.0     0.0    0.0
-       setRobot                                   Infsabot.Board                       522       15586    0.0    0.0     2.2    3.7
-        !!!                                       Infsabot.Board                       524       15586    0.1    0.1     0.6    1.2
-         boardContents                            Infsabot.Board                       571       15586    0.0    0.0     0.0    0.0
-         .!.                                      Infsabot.Board                       570           0    0.4    1.0     0.4    1.0
-         inBoard                                  Infsabot.Board                       525       15586    0.1    0.1     0.1    0.1
-          boardSize                               Infsabot.Board                       532       31172    0.0    0.0     0.0    0.0
-        setRobot.delRobot                         Infsabot.Board                       523       15586    0.2    0.3     1.6    2.5
-         setRobot.delRobot.oldRemoved             Infsabot.Board                       583       15586    0.3    0.2     0.3    0.2
-          boardRobots                             Infsabot.Board                       584       15586    0.0    0.0     0.0    0.0
-         setRobot.delRobot.newRobots              Infsabot.Board                       582       15586    0.1    0.1     0.1    0.1
-         setRobot.delRobot.newB                   Infsabot.Board                       572       15586    0.0    0.0     0.9    1.9
-          !->                                     Infsabot.Board                       573       15586    0.0    0.1     0.9    1.9
-           !->.oldx                               Infsabot.Board                       595       15586    0.0    0.0     0.2    0.5
-            boardContents                         Infsabot.Board                       597       15586    0.1    0.0     0.1    0.0
-            .!.                                   Infsabot.Board                       596           0    0.1    0.5     0.1    0.5
-           !->.newx                               Infsabot.Board                       594       15586    0.3    0.6     0.3    0.6
-           !->.newcontents                        Infsabot.Board                       576       15586    0.3    0.6     0.3    0.6
-            boardContents                         Infsabot.Board                       577       15586    0.0    0.0     0.0    0.0
-           inBoard                                Infsabot.Board                       574       15586    0.0    0.1     0.0    0.1
-            boardSize                             Infsabot.Board                       575       31172    0.0    0.0     0.0    0.0
+          .!.                                     Infsabot.Board                       670           0    0.0    0.0     0.0    0.0
+         !->.newx                                 Infsabot.Board                       668         512    0.0    0.0     0.0    0.0
+         !->.newcontents                          Infsabot.Board                       666         512    0.0    0.0     0.0    0.0
+          boardContents                           Infsabot.Board                       667         512    0.0    0.0     0.0    0.0
+         inBoard                                  Infsabot.Board                       664         512    0.0    0.0     0.0    0.0
+          boardSize                               Infsabot.Board                       665        1024    0.0    0.0     0.0    0.0
+       getAction.(...)                            Infsabot.GamePlay                    655         512    0.0    0.0     0.0    0.0
+        !!!                                       Infsabot.Board                       657         512    0.0    0.0     0.0    0.0
+         boardContents                            Infsabot.Board                       661         512    0.0    0.0     0.0    0.0
+         .!.                                      Infsabot.Board                       660           0    0.0    0.0     0.0    0.0
+         inBoard                                  Infsabot.Board                       658         512    0.0    0.0     0.0    0.0
+          boardSize                               Infsabot.Board                       659        1024    0.0    0.0     0.0    0.0
+        unpack                                    Infsabot.Base                        656         512    0.0    0.0     0.0    0.0
+       getAction.mat                              Infsabot.GamePlay                    654         512    0.0    0.0     0.0    0.0
+       ==                                         Infsabot.Base                        653         512    0.0    0.0     0.0    0.0
+       getAction.newy                             Infsabot.GamePlay                    648        6444    0.0    0.0     0.0    0.0
+       getAction.(...)                            Infsabot.GamePlay                    644        6444    0.0    0.0     0.1    0.0
+        robotTeam                                 Infsabot.Robot                       647        6444    0.0    0.0     0.0    0.0
+        getOffset                                 Infsabot.Base                        646        6444    0.0    0.0     0.0    0.0
+        applyOffset                               Infsabot.Base                        645        6444    0.0    0.0     0.0    0.0
+       getAction.newx                             Infsabot.GamePlay                    643        6444    0.0    0.0     0.0    0.0
+       getAction.newRobot                         Infsabot.GamePlay                    592        1638    0.0    0.0     0.0    0.0
+        paramInitialMaterial                      Infsabot.Parameters                  601        1638    0.0    0.0     0.0    0.0
+        boardTime                                 Infsabot.Board                       600        1638    0.0    0.0     0.0    0.0
+        robotTeam                                 Infsabot.Robot                       594        1638    0.0    0.0     0.0    0.0
+        newProgram                                Infsabot.RobotAction                 593        1638    0.0    0.0     0.0    0.0
+       getAction.newy                             Infsabot.GamePlay                    570        1818    0.0    0.0     0.0    0.0
+       getAction.(...)                            Infsabot.GamePlay                    528        1818    0.0    0.0     0.0    0.0
+        newDirection                              Infsabot.RobotAction                 532        1818    0.0    0.0     0.0    0.0
+        robotTeam                                 Infsabot.Robot                       531        1818    0.0    0.0     0.0    0.0
+        getOffset                                 Infsabot.Base                        530        1818    0.0    0.0     0.0    0.0
+        applyOffset                               Infsabot.Base                        529        1818    0.0    0.0     0.0    0.0
+       getAction.newx                             Infsabot.GamePlay                    527        1818    0.0    0.0     0.0    0.0
+       setRobot                                   Infsabot.Board                       523       15586    0.0    0.0     2.0    3.3
+        !!!                                       Infsabot.Board                       525       15586    0.1    0.0     0.5    1.1
+         boardContents                            Infsabot.Board                       572       15586    0.0    0.0     0.0    0.0
+         .!.                                      Infsabot.Board                       571           0    0.3    0.9     0.3    0.9
+         inBoard                                  Infsabot.Board                       526       15586    0.1    0.1     0.1    0.1
+          boardSize                               Infsabot.Board                       533       31172    0.0    0.0     0.0    0.0
+        setRobot.delRobot                         Infsabot.Board                       524       15586    0.1    0.3     1.5    2.2
+         setRobot.delRobot.oldRemoved             Infsabot.Board                       584       15586    0.3    0.2     0.3    0.2
+          boardRobots                             Infsabot.Board                       585       15586    0.0    0.0     0.0    0.0
+         setRobot.delRobot.newRobots              Infsabot.Board                       583       15586    0.2    0.1     0.2    0.1
+         setRobot.delRobot.newB                   Infsabot.Board                       573       15586    0.0    0.0     0.9    1.7
+          !->                                     Infsabot.Board                       574       15586    0.1    0.1     0.8    1.7
+           !->.oldx                               Infsabot.Board                       596       15586    0.0    0.0     0.2    0.5
+            boardContents                         Infsabot.Board                       598       15586    0.0    0.0     0.0    0.0
+            .!.                                   Infsabot.Board                       597           0    0.2    0.5     0.2    0.5
+           !->.newx                               Infsabot.Board                       595       15586    0.3    0.5     0.3    0.5
+           !->.newcontents                        Infsabot.Board                       577       15586    0.1    0.5     0.1    0.5
+            boardContents                         Infsabot.Board                       578       15586    0.0    0.0     0.0    0.0
+           inBoard                                Infsabot.Board                       575       15586    0.0    0.1     0.1    0.1
+            boardSize                             Infsabot.Board                       576       31172    0.0    0.0     0.0    0.0
      trace                                        Infsabot.Debug                       324         200    0.0    0.0     0.0    0.0
-   renderBoard                                    Infsabot.Board                       320           1    0.0    0.0     0.4    0.5
-    renderBoard.colorAt                           Infsabot.Board                       799        5625    0.0    0.0     0.3    0.5
-     !!!                                          Infsabot.Board                       803        5625    0.0    0.0     0.3    0.4
-      boardContents                               Infsabot.Board                       807        5625    0.0    0.0     0.0    0.0
-      .!.                                         Infsabot.Board                       806           0    0.3    0.4     0.3    0.4
-      inBoard                                     Infsabot.Board                       804        5625    0.0    0.0     0.0    0.0
-       boardSize                                  Infsabot.Board                       805       11250    0.0    0.0     0.0    0.0
-     unpack                                       Infsabot.Base                        802        5625    0.0    0.0     0.0    0.0
-     toSeenSpot                                   Infsabot.Robot                       801        5625    0.0    0.0     0.0    0.0
-     spotColor                                    Infsabot.Board                       800        5625    0.0    0.0     0.0    0.0
-    unsafeWritePixel                              Codec.Picture.Types                  798        5625    0.0    0.0     0.0    0.0
-    componentCount                                Codec.Picture.Types                  797           1    0.0    0.0     0.0    0.0
+   renderBoard                                    Infsabot.Board                       320           1    0.0    0.0     0.3    0.5
+    renderBoard.colorAt                           Infsabot.Board                       788        5625    0.0    0.0     0.2    0.4
+     !!!                                          Infsabot.Board                       792        5625    0.0    0.0     0.2    0.4
+      boardContents                               Infsabot.Board                       796        5625    0.0    0.0     0.0    0.0
+      .!.                                         Infsabot.Board                       795           0    0.2    0.3     0.2    0.3
+      inBoard                                     Infsabot.Board                       793        5625    0.0    0.0     0.0    0.0
+       boardSize                                  Infsabot.Board                       794       11250    0.0    0.0     0.0    0.0
+     unpack                                       Infsabot.Base                        791        5625    0.0    0.0     0.0    0.0
+     toSeenSpot                                   Infsabot.Robot                       790        5625    0.0    0.0     0.0    0.0
+     spotColor                                    Infsabot.Board                       789        5625    0.0    0.0     0.0    0.0
+    unsafeWritePixel                              Codec.Picture.Types                  787        5625    0.0    0.0     0.0    0.0
+    componentCount                                Codec.Picture.Types                  786           1    0.0    0.0     0.0    0.0
     boardSize                                     Infsabot.Board                       321           2    0.0    0.0     0.0    0.0
    writePng                                       Codec.Picture.Png.Export             313           1    0.0    0.0     0.0    0.0
     encodePng                                     Codec.Picture.Png.Export             318           0    0.0    0.0     0.0    0.0
      encodePngWithMetadata                        Codec.Picture.Png.Export             319           0    0.0    0.0     0.0    0.0
-      genericEncodePng.lineSize                   Codec.Picture.Png.Export             813           1    0.0    0.0     0.0    0.0
-      genericEncodePng.compCount                  Codec.Picture.Png.Export             811           1    0.0    0.0     0.0    0.0
-       componentCount                             Codec.Picture.Types                  812           1    0.0    0.0     0.0    0.0
-      genericEncodePng.imgEncodedData             Codec.Picture.Png.Export             790           1    0.0    0.0     0.0    0.0
-       genericEncodePng.encodeLine                Codec.Picture.Png.Export             793          75    0.0    0.0     0.0    0.0
-        blitVector                                Codec.Picture.VectorByteConversion   794          75    0.0    0.0     0.0    0.0
-         blitVector.offset                        Codec.Picture.VectorByteConversion   810          75    0.0    0.0     0.0    0.0
-         blitVector.(...)                         Codec.Picture.VectorByteConversion   796          75    0.0    0.0     0.0    0.0
-         blitVector.ptr                           Codec.Picture.VectorByteConversion   795          75    0.0    0.0     0.0    0.0
-      prepareIDatChunk                            Codec.Picture.Png.Export             788           0    0.0    0.0     0.0    0.0
-       mkRawChunk                                 Codec.Picture.Png.Type               789           1    0.0    0.0     0.0    0.0
-        pngComputeCrc                             Codec.Picture.Png.Type               815           0    0.0    0.0     0.0    0.0
-         pngComputeCrc.updateCrc                  Codec.Picture.Png.Type               819         619    0.0    0.0     0.0    0.0
-          pngComputeCrc.updateCrc.lutVal          Codec.Picture.Png.Type               821           0    0.0    0.0     0.0    0.0
-         pngComputeCrc.updateCrc.u32Val           Codec.Picture.Png.Type               818         619    0.0    0.0     0.0    0.0
-         pngComputeCrc.updateCrc.lutVal           Codec.Picture.Png.Type               817         619    0.0    0.0     0.0    0.0
-      genericEncodePng.prependPalette             Codec.Picture.Png.Export             783           1    0.0    0.0     0.0    0.0
-      encodeMetadatas                             Codec.Picture.Png.Metadata           766           1    0.0    0.0     0.0    0.0
-       encodeSingleMetadata                       Codec.Picture.Png.Metadata           779           0    0.0    0.0     0.0    0.0
-        foldMap                                   Codec.Picture.Metadata               780           0    0.0    0.0     0.0    0.0
-         foldl'                                   Codec.Picture.Metadata               781           0    0.0    0.0     0.0    0.0
-          getMetadatas                            Codec.Picture.Metadata               782           1    0.0    0.0     0.0    0.0
-       encodePhysicalMetadata                     Codec.Picture.Png.Metadata           767           1    0.0    0.0     0.0    0.0
-        lookup                                    Codec.Picture.Metadata               771           0    0.0    0.0     0.0    0.0
-         lookup.go                                Codec.Picture.Metadata               773           1    0.0    0.0     0.0    0.0
-         getMetadatas                             Codec.Picture.Metadata               772           1    0.0    0.0     0.0    0.0
-      genericEncodePng.hdr                        Codec.Picture.Png.Export             742           1    0.0    0.0     0.0    0.0
-       preparePngHeader                           Codec.Picture.Png.Export             743           1    0.0    0.0     0.0    0.0
-      genericEncodePng                            Codec.Picture.Png.Export             731           1    0.0    0.0     0.0    0.0
-       put                                        Codec.Picture.Png.Type               732           1    0.0    0.0     0.0    0.0
-        put                                       Codec.Picture.Png.Type               784           2    0.0    0.0     0.0    0.0
-         chunkData                                Codec.Picture.Png.Type               825           1    0.0    0.0     0.0    0.0
-         chunkType                                Codec.Picture.Png.Type               824           2    0.0    0.0     0.0    0.0
-         chunkCRC                                 Codec.Picture.Png.Type               814           2    0.0    0.0     0.0    0.0
-         chunkLength                              Codec.Picture.Png.Type               786           4    0.0    0.0     0.0    0.0
-        chunks                                    Codec.Picture.Png.Type               765           1    0.0    0.0     0.0    0.0
-        header                                    Codec.Picture.Png.Type               741           1    0.0    0.0     0.0    0.0
-        put                                       Codec.Picture.Png.Type               733           1    0.0    0.0     0.0    0.0
-         put                                      Codec.Picture.Png.Type               785           0    0.0    0.0     0.0    0.0
-         put.inner                                Codec.Picture.Png.Type               738           1    0.0    0.0     0.0    0.0
-          interlaceMethod                         Codec.Picture.Png.Type               750           1    0.0    0.0     0.0    0.0
-          put                                     Codec.Picture.Png.Type               749           1    0.0    0.0     0.0    0.0
-          filterMethod                            Codec.Picture.Png.Type               748           1    0.0    0.0     0.0    0.0
-          compressionMethod                       Codec.Picture.Png.Type               747           1    0.0    0.0     0.0    0.0
-          bitDepth                                Codec.Picture.Png.Type               746           1    0.0    0.0     0.0    0.0
-          height                                  Codec.Picture.Png.Type               745           1    0.0    0.0     0.0    0.0
-          width                                   Codec.Picture.Png.Type               744           1    0.0    0.0     0.0    0.0
-          colourType                              Codec.Picture.Png.Type               740           1    0.0    0.0     0.0    0.0
-          put                                     Codec.Picture.Png.Type               739           1    0.0    0.0     0.0    0.0
-           put                                    Codec.Picture.Png.Type               751           0    0.0    0.0     0.0    0.0
-         put.crc                                  Codec.Picture.Png.Type               735           1    0.0    0.0     0.0    0.0
-          pngComputeCrc                           Codec.Picture.Png.Type               737           0    0.0    0.0     0.0    0.0
-           pngComputeCrc.updateCrc                Codec.Picture.Png.Type               756          17    0.0    0.0     0.0    0.0
-            pngComputeCrc.updateCrc.lutVal        Codec.Picture.Png.Type               758           0    0.0    0.0     0.0    0.0
-           pngComputeCrc.updateCrc.u32Val         Codec.Picture.Png.Type               755          17    0.0    0.0     0.0    0.0
-           pngComputeCrc.updateCrc.lutVal         Codec.Picture.Png.Type               754          17    0.0    0.0     0.0    0.0
+      genericEncodePng.lineSize                   Codec.Picture.Png.Export             802           1    0.0    0.0     0.0    0.0
+      genericEncodePng.compCount                  Codec.Picture.Png.Export             800           1    0.0    0.0     0.0    0.0
+       componentCount                             Codec.Picture.Types                  801           1    0.0    0.0     0.0    0.0
+      genericEncodePng.imgEncodedData             Codec.Picture.Png.Export             779           1    0.0    0.0     0.0    0.0
+       genericEncodePng.encodeLine                Codec.Picture.Png.Export             782          75    0.0    0.0     0.0    0.0
+        blitVector                                Codec.Picture.VectorByteConversion   783          75    0.0    0.0     0.0    0.0
+         blitVector.offset                        Codec.Picture.VectorByteConversion   799          75    0.0    0.0     0.0    0.0
+         blitVector.(...)                         Codec.Picture.VectorByteConversion   785          75    0.0    0.0     0.0    0.0
+         blitVector.ptr                           Codec.Picture.VectorByteConversion   784          75    0.0    0.0     0.0    0.0
+      prepareIDatChunk                            Codec.Picture.Png.Export             777           0    0.0    0.0     0.0    0.0
+       mkRawChunk                                 Codec.Picture.Png.Type               778           1    0.0    0.0     0.0    0.0
+        pngComputeCrc                             Codec.Picture.Png.Type               804           0    0.0    0.0     0.0    0.0
+         pngComputeCrc.updateCrc                  Codec.Picture.Png.Type               808         619    0.0    0.0     0.0    0.0
+          pngComputeCrc.updateCrc.lutVal          Codec.Picture.Png.Type               810           0    0.0    0.0     0.0    0.0
+         pngComputeCrc.updateCrc.u32Val           Codec.Picture.Png.Type               807         619    0.0    0.0     0.0    0.0
+         pngComputeCrc.updateCrc.lutVal           Codec.Picture.Png.Type               806         619    0.0    0.0     0.0    0.0
+      genericEncodePng.prependPalette             Codec.Picture.Png.Export             772           1    0.0    0.0     0.0    0.0
+      encodeMetadatas                             Codec.Picture.Png.Metadata           755           1    0.0    0.0     0.0    0.0
+       encodeSingleMetadata                       Codec.Picture.Png.Metadata           768           0    0.0    0.0     0.0    0.0
+        foldMap                                   Codec.Picture.Metadata               769           0    0.0    0.0     0.0    0.0
+         foldl'                                   Codec.Picture.Metadata               770           0    0.0    0.0     0.0    0.0
+          getMetadatas                            Codec.Picture.Metadata               771           1    0.0    0.0     0.0    0.0
+       encodePhysicalMetadata                     Codec.Picture.Png.Metadata           756           1    0.0    0.0     0.0    0.0
+        lookup                                    Codec.Picture.Metadata               760           0    0.0    0.0     0.0    0.0
+         lookup.go                                Codec.Picture.Metadata               762           1    0.0    0.0     0.0    0.0
+         getMetadatas                             Codec.Picture.Metadata               761           1    0.0    0.0     0.0    0.0
+      genericEncodePng.hdr                        Codec.Picture.Png.Export             731           1    0.0    0.0     0.0    0.0
+       preparePngHeader                           Codec.Picture.Png.Export             732           1    0.0    0.0     0.0    0.0
+      genericEncodePng                            Codec.Picture.Png.Export             720           1    0.0    0.0     0.0    0.0
+       put                                        Codec.Picture.Png.Type               721           1    0.0    0.0     0.0    0.0
+        put                                       Codec.Picture.Png.Type               773           2    0.0    0.0     0.0    0.0
+         chunkData                                Codec.Picture.Png.Type               814           1    0.0    0.0     0.0    0.0
+         chunkType                                Codec.Picture.Png.Type               813           2    0.0    0.0     0.0    0.0
+         chunkCRC                                 Codec.Picture.Png.Type               803           2    0.0    0.0     0.0    0.0
+         chunkLength                              Codec.Picture.Png.Type               775           4    0.0    0.0     0.0    0.0
+        chunks                                    Codec.Picture.Png.Type               754           1    0.0    0.0     0.0    0.0
+        header                                    Codec.Picture.Png.Type               730           1    0.0    0.0     0.0    0.0
+        put                                       Codec.Picture.Png.Type               722           1    0.0    0.0     0.0    0.0
+         put                                      Codec.Picture.Png.Type               774           0    0.0    0.0     0.0    0.0
+         put.inner                                Codec.Picture.Png.Type               727           1    0.0    0.0     0.0    0.0
+          interlaceMethod                         Codec.Picture.Png.Type               739           1    0.0    0.0     0.0    0.0
+          put                                     Codec.Picture.Png.Type               738           1    0.0    0.0     0.0    0.0
+          filterMethod                            Codec.Picture.Png.Type               737           1    0.0    0.0     0.0    0.0
+          compressionMethod                       Codec.Picture.Png.Type               736           1    0.0    0.0     0.0    0.0
+          bitDepth                                Codec.Picture.Png.Type               735           1    0.0    0.0     0.0    0.0
+          height                                  Codec.Picture.Png.Type               734           1    0.0    0.0     0.0    0.0
+          width                                   Codec.Picture.Png.Type               733           1    0.0    0.0     0.0    0.0
+          colourType                              Codec.Picture.Png.Type               729           1    0.0    0.0     0.0    0.0
+          put                                     Codec.Picture.Png.Type               728           1    0.0    0.0     0.0    0.0
+           put                                    Codec.Picture.Png.Type               740           0    0.0    0.0     0.0    0.0
+         put.crc                                  Codec.Picture.Png.Type               724           1    0.0    0.0     0.0    0.0
+          pngComputeCrc                           Codec.Picture.Png.Type               726           0    0.0    0.0     0.0    0.0
+           pngComputeCrc.updateCrc                Codec.Picture.Png.Type               745          17    0.0    0.0     0.0    0.0
+            pngComputeCrc.updateCrc.lutVal        Codec.Picture.Png.Type               747           0    0.0    0.0     0.0    0.0
+           pngComputeCrc.updateCrc.u32Val         Codec.Picture.Png.Type               744          17    0.0    0.0     0.0    0.0
+           pngComputeCrc.updateCrc.lutVal         Codec.Picture.Png.Type               743          17    0.0    0.0     0.0    0.0
  CAF                                              Infsabot.Board                       283           0    0.0    0.0     0.0    0.0
   .!.                                             Infsabot.Board                       349           1    0.0    0.0     0.0    0.0
  CAF                                              Infsabot.Parameters                  282           0    0.0    0.0     0.0    0.0
   defaultParameters                               Infsabot.Parameters                  348           1    0.0    0.0     0.0    0.0
  CAF                                              Infsabot.Constants                   280           0    0.0    0.0     0.0    0.0
-  colorOfMaterialSpot                             Infsabot.Constants                   809           1    0.0    0.0     0.0    0.0
-  colorOfEmptySpot                                Infsabot.Constants                   808           1    0.0    0.0     0.0    0.0
+  colorOfMaterialSpot                             Infsabot.Constants                   798           1    0.0    0.0     0.0    0.0
+  colorOfEmptySpot                                Infsabot.Constants                   797           1    0.0    0.0     0.0    0.0
  CAF                                              Infsabot.MoveConflictResolution      274           0    0.0    0.0     0.0    0.0
-  mempty                                          Infsabot.MoveConflictResolution      480           1    0.0    0.0     0.0    0.0
+  mempty                                          Infsabot.MoveConflictResolution      481           1    0.0    0.0     0.0    0.0
   organizeRobots                                  Infsabot.MoveConflictResolution      334           1    0.0    0.0     0.0    0.0
   removeConflicting                               Infsabot.MoveConflictResolution      328           1    0.0    0.0     0.0    0.0
  CAF                                              Infsabot.Debug                       271           0    0.0    0.0     0.0    0.0
   isDEBUG                                         Infsabot.Debug                       325           1    0.0    0.0     0.0    0.0
  CAF                                              Codec.Picture.Types                  244           0    0.0    0.0     0.0    0.0
  CAF                                              Codec.Picture.Png.Export             243           0    0.0    0.0     0.0    0.0
-  endChunk                                        Codec.Picture.Png.Export             822           1    0.0    0.0     0.0    0.0
-   mkRawChunk                                     Codec.Picture.Png.Type               823           1    0.0    0.0     0.0    0.0
-    pngComputeCrc                                 Codec.Picture.Png.Type               826           0    0.0    0.0     0.0    0.0
-     pngComputeCrc.updateCrc                      Codec.Picture.Png.Type               830           4    0.0    0.0     0.0    0.0
-      pngComputeCrc.updateCrc.lutVal              Codec.Picture.Png.Type               832           0    0.0    0.0     0.0    0.0
-     pngComputeCrc.updateCrc.u32Val               Codec.Picture.Png.Type               829           4    0.0    0.0     0.0    0.0
-     pngComputeCrc.updateCrc.lutVal               Codec.Picture.Png.Type               828           4    0.0    0.0     0.0    0.0
-  genericEncodePng                                Codec.Picture.Png.Export             791           0    0.0    0.0     0.0    0.0
-   genericEncodePng.zero                          Codec.Picture.Png.Export             792           1    0.0    0.0     0.0    0.0
-  prepareIDatChunk                                Codec.Picture.Png.Export             787           1    0.0    0.0     0.0    0.0
+  endChunk                                        Codec.Picture.Png.Export             811           1    0.0    0.0     0.0    0.0
+   mkRawChunk                                     Codec.Picture.Png.Type               812           1    0.0    0.0     0.0    0.0
+    pngComputeCrc                                 Codec.Picture.Png.Type               815           0    0.0    0.0     0.0    0.0
+     pngComputeCrc.updateCrc                      Codec.Picture.Png.Type               819           4    0.0    0.0     0.0    0.0
+      pngComputeCrc.updateCrc.lutVal              Codec.Picture.Png.Type               821           0    0.0    0.0     0.0    0.0
+     pngComputeCrc.updateCrc.u32Val               Codec.Picture.Png.Type               818           4    0.0    0.0     0.0    0.0
+     pngComputeCrc.updateCrc.lutVal               Codec.Picture.Png.Type               817           4    0.0    0.0     0.0    0.0
+  genericEncodePng                                Codec.Picture.Png.Export             780           0    0.0    0.0     0.0    0.0
+   genericEncodePng.zero                          Codec.Picture.Png.Export             781           1    0.0    0.0     0.0    0.0
+  prepareIDatChunk                                Codec.Picture.Png.Export             776           1    0.0    0.0     0.0    0.0
   encodePngWithMetadata                           Codec.Picture.Png.Export             317           1    0.0    0.0     0.0    0.0
   encodePng                                       Codec.Picture.Png.Export             316           1    0.0    0.0     0.0    0.0
  CAF                                              Codec.Picture.Png.Type               242           0    0.0    0.0     0.0    0.0
-  iENDSignature                                   Codec.Picture.Png.Type               827           1    0.0    0.0     0.0    0.0
-  iDATSignature                                   Codec.Picture.Png.Type               816           1    0.0    0.0     0.0    0.0
-  pngCrcTable                                     Codec.Picture.Png.Type               761           1    0.0    0.0     0.0    0.0
-   pngCrcTable.magicConstant                      Codec.Picture.Png.Type               764           1    0.0    0.0     0.0    0.0
-   pngCrcTable.updateCrcConstant                  Codec.Picture.Png.Type               763        2048    0.0    0.0     0.0    0.0
-   pngCrcTable.zero                               Codec.Picture.Png.Type               762           1    0.0    0.0     0.0    0.0
-  pngComputeCrc.updateCrc                         Codec.Picture.Png.Type               759           0    0.0    0.0     0.0    0.0
-   pngComputeCrc.updateCrc.lutVal                 Codec.Picture.Png.Type               760           0    0.0    0.0     0.0    0.0
-  signature                                       Codec.Picture.Png.Type               753           1    0.0    0.0     0.0    0.0
-  iHDRSignature                                   Codec.Picture.Png.Type               752           1    0.0    0.0     0.0    0.0
-  pngComputeCrc                                   Codec.Picture.Png.Type               736           1    0.0    0.0     0.0    0.0
-  pngSignature                                    Codec.Picture.Png.Type               734           1    0.0    0.0     0.0    0.0
+  iENDSignature                                   Codec.Picture.Png.Type               816           1    0.0    0.0     0.0    0.0
+  iDATSignature                                   Codec.Picture.Png.Type               805           1    0.0    0.0     0.0    0.0
+  pngCrcTable                                     Codec.Picture.Png.Type               750           1    0.0    0.0     0.0    0.0
+   pngCrcTable.magicConstant                      Codec.Picture.Png.Type               753           1    0.0    0.0     0.0    0.0
+   pngCrcTable.updateCrcConstant                  Codec.Picture.Png.Type               752        2048    0.0    0.0     0.0    0.0
+   pngCrcTable.zero                               Codec.Picture.Png.Type               751           1    0.0    0.0     0.0    0.0
+  pngComputeCrc.updateCrc                         Codec.Picture.Png.Type               748           0    0.0    0.0     0.0    0.0
+   pngComputeCrc.updateCrc.lutVal                 Codec.Picture.Png.Type               749           0    0.0    0.0     0.0    0.0
+  signature                                       Codec.Picture.Png.Type               742           1    0.0    0.0     0.0    0.0
+  iHDRSignature                                   Codec.Picture.Png.Type               741           1    0.0    0.0     0.0    0.0
+  pngComputeCrc                                   Codec.Picture.Png.Type               725           1    0.0    0.0     0.0    0.0
+  pngSignature                                    Codec.Picture.Png.Type               723           1    0.0    0.0     0.0    0.0
  CAF                                              Codec.Picture.Png.Metadata           241           0    0.0    0.0     0.0    0.0
-  encodeSingleMetadata                            Codec.Picture.Png.Metadata           776           1    0.0    0.0     0.0    0.0
-   foldMap                                        Codec.Picture.Metadata               777           1    0.0    0.0     0.0    0.0
-    foldl'                                        Codec.Picture.Metadata               778           1    0.0    0.0     0.0    0.0
-  encodeMetadatas                                 Codec.Picture.Png.Metadata           768           0    0.0    0.0     0.0    0.0
-   encodePhysicalMetadata                         Codec.Picture.Png.Metadata           769           0    0.0    0.0     0.0    0.0
-    lookup                                        Codec.Picture.Metadata               770           1    0.0    0.0     0.0    0.0
+  encodeSingleMetadata                            Codec.Picture.Png.Metadata           765           1    0.0    0.0     0.0    0.0
+   foldMap                                        Codec.Picture.Metadata               766           1    0.0    0.0     0.0    0.0
+    foldl'                                        Codec.Picture.Metadata               767           1    0.0    0.0     0.0    0.0
+  encodeMetadatas                                 Codec.Picture.Png.Metadata           757           0    0.0    0.0     0.0    0.0
+   encodePhysicalMetadata                         Codec.Picture.Png.Metadata           758           0    0.0    0.0     0.0    0.0
+    lookup                                        Codec.Picture.Metadata               759           1    0.0    0.0     0.0    0.0
  CAF                                              Codec.Picture.Metadata               238           0    0.0    0.0     0.0    0.0
-  empty                                           Codec.Picture.Metadata               775           1    0.0    0.0     0.0    0.0
-  mempty                                          Codec.Picture.Metadata               774           1    0.0    0.0     0.0    0.0
+  empty                                           Codec.Picture.Metadata               764           1    0.0    0.0     0.0    0.0
+  mempty                                          Codec.Picture.Metadata               763           1    0.0    0.0     0.0    0.0
  CAF                                              Codec.Compression.Zlib               236           0    0.0    0.0     0.0    0.0
  CAF                                              Codec.Compression.Zlib.Stream        234           0    0.0    0.0     0.0    0.0
  CAF                                              Data.Map.Base                        213           0    0.0    0.0     0.0    0.0

@@ -12,7 +12,7 @@ import Data.List(groupBy, sortBy)
 import Data.Function(on)
 import Data.Monoid(Monoid, mempty, mappend, mconcat)
 
-import Infsabot.Tools(sameElements, (!-!))
+import Infsabot.Tools(spanNeq, sameElements, (!-!))
 
 import Infsabot.Debug
 
@@ -168,10 +168,10 @@ removeLcl current (l, c, r)
     --effect = effectOf confThis (fst current) `mappend` (if not confOther then Effect False False else Effect True True)
 
 effectOf :: Bool -> RobotAndAction -> Effect
-effectOf True ((_, _, rob), MoveIn dir)
-    | x /= 0    = Effect False True
-    | y /= 0    = Effect True False
-        where (Offset x, Offset y) = getOffset (robotTeam rob) dir
+effectOf True ((_, _, _), MoveIn _) = Effect True True
+    -- | x /= 0    = Effect False True
+    -- | y /= 0    = Effect True False
+        --where (Offset x, Offset y) = getOffset (robotTeam rob) dir
 effectOf _ _ = Effect False False
 
 noopifyIf :: RAAFL -> Bool -> RAAFL
@@ -199,24 +199,18 @@ noopify (((x, y, rob), _), _) = (newRobAct, finalLocations2 newRobAct)
     This code assumes that the robots it is given are an ordered column
 -}
 getNeighborhood :: RAAFL -> [RAAFL] -> ([RAAFL], [RAAFL], [RAAFL])
-getNeighborhood cur rest = (before, filter (/=cur) during, after)
+getNeighborhood cur@(((x1, y1, _), _), _) rest = (before, during, after)
     where
-    (before, duringafter) = span (\x -> getRelPosition cur x == Before) rest
-    (during, after) = span (\x -> getRelPosition cur x == Neighborhood) duringafter
-
-data RelPosition = Before | Neighborhood | After deriving (Eq, Show)
-
-getRelPosition :: RAAFL -> RAAFL -> RelPosition
-getRelPosition a@(((_, y1, _), _), _) b@(((_, y2, _),_), _)
-    | inNeighborhood a b        = Neighborhood
-    | y1 > y2                   = Before
-    | otherwise                 = After
+    isBefore (((x2, y2, _),_), _) = (y1 > y2) && not (inNeighborhood (x1, y1) (x2, y2))
+    isDuring (((x2, y2, _),_), _) = inNeighborhood (x1, y1) (x2, y2)
+    (before, duringafter) = span isBefore rest
+    (during, after) = spanNeq isDuring cur duringafter
 
 {- Returns whether or not the first robot is in the neighborhood of the second
     Since the maximum effect of a move is 1 spot, the robots must be within
     a taxicab distance of 2-}
-inNeighborhood :: RAAFL -> RAAFL -> Bool
-inNeighborhood (((x1, y1, _), _), _) (((x2, y2, _),_), _)
+inNeighborhood :: (Int, Int) -> (Int, Int) -> Bool
+inNeighborhood (x1, y1) (x2, y2)
     = abs (x1 - x2) + abs (y1 - y2) <= 2
 
 propOrganizeRobotsSame :: [RobotAndAction] -> Bool
