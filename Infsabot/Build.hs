@@ -14,8 +14,6 @@ import Test.HUnit(runTestTT, failures)
 import Infsabot.Demoes(demoes)
 import Infsabot.Tests(tests, stressTest)
 import Infsabot.QuickChecks(checks)
-import Infsabot.Board(Board(..), renderBoard)
-import Infsabot.Parameters
 
 import Control.Monad(forM_, when)
 

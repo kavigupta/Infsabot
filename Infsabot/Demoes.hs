@@ -5,7 +5,8 @@ import Codec.Picture(writePng)
 import Control.Monad(forM_)
 import Infsabot.Parameters
 import Infsabot.GamePlay(boards)
-import Infsabot.Board(Board, renderBoard, startingBoard)
+import Infsabot.Board(Board, startingBoard)
+import Infsabot.Rendering(renderBoard)
 import Infsabot.RobotStrategy(basicProgram)
 
 import System.Process(system)

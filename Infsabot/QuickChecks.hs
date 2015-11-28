@@ -25,6 +25,8 @@ import Data.DeriveTH(derive, makeArbitrary)
 --import Debug.Trace
 import Test.QuickCheck hiding (shuffle)
 
+type RAL = DRal.RandomAccessList
+
 checkCount :: Int
 checkCount = 4000
 

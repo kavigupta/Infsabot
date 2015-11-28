@@ -1,17 +1,12 @@
 module Infsabot.Board (
-		RAL,
 		Board(Board),
 			boardContents, boardRobots, boardSize, boardTime,
 			(!!!), setRobot, robotAt, updateSpot, robotAlongPath,
 		startingBoard,
-		renderBoard
 	) where
 
-import Codec.Picture
-import Data.RandomAccessList
-import Data.Maybe(fromJust)
-import Infsabot.MathTools
-import Infsabot.Constants
+import Data.RandomAccessList(RandomAccessList, lookup)
+import Infsabot.MathTools(isPrime)
 import Infsabot.Base
 import Infsabot.Robot
 import Infsabot.RobotAction
@@ -22,14 +17,6 @@ type RAL = RandomAccessList
 
 (.!.) :: RandomAccessList a -> Int -> a
 (.!.) = flip Data.RandomAccessList.lookup
-
--- Gets the display color of the given spot.
--- If there is a robot, then the color is that of the robot
--- Otherwise, the color is that of the underlying material
-spotColor :: SeenSpot -> PixelRGB8
-spotColor (SeenSpot SpotEmpty Nothing) 		= colorOfEmptySpot
-spotColor (SeenSpot SpotMaterial Nothing) 	= colorOfMaterialSpot
-spotColor (SeenSpot _ (Just rob)) 			= robotColor rob
 
 -- Represents a board.
 data Board = Board {
@@ -122,15 +109,8 @@ robotAlongPath _ _ _ _ 0 = Nothing
 robotAlongPath team b (x, y) dir n
 	= case perhapsRobot of
 		Nothing 	-> robotAlongPath team b offsettedPosition dir (n-1)
-		Just rob 	-> Just $ (x, y, rob)
+		Just rob 	-> Just (x, y, rob)
 	where
 	offsettedPosition :: (Int, Int)
 	offsettedPosition = applyDirection team dir (x, y)
 	perhapsRobot = robotAt b (x, y)
-
--- Renders the given board as an image
-renderBoard :: Int -> Board -> Image PixelRGB8
-renderBoard n b = generateImage colorAt (n * boardSize b) (n * boardSize b)
-	where
-	colorAt :: Int -> Int -> PixelRGB8
-	colorAt x y = spotColor . toSeenSpot . fromJust $ b !!! (x `div` n, y `div` n)

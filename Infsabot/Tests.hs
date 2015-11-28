@@ -14,6 +14,7 @@ import Data.Map(fromList, toList)
 import Codec.Picture
 import Infsabot.GamePlay(boards)
 import Infsabot.Parameters
+import Infsabot.Rendering(renderBoard)
 
 --import Debug.Trace
 
