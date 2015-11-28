@@ -24,7 +24,7 @@ data BoardSpot = SpotEmpty | SpotMaterial
         deriving (Eq, Show)
 
 -- Represents an offset from the original position.
-newtype Offset = Offset Int
+newtype Offset = Offset (Int, Int)
 
 -- The robot's internal state. This is represented by a Stringly-typed Map
 type InternalState = Map String String
@@ -52,30 +52,34 @@ limitedOffset team len directs to
     withinRange = squareNorm offs <= len * len
     offs = overallOffset team directs
 
-
+{-
+    Apply the given direction to the given coordinate pair
+-}
 applyDirection :: Team -> RDirection -> (Int, Int) -> (Int, Int)
 applyDirection team dir = applyOffset (getOffset team dir)
 
-overallOffset :: Team -> [RDirection] -> (Offset, Offset)
-overallOffset team directs = foldr (addOffset) (Offset 0, Offset 0) $ map (getOffset team) directs
+-- get the overall offset of the given list of directions, summed up
+overallOffset :: Team -> [RDirection] -> Offset
+overallOffset team = foldr (addOffset) (Offset (0, 0)) . map (getOffset team)
 
 -- Gets the coordinate pair of offsets representing the given Team's understanding of the given direction
-getOffset :: Team -> RDirection -> (Offset, Offset)
-getOffset B N = (Offset 0, Offset (-1))
-getOffset B E = (Offset 1, Offset 0)
+getOffset :: Team -> RDirection -> Offset
+getOffset B N = Offset (0, -1)
+getOffset B E = Offset (1, 0)
 getOffset B dir = negateOff . getOffset B . oppositeDirection $ dir
-getOffset A dir = swap $ getOffset B dir
+getOffset A dir = swapsset $ getOffset B dir
+    where swapsset (Offset x) = Offset . swap $ x
 
-applyOffset :: (Offset, Offset) -> (Int, Int) -> (Int, Int)
-applyOffset (Offset offx, Offset offy) (x, y) = (x + offx, y + offy)
+-- applies the given offset to the given coordinate
+applyOffset :: Offset -> (Int, Int) -> (Int, Int)
+applyOffset (Offset (offx, offy)) (x, y) = (x + offx, y + offy)
 
-negateOff :: (Offset, Offset) -> (Offset, Offset)
-negateOff (Offset offx, Offset offy) = (Offset (-offx), Offset (-offy))
+-- negates the given offset
+negateOff :: Offset -> Offset
+negateOff (Offset (offx, offy)) = Offset (-offx, -offy)
 
-addOffset :: (Offset, Offset) -> (Offset, Offset) -> (Offset, Offset)
-addOffset         (Offset offx1, Offset offy1)
-                        (Offset offx2, Offset offy2)
-                = (Offset (offx1 + offx2), Offset (offy1 + offy2))
+addOffset :: Offset -> Offset -> Offset
+addOffset a (Offset b) = Offset $ applyOffset a b
 
 oppositeDirection :: RDirection -> RDirection
 oppositeDirection N = S
@@ -83,5 +87,5 @@ oppositeDirection S = N
 oppositeDirection E = W
 oppositeDirection W = E
 
-squareNorm :: (Offset, Offset) -> Int
-squareNorm (Offset x, Offset y) = x * x + y * y
+squareNorm :: Offset -> Int
+squareNorm (Offset (x, y)) = x * x + y * y
