@@ -11,6 +11,7 @@ module Infsabot.Base(
                 unpack
         ) where
 
+import Data.Tuple(swap)
 import Data.Map(Map)
 import Codec.Picture (PixelRGB8)
 
@@ -44,9 +45,8 @@ data SeenSpot = SeenSpot BoardSpot (Maybe RobotAppearance)
 getOffset :: Team -> RDirection -> (Offset, Offset)
 getOffset B N = (Offset 0, Offset (-1))
 getOffset B E = (Offset 1, Offset 0)
-getOffset A N = (Offset (-1), Offset 0)
-getOffset A E = (Offset 0, Offset 1)
-getOffset team dir = negateOff $ getOffset team $ oppositeDirection dir
+getOffset B dir = negateOff . getOffset B . oppositeDirection $ dir
+getOffset A dir = swap $ getOffset B dir
 
 applyOffset :: (Offset, Offset) -> (Int, Int) -> (Int, Int)
 applyOffset (Offset offx, Offset offy) (x, y) = (x + offx, y + offy)

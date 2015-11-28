@@ -1,6 +1,5 @@
 module Infsabot.Board (
 		RAL,
-		BoardSpot,
 		Board(Board),
 			boardContents, boardRobots, boardSize, boardTime,
 			(!!!), setRobot, robotAt, updateSpot, robotAlongPath,

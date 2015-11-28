@@ -14,6 +14,8 @@ import Infsabot.MoveConflictResolution
 import Infsabot.Parameters
 import Infsabot.TestLibrary
 import Infsabot.GamePlay
+import Data.Function(on)
+import Data.List(nubBy)
 import Data.Map(fromList, Map, toList)
 import Control.Monad(forM_, liftM)
 
@@ -64,8 +66,8 @@ propConflictOrderIndependence (x, y) = location x /= location y
     (d, c) = conflictsBetween y x
 
 propNoChangeInLength :: [RobotAndAction] -> Bool
-propNoChangeInLength raas = length raas == length (removeConflicting raas)
-
+propNoChangeInLength r = length raas == length (removeConflicting raas)
+    where raas = nubBy ((==) `on` (\((x, y, _), _) -> (x, y))) r
 location :: RAAFL -> (Int, Int)
 location (((x, y, _), _), _) = (x, y)
 

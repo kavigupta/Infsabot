@@ -208,7 +208,9 @@ propConflictsResolved acts
 makeSymmetric :: [RobotAndAction] -> [RobotAndAction]
 makeSymmetric raas = unique ++ map symmetricOf unique
     where
-    unique = filter (\((x,y,_),_) -> x /= y) $ nubBy ((==) `on` (effectivePosition)) raas
+    unique = removeOpposition $ nubBy ((==) `on` (effectivePosition)) raas
+    removeOpposition [] = []
+    removeOpposition (a:us) = filter (\u -> effectivePosition a /= swap (effectivePosition u)) $ removeOpposition us
 
 effectivePosition :: (TeamedObject a) => a -> (Int, Int)
 effectivePosition x

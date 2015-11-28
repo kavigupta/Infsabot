@@ -12,8 +12,11 @@ import Infsabot.QuickChecks
 import Test.QuickCheck.Property(exhaustive)
 
 tests :: [RobotAndAction]
-tests = makeSymmetric [((-1,-2,Robot {robotProgram = basicProgram A, robotTeam = A, robotAppearance = RobotAppearance {robotColor = PixelRGB8 140 27 170}, robotMaterial = 11, robotHitpoints = 46, robotBirthdate = 37, robotMemory = fromList [], robotMessages = []}),MoveIn N),((-3,-1,Robot {robotProgram = basicProgram A, robotTeam = A, robotAppearance = RobotAppearance {robotColor = PixelRGB8 234 132 136}, robotMaterial = 42, robotHitpoints = 36, robotBirthdate = 26, robotMemory = fromList [], robotMessages = []}),MoveIn S)]
+tests = makeSymmetric [((-32,-34,Robot {robotProgram = basicProgram A, robotTeam = A, robotAppearance = RobotAppearance {robotColor = PixelRGB8 154 156 210}, robotMaterial = 9, robotHitpoints = 20, robotBirthdate = 37, robotMemory = fromList [], robotMessages = []}),Noop),((-34,-32,Robot {robotProgram = basicProgram A, robotTeam = A, robotAppearance = RobotAppearance {robotColor = PixelRGB8 151 115 192}, robotMaterial = 41, robotHitpoints = 30, robotBirthdate = 20, robotMemory = fromList [], robotMessages = []}),Fire {fireDirection = E, materialExpended = -37})]
 
+
+{- makeSymmetric [((-1,-2,Robot {robotProgram = basicProgram A, robotTeam = A, robotAppearance = RobotAppearance {robotColor = PixelRGB8 140 27 170}, robotMaterial = 11, robotHitpoints = 46, robotBirthdate = 37, robotMemory = fromList [], robotMessages = []}),MoveIn N),((-3,-1,Robot {robotProgram = basicProgram A, robotTeam = A, robotAppearance = RobotAppearance {robotColor = PixelRGB8 234 132 136}, robotMaterial = 42, robotHitpoints = 36, robotBirthdate = 26, robotMemory = fromList [], robotMessages = []}),MoveIn S)]
+-}
 
 -- [((33,2,Robot {robotProgram = basicProgram A, robotTeam = B, robotAppearance = RobotAppearance {robotColor = PixelRGB8 18 75 15}, robotMaterial = 19, robotHitpoints = 0, robotBirthdate = 10, robotMemory = fromList [], robotMessages = []}),MoveIn E),((34,2,Robot {robotProgram = basicProgram A, robotTeam = A, robotAppearance = RobotAppearance {robotColor = PixelRGB8 227 112 174}, robotMaterial = 4, robotHitpoints = 22, robotBirthdate = 33, robotMemory = fromList [], robotMessages = []}),MoveIn W),((34,1,Robot {robotProgram = basicProgram A, robotTeam = B, robotAppearance = RobotAppearance {robotColor = PixelRGB8 130 50 122}, robotMaterial = 31, robotHitpoints = 8, robotBirthdate = 11, robotMemory = fromList [], robotMessages = []}),Dig)]
 

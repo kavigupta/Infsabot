@@ -8,17 +8,17 @@ import Data.STRef
 import Data.List(sort, (\\))
 
 
-propspanNeqWorks :: Eq a => (a -> Bool) -> a -> [a] -> Bool
-propspanNeqWorks f x xs = spanNeq f x xs == let (a, b) = span f xs in (filter (/= x) a, b)
+propspanNeqWorks :: Eq a => (a -> Bool) -> (a -> Bool) -> [a] -> Bool
+propspanNeqWorks f filt xs = spanNeq f filt xs == let (a, b) = span f xs in (filter filt a, b)
 
-spanNeq :: Eq a => (a -> Bool) -> a -> [a] -> ([a], [a])
+spanNeq :: Eq a => (a -> Bool) -> (a -> Bool) -> [a] -> ([a], [a])
 spanNeq _ _ [] = ([], [])
-spanNeq f y (x:xs)
+spanNeq f filt (x:xs)
     | f x
-        = if x == y
+        = if not (filt x)
             then span f xs
             else
-                let (a, b) = spanNeq f y xs
+                let (a, b) = spanNeq f filt xs
                 in (x:a, b)
     | otherwise
         = ([], x:xs)

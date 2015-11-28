@@ -191,12 +191,13 @@ noopify (((x, y, rob), _), _) = (newRobAct, finalLocations2 newRobAct)
     This code assumes that the robots it is given are an ordered column
 -}
 getNeighborhood :: RAAFL -> [RAAFL] -> ([RAAFL], [RAAFL], [RAAFL])
-getNeighborhood cur@(((x1, y1, _), _), _) rest = (before, during, after)
+getNeighborhood (((x1, y1, _), _), _) rest = (before, during, after)
     where
     isBefore (((x2, y2, _),_), _) = (y1 > y2) && not (inNeighborhood (x1, y1) (x2, y2))
     isDuring (((x2, y2, _),_), _) = inNeighborhood (x1, y1) (x2, y2)
+    notSame (((x2, y2, _),_), _) = (x1, y1) /= (x2, y2)
     (before, duringafter) = span isBefore rest
-    (during, after) = spanNeq isDuring cur duringafter
+    (during, after) = spanNeq isDuring notSame duringafter
 
 {- Returns whether or not the first robot is in the neighborhood of the second
     Since the maximum effect of a move is 1 spot, the robots must be within
