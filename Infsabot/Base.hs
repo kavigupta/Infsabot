@@ -3,12 +3,10 @@ module Infsabot.Base(
                         oppositeDirection,
                 Team(A,B),
                 BoardSpot(SpotEmpty, SpotMaterial),
-                Offset(Offset),
-                        getOffset, applyOffset, addOffset, squareNorm, asSeen,
+                        applyDirection, limitedOffset,
                 InternalState,
                 RobotAppearance(RobotAppearance), robotColor,
                 SeenSpot(SeenSpot),
-                unpack
         ) where
 
 import Data.Tuple(swap)
@@ -26,7 +24,7 @@ data BoardSpot = SpotEmpty | SpotMaterial
         deriving (Eq, Show)
 
 -- Represents an offset from the original position.
-newtype Offset = Offset Int deriving Eq
+newtype Offset = Offset Int
 
 -- The robot's internal state. This is represented by a Stringly-typed Map
 type InternalState = Map String String
@@ -40,6 +38,26 @@ data RobotAppearance = RobotAppearance {
 -- This contains a Board Spot, which the Robot can always see,
 --      contains a robot's appearance iff there is a robot at that spot.
 data SeenSpot = SeenSpot BoardSpot (Maybe RobotAppearance)
+
+
+{-
+    Offsets the given coordinate by the given directions, if the length of the overall
+    offset is less than the given length
+-}
+limitedOffset :: Team -> Int -> [RDirection] -> (Int, Int) -> Maybe (Int, Int)
+limitedOffset team len directs to
+        | withinRange   = Just $ applyOffset offs to
+        | otherwise     = Nothing
+    where
+    withinRange = squareNorm offs <= len * len
+    offs = overallOffset team directs
+
+
+applyDirection :: Team -> RDirection -> (Int, Int) -> (Int, Int)
+applyDirection team dir = applyOffset (getOffset team dir)
+
+overallOffset :: Team -> [RDirection] -> (Offset, Offset)
+overallOffset team directs = foldr (addOffset) (Offset 0, Offset 0) $ map (getOffset team) directs
 
 -- Gets the coordinate pair of offsets representing the given Team's understanding of the given direction
 getOffset :: Team -> RDirection -> (Offset, Offset)
@@ -67,11 +85,3 @@ oppositeDirection W = E
 
 squareNorm :: (Offset, Offset) -> Int
 squareNorm (Offset x, Offset y) = x * x + y * y
-
-unpack :: (Maybe a) -> a
-unpack Nothing = error "logic error"
-unpack (Just x) = x
-
-asSeen :: Team -> (Offset, Offset) -> (Offset, Offset)
-asSeen A xy = xy
-asSeen B (Offset x, Offset y) = (Offset (-x), Offset (-y))

@@ -227,10 +227,10 @@ finalLocations2 :: RobotAndAction -> FinalLocs
 finalLocations2 ((x,y,rob), act) = locs act
     where
     locs (MoveIn dir)
-        = let (newx, newy) = applyOffset (getOffset (robotTeam rob) dir) (x,y)
+        = let (newx, newy) = applyDirection (robotTeam rob) dir (x,y)
             in FinalLocs Nothing (Just (newx, newy))
     locs spawn@(Spawn _ _ _ _ _)
-        = let (newx, newy) = applyOffset (getOffset (robotTeam rob) $ newDirection spawn) (x,y)
+        = let (newx, newy) = applyDirection (robotTeam rob) (newDirection spawn) (x,y)
             in FinalLocs (Just (x, y)) (Just (newx, newy))
     locs Die = FinalLocs Nothing Nothing
     locs _ = FinalLocs (Just (x, y)) Nothing

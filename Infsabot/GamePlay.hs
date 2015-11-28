@@ -9,6 +9,7 @@ import Infsabot.MoveConflictResolution
 import Infsabot.Base
 import Data.List(sortBy)
 import Data.Function(on)
+import Data.Maybe(fromJust)
 import qualified Data.Map as M
 
 import Infsabot.Debug
@@ -85,10 +86,10 @@ getAction p ((x, y, rob), fire@(Fire _ _)) b
 getAction _ ((x, y, _), Dig) b
 		| mat == SpotMaterial		= updateSpot (x,y) SpotEmpty b
 		| otherwise					= b
-		where GameSpot mat _ = unpack $ b !!! (x, y)
+		where GameSpot mat _ = fromJust $ b !!! (x, y)
 getAction _ ((x, y, rob), MoveIn dir) b
 									= setRobot (x, y, Nothing) $ setRobot (newx, newy, Just rob) b
-	where (newx, newy) = applyOffset (getOffset (robotTeam rob) dir) (x, y)
+	where (newx, newy) = applyDirection (robotTeam rob) dir (x, y)
 getAction params ((x, y, rob), spawn@(Spawn _ _ _ _ _)) b
 									= setRobot (newx, newy, Just newRobot) b
 	where
@@ -102,7 +103,7 @@ getAction params ((x, y, rob), spawn@(Spawn _ _ _ _ _)) b
 		robotMemory = newMemory spawn,
 		robotMessages = []
 	}
-	(newx, newy) = applyOffset (getOffset (robotTeam rob) $ newDirection spawn) (x, y)
+	(newx, newy) = applyDirection (robotTeam rob) (newDirection spawn) (x, y)
 
 -- Gets a function that mutates a robot along a path, given
 	-- an original position
@@ -162,14 +163,10 @@ getKnownState p team b (x, y, rob) = KnownState {
 	}
 	where
 	peekFn :: [RDirection] -> Maybe SeenSpot
-	peekFn directs
-		| withinRange
-			= (b !!! (applyOffset (asSeen (robotTeam rob) offs) (x, y)))
-				>>= Just . toSeenSpot
-		| otherwise	= Nothing
-	        where
-			withinRange = squareNorm offs <= (lineOfSight p) * (lineOfSight p)
-			offs = foldr (addOffset) (Offset 0, Offset 0) $ map (getOffset team) directs
+	peekFn directs = (limitedOffset team (lineOfSight p) directs (x, y))
+			>>= (b !!!)
+			>>= (return . toSeenSpot)
+
 -- Returns the closest approximation to the requested action that is possible
     -- given the robot's level of material
 -- This may be another type of action.

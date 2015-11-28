@@ -9,6 +9,7 @@ module Infsabot.Board (
 
 import Codec.Picture
 import Data.RandomAccessList
+import Data.Maybe(fromJust)
 import Infsabot.MathTools
 import Infsabot.Constants
 import Infsabot.Base
@@ -124,7 +125,7 @@ robotAlongPath team b (x, y) dir n
 		Just rob 	-> Just $ (x, y, rob)
 	where
 	offsettedPosition :: (Int, Int)
-	offsettedPosition = applyOffset (getOffset team dir) (x, y)
+	offsettedPosition = applyDirection team dir (x, y)
 	perhapsRobot = robotAt b (x, y)
 
 -- Renders the given board as an image
@@ -132,4 +133,4 @@ renderBoard :: Int -> Board -> Image PixelRGB8
 renderBoard n b = generateImage colorAt (n * boardSize b) (n * boardSize b)
 	where
 	colorAt :: Int -> Int -> PixelRGB8
-	colorAt x y = spotColor . toSeenSpot . unpack $ b !!! (x `div` n, y `div` n)
+	colorAt x y = spotColor . toSeenSpot . fromJust $ b !!! (x `div` n, y `div` n)
