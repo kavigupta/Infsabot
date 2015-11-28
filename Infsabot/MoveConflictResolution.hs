@@ -10,7 +10,6 @@ import Infsabot.Base
 
 import Data.List(groupBy, sortBy)
 import Data.Function(on)
-import Data.Monoid(Monoid, mempty, mappend, mconcat)
 
 import Infsabot.Tools(spanNeq, sameElements, (!-!))
 
@@ -71,20 +70,13 @@ columnSweeper cols_
     (bccols', resweepNext) = columnSweeper (filter (not . null) $ b':c':cols)
 
 
-{- First element: whether a downward move was nullified, requiring a single element redo.
-   Second element: whether a rightward move was nullified, requiring a column redo-}
-data Effect = Effect Bool Bool deriving (Show, Eq)
-
-instance Monoid Effect where
-    mempty = Effect False False
-    mappend (Effect a b) (Effect c d) = Effect (a || c) (b || d)
 
 removeLocalCompletely :: RAA3Col -> (RAA3Col, Bool)
 removeLocalCompletely d
-        | redoV     = let (u, v) = removeLocalCompletely new in (u, v || redoH)
-        | otherwise = (new, redoH)
+        | redo     = let (u, v) = removeLocalCompletely new in (u, v || redo)
+        | otherwise = (new, redo)
     where
-    (new, Effect redoV redoH) = removeLocal d
+    (new, redo) = removeLocal d
 
 {-
     Removes conflicts with the given Robot and Action in the three columns recursively.
@@ -93,9 +85,9 @@ removeLocalCompletely d
             current and future columns (modified),
             whether or not there is a need to recalculate leftwards)
 -}
-removeLocal :: RAA3Col -> (RAA3Col, Effect)
+removeLocal :: RAA3Col -> (RAA3Col, Bool)
 removeLocal ([], c, r)
-        = (([], c, r), Effect False False)
+        = (([], c, r), False)
 removeLocal (current:l, c, r)
         | trace (
             "Current = " ++ printRobotAndAction (fst current) ++
@@ -121,16 +113,16 @@ removeLocal (current:l, c, r)
             = removeLcl current (l, c, r)
     -- Remove any future conflicts
     ((mLnext, mCnext, mRnext),
-        Effect redoNextV redoNextH)
+        redoNext)
             = removeLocal (lnext, cnext, rnext)
     l' = lprev ++ [noopifyIf current removeCurrent] ++ mLnext
     c' = cprev ++ mCnext
     r' = rprev ++ mRnext
-    effect' = effect `mappend` (Effect False redoNextH)
+    effect' = effect || redoNext
     (l'', c'', r'', effect'')
-        | redoNextV
+        | redoNext
             = let ((newL', newC', newR'), secondEffect) = removeLocal(l', c', r')
-                in (newL', newC', newR', effect' `mappend` secondEffect)
+                in (newL', newC', newR', effect' || secondEffect)
         | otherwise
             = (l', c', r', effect')
 {-
@@ -141,7 +133,7 @@ removeLocal (current:l, c, r)
             whether the current robot should be noopified,
             the effect of the potential noopifications of the current robot)
 -}
-removeLcl :: RAAFL -> RAA3Col -> (RAA3Col, RAA3Col, Bool, Effect)
+removeLcl :: RAAFL -> RAA3Col -> (RAA3Col, RAA3Col, Bool, Bool)
 removeLcl current (l, c, r)
         = ((lprev, cprev, rprev),
             (luse' ++ lrest, cuse' ++ crest, ruse' ++ rrest),
@@ -159,20 +151,20 @@ removeLcl current (l, c, r)
     luse' = zipWith noopifyIf lneigh confOtherL
     cuse' = zipWith noopifyIf cneigh confOtherC
     ruse' = zipWith noopifyIf rneigh confOtherR
-    effOther = mconcat $ (map mconcat)
+    effOther = any (any id)
         [zipWith effectOf confOtherL (map fst lneigh),
             zipWith effectOf confOtherC (map fst cneigh),
             zipWith effectOf confOtherR (map fst rneigh)]
     confThis = any (any fst) [confL, confC, confR]
-    effect = (effectOf confThis . fst $ current) `mappend` effOther
+    effect = (effectOf confThis . fst $ current) || effOther
     --effect = effectOf confThis (fst current) `mappend` (if not confOther then Effect False False else Effect True True)
 
-effectOf :: Bool -> RobotAndAction -> Effect
-effectOf True ((_, _, _), MoveIn _) = Effect True True
+effectOf :: Bool -> RobotAndAction -> Bool
+effectOf True ((_, _, _), MoveIn _) = True
     -- | x /= 0    = Effect False True
     -- | y /= 0    = Effect True False
         --where (Offset x, Offset y) = getOffset (robotTeam rob) dir
-effectOf _ _ = Effect False False
+effectOf _ _ = False
 
 noopifyIf :: RAAFL -> Bool -> RAAFL
 noopifyIf x True = noopify x
