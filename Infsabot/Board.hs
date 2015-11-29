@@ -2,21 +2,16 @@ module Infsabot.Board (
 		Board(Board),
 			boardContents, boardRobots, boardSize, boardTime,
 			(!!!), setRobot, robotAt, updateSpot, robotAlongPath,
-		startingBoard,
+		startingBoard
 	) where
 
-import Data.RandomAccessList(RandomAccessList, lookup)
+import Data.RandomAccessList(RandomAccessList, lookup, update, fromList)
 import Infsabot.MathTools(isPrime)
 import Infsabot.Base
 import Infsabot.Robot
 import Infsabot.RobotAction
 import Infsabot.Parameters
 import qualified Data.Map as M
-
-type RAL = RandomAccessList
-
-(.!.) :: RandomAccessList a -> Int -> a
-(.!.) = flip Data.RandomAccessList.lookup
 
 -- Represents a board.
 data Board = Board {
@@ -30,10 +25,6 @@ data Board = Board {
 	-- The Current Time of the Board
 	boardTime :: Int
 } deriving (Show)
-
--- Returns true iff the given coordinate pair is in the board
-inBoard :: Board -> (Int, Int) -> Bool
-inBoard b (x, y) = x >= 0 && x < boardSize b && y >= 0 && y < boardSize b
 
 -- Gets the game spot at the given board location
 (!!!) :: Board -> (Int, Int) -> Maybe GameSpot
@@ -98,7 +89,7 @@ updateSpot :: (Int, Int) -> BoardSpot -> Board -> Board
 updateSpot (x, y) spot b = b !-> (x, y) $ GameSpot spot (robotAt b (x, y))
 
 -- Gets the robot at the given position, if it exists
-robotAt :: Board -> (Int, Int) -> Maybe (Robot)
+robotAt :: Board -> (Int, Int) -> Maybe Robot
 robotAt b pos = (b !!! pos) >>= (\(GameSpot _ rob) -> rob)
 
 -- Finds the first robot along the given direction from the given position
@@ -114,3 +105,14 @@ robotAlongPath team b (x, y) dir n
 	offsettedPosition :: (Int, Int)
 	offsettedPosition = applyDirection team dir (x, y)
 	perhapsRobot = robotAt b (x, y)
+
+
+-- Returns true iff the given coordinate pair is in the board
+inBoard :: Board -> (Int, Int) -> Bool
+inBoard b (x, y) = x >= 0 && x < boardSize b && y >= 0 && y < boardSize b
+
+
+type RAL = RandomAccessList
+
+(.!.) :: RandomAccessList a -> Int -> a
+(.!.) = flip Data.RandomAccessList.lookup

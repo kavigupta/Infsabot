@@ -22,7 +22,7 @@ basicProgram team state
         = case peekAtSpot state [] of
             Nothing -> SpotEmpty
             Just (SeenSpot current _) -> current
-    createSpawn dir = Spawn {
+    createSpawn dir = Spawn $ SpawnAction {
         newDirection = dir,
         newProgram = basicProgram team,
         newAppearance = RobotAppearance {
@@ -37,7 +37,7 @@ basicProgram2 asdf state
     | mat == SpotMaterial
         = (Dig, stateMemory state)
     | enemyLoc /= Nothing
-        = (Fire {fireDirection = case enemyLoc of (Just loc) -> loc, materialExpended = 2}, stateMemory state)
+        = (Fire $ FireAction {fireDirection = case enemyLoc of (Just loc) -> loc, materialExpended = 2}, stateMemory state)
     | stateAge state `mod` 11 == 0  = directionByMod createSpawn
     | stateAge state `mod` 11 == 1  = directionByMod createSendMessage
     | otherwise = directionByMod MoveIn
@@ -73,14 +73,14 @@ basicProgram2 asdf state
             Nothing -> SpotEmpty
             Just (SeenSpot current _) -> current
     ourAppearance = RobotAppearance {robotColor = colorDefaultOf asdf}
-    createSpawn dir = Spawn {
+    createSpawn dir = Spawn $ SpawnAction{
         newDirection = dir,
         newProgram = basicProgram asdf,
         newAppearance = ourAppearance,
         newMaterial = material state `div` 3,
         newMemory = stateMemory state
     }
-    createSendMessage dir = SendMessage {
+    createSendMessage dir = Send $ SendAction {
         messageToSend = show (stateAge state),
         sendDirection = dir
     }

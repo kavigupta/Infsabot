@@ -56,7 +56,7 @@ play p b
 getAction :: Parameters -> RobotAndAction -> Board -> Board
 getAction _ ((x,y,_),Die) b 		= setRobot (x, y, Nothing) b
 getAction _ (_, Noop) b		 	= b
-getAction p ((x, y, rob), send@(SendMessage _ _)) b
+getAction p ((x, y, rob), Send send) b
 									= mutateRobot
 										(robotTeam rob)
 										(x, y)
@@ -70,7 +70,7 @@ getAction p ((x, y, rob), send@(SendMessage _ _)) b
 		where
 		newMessage :: (String, RDirection)
 		newMessage = (messageToSend send, oppositeDirection $ sendDirection send)
-getAction p ((x, y, rob), fire@(Fire _ _)) b
+getAction p ((x, y, rob), Fire fire) b
 									= mutateRobot
 										(robotTeam rob)
 										(x, y)
@@ -90,7 +90,7 @@ getAction _ ((x, y, _), Dig) b
 getAction _ ((x, y, rob), MoveIn dir) b
 									= setRobot (x, y, Nothing) $ setRobot (newx, newy, Just rob) b
 	where (newx, newy) = applyDirection (robotTeam rob) dir (x, y)
-getAction params ((x, y, rob), spawn@(Spawn _ _ _ _ _)) b
+getAction params ((x, y, rob), Spawn spawn) b
 									= setRobot (newx, newy, Just newRobot) b
 	where
 	newRobot = Robot {
@@ -180,11 +180,11 @@ possibleAction p (xyrob@(_, _, rob), action)
 	downgrade Noop = (xyrob, Die) -- no alternative
 	downgrade (MoveIn _) = tryNoop
 	downgrade Dig = tryNoop
-	downgrade s@(Spawn _ _ _ _ _) -- TODO Potential massive inefficiency here!
-		= possibleAction p (xyrob, s {newMaterial = newMaterial s - 1})
-	downgrade f@(Fire _ _)
-		= possibleAction p (xyrob, f {materialExpended = materialExpended f - 1})
-	downgrade (SendMessage _ _) = tryNoop
+	downgrade (Spawn s) -- TODO Potential massive inefficiency here!
+		= possibleAction p (xyrob, Spawn $ s {newMaterial = newMaterial s - 1})
+	downgrade (Fire f)
+		= possibleAction p (xyrob, Fire $ f {materialExpended = materialExpended f - 1})
+	downgrade (Send _) = tryNoop
 	tryNoop = possibleAction p (xyrob, Noop)
 
 -- Increments time by one

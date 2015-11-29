@@ -229,7 +229,7 @@ finalLocations2 ((x,y,rob), act) = locs act
     locs (MoveIn dir)
         = let (newx, newy) = applyDirection (robotTeam rob) dir (x,y)
             in FinalLocs Nothing (Just (newx, newy))
-    locs spawn@(Spawn _ _ _ _ _)
+    locs (Spawn spawn)
         = let (newx, newy) = applyDirection (robotTeam rob) (newDirection spawn) (x,y)
             in FinalLocs (Just (x, y)) (Just (newx, newy))
     locs Die = FinalLocs Nothing Nothing

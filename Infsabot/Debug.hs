@@ -16,7 +16,7 @@ printRobot :: (Int, Int, Robot) -> String
 printRobot (x, y, rob) = show (x, y, robotTeam rob)
 
 printAction :: RobotAction -> String
-printAction s@(Spawn _ _ _ _ _) = "Spawn " ++ show (newDirection s)
+printAction (Spawn s) = "Spawn " ++ show (newDirection s)
 printAction x = show x
 
 printRobotAndAction :: ((Int, Int, Robot), RobotAction) -> String

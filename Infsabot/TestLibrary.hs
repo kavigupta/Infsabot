@@ -140,11 +140,11 @@ instance TeamedComparable RobotAction where
         aS (Die, Die) = TRSuccess
         aS (Dig, Dig) = TRSuccess
         aS (MoveIn a, MoveIn b) = areSymm (a, b)
-        aS (Fire dir1 mat1, Fire dir2 mat2)
+        aS (Fire (FireAction mat1 dir1), Fire  (FireAction mat2 dir2))
             = areSymm(mat1, mat2) `mappend` areSymm (dir1, dir2)
-        aS (SendMessage str1 dir1, SendMessage str2 dir2)
+        aS (Send (SendAction str1 dir1), Send (SendAction str2 dir2))
             = areSymm (str1, str2) `mappend` areSymm (dir1, dir2)
-        aS (s1@(Spawn _ _ _ _ _), s2@(Spawn _ _ _ _ _))
+        aS (Spawn s1, Spawn s2)
             = areSymm (newDirection s1, newDirection s2) `mappend`
                 areSymm(newMaterial s1, newMaterial s2) `mappend`
                 areSymm (newMemory s1, newMemory s2)
@@ -153,10 +153,10 @@ instance TeamedComparable RobotAction where
     symmetricOf Die = Die
     symmetricOf Dig = Dig
     symmetricOf (MoveIn a) = MoveIn $ symmetricOf a
-    symmetricOf (Fire a b) = Fire (symmetricOf a) (symmetricOf b)
-    symmetricOf (SendMessage a b) = SendMessage (symmetricOf a) (symmetricOf b)
-    symmetricOf (Spawn a b c d e)
-        = Spawn
+    symmetricOf (Fire (FireAction a b)) = Fire $ FireAction (symmetricOf a) (symmetricOf b)
+    symmetricOf (Send (SendAction a b)) = Send $ SendAction (symmetricOf a) (symmetricOf b)
+    symmetricOf (Spawn (SpawnAction a b c d e))
+        = Spawn $ SpawnAction
             (symmetricOf a)
             (symmetricOf b)
             (symmetricOf c)
