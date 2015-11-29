@@ -5,13 +5,14 @@ module Infsabot.Base(
                 BoardSpot(SpotEmpty, SpotMaterial),
                         applyDirection, limitedOffset,
                 InternalState,
-                RobotAppearance(RobotAppearance), robotColor,
+                RobotAppearance(RobotAppearance),
                 SeenSpot(SeenSpot),
+                colorOf
         ) where
 
 import Data.Tuple(swap)
 import Data.Map(Map)
-import Codec.Picture (PixelRGB8)
+import Codec.Picture (PixelRGB8(PixelRGB8))
 
 -- Represents one of the 4 potential directions, relative to the Robot itself
 data RDirection = N | E | W | S deriving (Show, Eq)
@@ -30,9 +31,7 @@ newtype Offset = Offset (Int, Int)
 type InternalState = Map String String
 
 -- The robot's appearance. Currently just contains a color.
-data RobotAppearance = RobotAppearance {
-        robotColor :: PixelRGB8
-} deriving (Show, Eq)
+data RobotAppearance = RobotAppearance PixelRGB8 deriving (Show, Eq)
 
 -- Represents a Spot on the Board as seen by a robot.
 -- This contains a Board Spot, which the Robot can always see,
@@ -89,3 +88,24 @@ oppositeDirection W = E
 
 squareNorm :: Offset -> Int
 squareNorm (Offset (x, y)) = x * x + y * y
+
+class Colored a where
+    colorOf :: a -> PixelRGB8
+
+instance Colored BoardSpot where
+    colorOf SpotEmpty =  PixelRGB8 255 255 255
+    colorOf SpotMaterial = PixelRGB8 128 128 128
+
+instance Colored Team where
+    colorOf A = PixelRGB8 255 0 0
+    colorOf B = PixelRGB8 0 0 128
+
+instance Colored RobotAppearance where
+    colorOf (RobotAppearance x) = x
+
+    -- Gets the display color of the given spot.
+	-- If there is a robot, then the color is that of the robot
+	-- Otherwise, the color is that of the underlying material
+instance Colored SeenSpot where
+    colorOf (SeenSpot _ (Just rob)) 			= colorOf rob
+    colorOf (SeenSpot x Nothing) 		        = colorOf x

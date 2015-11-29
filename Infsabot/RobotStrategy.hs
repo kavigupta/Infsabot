@@ -2,7 +2,6 @@ module Infsabot.RobotStrategy(basicProgram2, basicProgram)
     where
 
 import Infsabot.Base
-import Infsabot.Constants
 import Infsabot.RobotAction
 
 basicProgram :: Team -> RobotProgram
@@ -25,9 +24,7 @@ basicProgram team state
     createSpawn dir = Spawn $ SpawnAction {
         newDirection = dir,
         newProgram = basicProgram team,
-        newAppearance = RobotAppearance {
-            robotColor = colorDefaultOf team
-        },
+        newAppearance = RobotAppearance $ colorOf team,
         newMaterial = material state `div` 3,
         newMemory = stateMemory state
     }
@@ -72,7 +69,7 @@ basicProgram2 asdf state
         = case peekAtSpot state [] of
             Nothing -> SpotEmpty
             Just (SeenSpot current _) -> current
-    ourAppearance = RobotAppearance {robotColor = colorDefaultOf asdf}
+    ourAppearance = RobotAppearance $ colorOf asdf
     createSpawn dir = Spawn $ SpawnAction{
         newDirection = dir,
         newProgram = basicProgram asdf,
