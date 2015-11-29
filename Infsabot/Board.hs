@@ -2,7 +2,8 @@ module Infsabot.Board (
 		Board(Board),
 			boardContents, boardRobots, boardSize, boardTime,
 			(!!!), setRobot, robotAt, updateSpot, robotAlongPath,
-		startingBoard
+		startingBoard,
+		GameSpot(GameSpot), toSeenSpot
 	) where
 
 import Data.RandomAccessList(RandomAccessList, lookup, update, fromList)
@@ -12,6 +13,15 @@ import Infsabot.Robot
 import Infsabot.RobotAction
 import Infsabot.Parameters
 import qualified Data.Map as M
+
+-- Represents a Spot on the Board as seen by a robot.
+-- This contains a Board Spot, which the Robot can always see, contains a robot's appearance iff there is a robot at that spot.
+data GameSpot = GameSpot BoardSpot (Maybe Robot) deriving (Show)
+
+-- Converts a GameSpot to a seen spot
+toSeenSpot :: GameSpot -> SeenSpot
+toSeenSpot (GameSpot s Nothing) = SeenSpot s Nothing
+toSeenSpot (GameSpot s (Just rob)) = SeenSpot s $ Just $ robotAppearance rob
 
 -- Represents a board.
 data Board = Board {

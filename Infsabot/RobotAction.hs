@@ -9,7 +9,7 @@ module Infsabot.RobotAction (
             newProgram, newAppearance, newMaterial, newMemory, newDirection,
             fireDirection, materialExpended,
             messageToSend, sendDirection,
-            orderOfOperations,
+        orderOfOperations,
         actionCost
     ) where
 

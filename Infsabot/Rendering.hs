@@ -2,8 +2,7 @@ module Infsabot.Rendering (renderBoard) where
 
 
 import Infsabot.Base(colorOf)
-import Infsabot.Robot(toSeenSpot)
-import Infsabot.Board(Board, boardSize, (!!!), )
+import Infsabot.Board(Board, boardSize, (!!!), toSeenSpot)
 import Codec.Picture(PixelRGB8, Image, generateImage)
 import Data.Maybe(fromJust)
 

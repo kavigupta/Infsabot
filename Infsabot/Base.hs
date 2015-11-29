@@ -89,6 +89,9 @@ oppositeDirection W = E
 squareNorm :: Offset -> Int
 squareNorm (Offset (x, y)) = x * x + y * y
 
+{-
+    Represents objects that have colors.
+-}
 class Colored a where
     colorOf :: a -> PixelRGB8
 
