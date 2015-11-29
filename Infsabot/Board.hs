@@ -59,8 +59,8 @@ b !!! (x, y)
 -- This board contains one robot from each team.
 startingBoard :: Parameters -> (Team -> RobotProgram) -> Board
 startingBoard p programOf
-	= setRobot (0, paramBoardSize p - 1, Just $ bot B) $
-		setRobot (paramBoardSize p - 1, 0, Just $ bot A) $
+	= setRobot (0, paramBoardSize p - 1, bot B) $
+		setRobot (paramBoardSize p - 1, 0, bot A) $
 		Board {
 			boardContents 	= startingSpots,
 			boardRobots 	= M.fromList [],
@@ -71,13 +71,14 @@ startingBoard p programOf
 	startingSpots :: (RAL (RAL GameSpot))
 	startingSpots = fmap ys $ fromList [0..paramBoardSize p]
 		where
-		ys x = fmap (initialColor x) $ fromList [0..paramBoardSize p]
-		initialColor :: Int -> Int -> GameSpot
-		initialColor x y =
-			if isPrime (x * x + y * y)
-				then GameSpot SpotMaterial Nothing
-				else GameSpot SpotEmpty Nothing
-	bot team = defaultRobot p team (programOf team)
+		ys x = fmap initialColor $ fromList [0..paramBoardSize p]
+			where
+			initialColor :: Int -> GameSpot
+			initialColor y =
+				if isPrime (x * x + y * y)
+					then GameSpot SpotMaterial Nothing
+					else GameSpot SpotEmpty Nothing
+	bot team = Just $ defaultRobot p team (programOf team)
 
 -- Sets the robot at the given spot to the given value, or deletes it.
 -- 		1. places the robot at the gamespot at the given coordinates
@@ -90,9 +91,9 @@ setRobot (x, y, rob) b = delRobot $ b !!! (x, y)
 			= newB {boardRobots = newRobots rob}
 		where
 		newB = b !-> (x, y) $ GameSpot oldMaterial rob
-		oldRemoved = M.delete (x, y) $ boardRobots newB
-		newRobots Nothing = oldRemoved
-		newRobots (Just robot) = M.insert (x, y) robot oldRemoved
+		newRobots Nothing 		=  M.delete (x, y) oldRobots
+		newRobots (Just robot) 	= M.insert (x, y) robot oldRobots
+		oldRobots = boardRobots newB
 
 --Updates the given spot to the new value
 updateSpot :: (Int, Int) -> BoardSpot -> Board -> Board
@@ -108,14 +109,9 @@ robotAt b pos = (b !!! pos) >>= (\(GameSpot _ rob) -> rob)
 robotAlongPath :: Team -> Board -> (Int, Int) -> RDirection -> Int -> Maybe (Int, Int, Robot)
 robotAlongPath _ _ _ _ 0 = Nothing
 robotAlongPath team b (x, y) dir n
-	= case perhapsRobot of
-		Nothing 	-> robotAlongPath team b offsettedPosition dir (n-1)
+	= case robotAt b (x, y) of
+		Nothing 	-> robotAlongPath team b (applyDirection team dir (x, y)) dir (n-1)
 		Just rob 	-> Just (x, y, rob)
-	where
-	offsettedPosition :: (Int, Int)
-	offsettedPosition = applyDirection team dir (x, y)
-	perhapsRobot = robotAt b (x, y)
-
 
 -- Returns true iff the given coordinate pair is in the board
 inBoard :: Board -> (Int, Int) -> Bool
