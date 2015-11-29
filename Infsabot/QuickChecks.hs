@@ -43,7 +43,7 @@ checks =
 -- GamePlay checks follow
 
 rListBoardCorr :: Parameters -> Board -> Bool
-rListBoardCorr p b = sameElements (map (\((x, y), r) -> (x, y, r)) $ toList $ boardRobots nextb) (robotsOnBoard nextb)
+rListBoardCorr p b = sameElements (map PositionedRobot $ toList $ boardRobots nextb) (robotsOnBoard nextb)
     where nextb = boards p b !! 1
 
 -- Move Conflict Resolution tests Follow
@@ -69,15 +69,17 @@ propConflictOrderIndependence (x, y) = location x /= location y
 
 propNoChangeInLength :: [RobotAndAction] -> Bool
 propNoChangeInLength r = length raas == length (removeConflicting raas)
-    where raas = nubBy ((==) `on` (\((x, y, _), _) -> (x, y))) r
+    where raas = nubBy ((==) `on` positionOf) r
+
 location :: RAAFL -> (Int, Int)
-location (((x, y, _), _), _) = (x, y)
+location = positionOf . fst
 
 $( derive makeArbitrary ''RDirection )
 $( derive makeArbitrary ''SpawnAction )
 $( derive makeArbitrary ''FireAction )
 $( derive makeArbitrary ''SendAction )
 $( derive makeArbitrary ''RobotAction )
+$( derive makeArbitrary ''PositionedRobot )
 $( derive makeArbitrary ''Team )
 $( derive makeArbitrary ''RobotAppearance )
 $( derive makeArbitrary ''PixelRGB8 )
@@ -93,7 +95,7 @@ instance Arbitrary Board where
             time <- choose (1, 100)
             contents <- arbitraryBoard size
             let robots = robotsOnBoard $ Board {boardSize = size, boardTime = time, boardRobots = fromList [], boardContents = contents}
-            return $ Board {boardSize = size, boardTime = time, boardRobots = fromList $ map (\(x, y, r) -> ((x, y), r)) robots, boardContents = contents}
+            return $ Board {boardSize = size, boardTime = time, boardRobots = fromList $ map (\(PositionedRobot x) -> x) robots, boardContents = contents}
         where
         arbitraryBoard :: Int -> Gen (RAL (RAL GameSpot))
         arbitraryBoard size = liftM DRal.fromList $ arbitraryBoardL size

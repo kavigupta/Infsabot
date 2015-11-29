@@ -15,7 +15,7 @@ import Infsabot.Tools(spanNeq, sameElements, (!-!))
 
 import Infsabot.Debug
 
-type RobotAndAction = ((Int, Int, Robot), RobotAction)
+type RobotAndAction = (PositionedRobot, RobotAction)
 
 type FinalLocations = [(Int, Int, Bool)]
 
@@ -160,7 +160,7 @@ removeLcl current (l, c, r)
     --effect = effectOf confThis (fst current) `mappend` (if not confOther then Effect False False else Effect True True)
 
 effectOf :: Bool -> RobotAndAction -> Bool
-effectOf True ((_, _, _), MoveIn _) = True
+effectOf True (_, MoveIn _) = True
     -- | x /= 0    = Effect False True
     -- | y /= 0    = Effect True False
         --where (Offset x, Offset y) = getOffset (robotTeam rob) dir
@@ -181,8 +181,8 @@ conflictsBetween u v = (on firstConflicts snd u v, on firstConflicts snd v u)
 Converts the given action into a Noop
 -}
 noopify :: RAAFL -> RAAFL
-noopify (((x, y, rob), _), _) = (newRobAct, finalLocations2 newRobAct)
-    where newRobAct = ((x, y, rob), Noop)
+noopify ((xyrob, _), _) = (newRobAct, finalLocations2 newRobAct)
+    where newRobAct = (xyrob, Noop)
 {- Splits the given list into three parts
     - the part before the neighborhood of the given robot
     - the neighborhood of the given robot
@@ -191,13 +191,15 @@ noopify (((x, y, rob), _), _) = (newRobAct, finalLocations2 newRobAct)
     This code assumes that the robots it is given are an ordered column
 -}
 getNeighborhood :: RAAFL -> [RAAFL] -> ([RAAFL], [RAAFL], [RAAFL])
-getNeighborhood (((x1, y1, _), _), _) rest = (before, during, after)
+getNeighborhood = liftPosition go
     where
-    isBefore (((x2, y2, _),_), _) = (y1 > y2) && not (inNeighborhood (x1, y1) (x2, y2))
-    isDuring (((x2, y2, _),_), _) = inNeighborhood (x1, y1) (x2, y2)
-    notSame (((x2, y2, _),_), _) = (x1, y1) /= (x2, y2)
-    (before, duringafter) = span isBefore rest
-    (during, after) = spanNeq isDuring notSame duringafter
+    go (x1, y1) rest = (before, during, after)
+        where
+        isBefore (x2, y2) = (y1 > y2) && not (inNeighborhood (x1, y1) (x2, y2))
+        isDuring (x2, y2) = inNeighborhood (x1, y1) (x2, y2)
+        notSame (x2, y2) = (x1, y1) /= (x2, y2)
+        (before, duringafter) = span (liftPosition isBefore) rest
+        (during, after) = spanNeq (liftPosition isDuring) (liftPosition notSame) duringafter
 
 {- Returns whether or not the first robot is in the neighborhood of the second
     Since the maximum effect of a move is 1 spot, the robots must be within
@@ -220,11 +222,11 @@ organizeRobots =
         groupBy ((==) `on` xc) .
         sortBy (compare `on` xc)
     where
-    xc ((x, _, _), _) = x
-    yc ((_, y, _), _) = y
+    xc = fst . getLocation . fst
+    yc = snd . getLocation . fst
 
 finalLocations2 :: RobotAndAction -> FinalLocs
-finalLocations2 ((x,y,rob), act) = locs act
+finalLocations2 ((PositionedRobot ((x,y),rob)), act) = locs act
     where
     locs (MoveIn dir)
         = let (newx, newy) = applyDirection (robotTeam rob) dir (x,y)
@@ -234,3 +236,6 @@ finalLocations2 ((x,y,rob), act) = locs act
             in FinalLocs (Just (x, y)) (Just (newx, newy))
     locs Die = FinalLocs Nothing Nothing
     locs _ = FinalLocs (Just (x, y)) Nothing
+
+liftPosition :: ((Int, Int) -> a) -> RAAFL -> a
+liftPosition f ((PositionedRobot ((x2, y2), _),_), _) = f (x2, y2)

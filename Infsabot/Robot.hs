@@ -8,7 +8,9 @@ module Infsabot.Robot (
             robotMemory,
             robotHitpoints,
             robotMessages,
-        defaultRobot
+        defaultRobot,
+        PositionedRobot(PositionedRobot),
+            getLocation
     ) where
 
 import Infsabot.Base
@@ -35,6 +37,11 @@ data Robot = Robot {
         -- The messages this robot has on the stack
         robotMessages :: [(String, RDirection)]
 } deriving (Eq, Show)
+
+newtype PositionedRobot = PositionedRobot ((Int, Int), Robot) deriving (Eq, Show)
+
+getLocation :: PositionedRobot -> (Int, Int)
+getLocation (PositionedRobot (xy, _)) = xy
 
 defaultRobot :: Parameters -> Team -> RobotProgram -> Robot
 defaultRobot p team program = Robot {

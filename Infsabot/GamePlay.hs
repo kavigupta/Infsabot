@@ -14,7 +14,7 @@ import qualified Data.Map as M
 
 import Infsabot.Debug
 
-type RobotAndResult = ((Int, Int, Robot), RobotProgramResult)
+type RobotAndResult = (PositionedRobot, RobotProgramResult)
 
 boards :: Parameters -> Board -> [Board]
 boards params initialBoard = iterate (play params) initialBoard
@@ -54,9 +54,10 @@ play p b
 -- gets the action associated with the given robotandaction in the form
 -- of a function that mutates a board
 getAction :: Parameters -> RobotAndAction -> Board -> Board
-getAction _ ((x,y,_),Die) b 		= setRobot (x, y, Nothing) b
+getAction _ (PositionedRobot ((x,y),_),Die) b
+									= setRobot (x, y, Nothing) b
 getAction _ (_, Noop) b		 	= b
-getAction p ((x, y, rob), Send send) b
+getAction p (PositionedRobot ((x, y), rob), Send send) b
 									= mutateRobot
 										(robotTeam rob)
 										(x, y)
@@ -70,7 +71,7 @@ getAction p ((x, y, rob), Send send) b
 		where
 		newMessage :: (String, RDirection)
 		newMessage = (messageToSend send, oppositeDirection $ sendDirection send)
-getAction p ((x, y, rob), Fire fire) b
+getAction p (PositionedRobot ((x, y), rob), Fire fire) b
 									= mutateRobot
 										(robotTeam rob)
 										(x, y)
@@ -83,14 +84,14 @@ getAction p ((x, y, rob), Fire fire) b
 			| newHP > 0 	= Just $ toReceive { robotHitpoints = newHP }
 			| otherwise		= Nothing
 		where newHP = robotHitpoints toReceive - apply (hitpointsRemoved p) (materialExpended fire)
-getAction _ ((x, y, _), Dig) b
+getAction _ (PositionedRobot ((x, y), _), Dig) b
 		| mat == SpotMaterial		= updateSpot (x,y) SpotEmpty b
 		| otherwise					= b
 		where GameSpot mat _ = fromJust $ b !!! (x, y)
-getAction _ ((x, y, rob), MoveIn dir) b
+getAction _ (PositionedRobot ((x, y), rob), MoveIn dir) b
 									= setRobot (x, y, Nothing) $ setRobot (newx, newy, Just rob) b
 	where (newx, newy) = applyDirection (robotTeam rob) dir (x, y)
-getAction params ((x, y, rob), Spawn spawn) b
+getAction params (PositionedRobot ((x, y), rob), Spawn spawn) b
 									= setRobot (newx, newy, Just newRobot) b
 	where
 	newRobot = Robot {
@@ -130,7 +131,8 @@ updateAllHardDrives rars = (
 		map removeState rars)
 	where
 	removeState (xyrob, (act, _)) = (xyrob, act)
-	updateHardDrive ((x,y,rob), (_, state))
+	updateHardDrive :: RobotAndResult -> Board -> Board
+	updateHardDrive (PositionedRobot ((x,y),rob), (_, state))
 		= setRobot (x,y,Just rob {robotMemory = state})
 
 -- Takes a parameter list and list of actions, and applies all their costs to
@@ -139,7 +141,7 @@ applyActionCosts :: Parameters -> [RobotAndAction] -> Board -> Board
 applyActionCosts params raas = foldr (.) id $ map applyActionCost raas
 	where
 	applyActionCost :: RobotAndAction -> Board -> Board
-	applyActionCost ((x,y,rob), act) = setRobot (x, y, Just newRobot)
+	applyActionCost (PositionedRobot ((x, y), rob), act) = setRobot (x, y, Just newRobot)
 		where
 		cost = actionCost params act
 		newRobot = rob {robotMaterial = robotMaterial rob - cost}
@@ -148,12 +150,12 @@ applyActionCosts params raas = foldr (.) id $ map applyActionCost raas
 getRobotResults :: Parameters -> Board -> [RobotAndResult]
 getRobotResults p b = map getRobotResult $ M.toList $ boardRobots b
 	where
-	getRobotResult ((x, y), rob) = ((x, y, rob), robotProgram rob state)
-	   where state = getKnownState p (robotTeam rob) b (x, y, rob)
+	getRobotResult ((x, y), rob) = (PositionedRobot ((x, y), rob), robotProgram rob state)
+	   where state = getKnownState p (robotTeam rob) b $ PositionedRobot ((x, y), rob)
 
 -- Gets the known state for the given robot
-getKnownState :: Parameters -> Team -> Board -> (Int, Int, Robot) -> KnownState
-getKnownState p team b (x, y, rob) = KnownState {
+getKnownState :: Parameters -> Team -> Board -> PositionedRobot -> KnownState
+getKnownState p team b (PositionedRobot ((x, y), rob)) = KnownState {
 		peekAtSpot = peekFn,
 		material = robotMaterial rob,
 		stateLocation = (x,y),
@@ -171,7 +173,7 @@ getKnownState p team b (x, y, rob) = KnownState {
     -- given the robot's level of material
 -- This may be another type of action.
 possibleAction :: Parameters -> RobotAndAction -> RobotAndAction
-possibleAction p (xyrob@(_, _, rob), action)
+possibleAction p (xyrob@(PositionedRobot (_, rob)), action)
     | actionCost p action <= robotMaterial rob  = (xyrob, action)
     | otherwise 								= downgrade action
 	where

@@ -11,16 +11,11 @@ import Infsabot.RobotStrategy(basicProgram)
 
 import System.Process(system)
 
-nBoards :: Int
+nBoards, boardSize, boardScalingFactor, fps :: Int
+
 nBoards = 150
-
-boardSize :: Int
 boardSize = 70
-
-boardScalingFactor :: Int
 boardScalingFactor = 1000 `div` boardSize
-
-fps :: Int
 fps = 5
 
 showPadded :: Int -> String
@@ -37,8 +32,7 @@ createDemoBoards demoBoardSize
         forM_ (tail selectedBoards) $ \(x, board) ->
             do
                 writeBoard ("demo/demo-moves-" ++ (showPadded x) ++ ".png") board
-        system $ ffmpeg "mp4"
-        system $ ffmpeg "gif"
+        forM_ ["mp4", "gif"] (system . ffmpeg)
         return ()
     where
     params = defaultParameters {paramBoardSize = demoBoardSize, paramInitialMaterial=100}

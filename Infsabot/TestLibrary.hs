@@ -6,7 +6,8 @@ module Infsabot.TestLibrary(robotsOnBoard,
     propConflictsResolved,
     areSymm, makeSymmetric, teamSymmetric,
     TestResult(..),
-    constructTest, toTestCase) where
+    constructTest, toTestCase,
+    positionOf) where
 
 import Infsabot.Board
 import Infsabot.Base
@@ -41,9 +42,9 @@ class TeamedComparable a where
     areSymm :: (a, a) -> TestResult String
     symmetricOf :: a -> a
 
-instance TeamedObject (Int, Int, Robot) where
-    positionOf (x, y, _) = (x, y)
-    teamOf (_, _, rob) = robotTeam rob
+instance TeamedObject PositionedRobot where
+    positionOf (PositionedRobot (pos, _)) = pos
+    teamOf (PositionedRobot (_, rob)) = robotTeam rob
 
 instance TeamedComparable Robot where
     areSymm (rob1, rob2) = mconcat $ zipWith constructTest results assertLabels
@@ -67,8 +68,8 @@ instance TeamedComparable Robot where
             ]
     symmetricOf rob = rob {robotTeam = symmetricOf $ robotTeam rob}
 
-instance TeamedComparable (Int, Int, Robot) where
-    areSymm ((x1, y1, rob1), (x2, y2, rob2))
+instance TeamedComparable PositionedRobot where
+    areSymm (PositionedRobot ((x1, y1), rob1), (PositionedRobot ((x2, y2), rob2)))
         | x1 /= y2 || y1 /= x2
             = TRFailure
                 $  "The Team A robot at "
@@ -76,7 +77,7 @@ instance TeamedComparable (Int, Int, Robot) where
                 ++ " appears to have no corresponding B robot"
         | otherwise
             = areSymm (rob1, rob2)
-    symmetricOf (x, y, r) = (symmetricOf y, symmetricOf x, symmetricOf r)
+    symmetricOf (PositionedRobot ((x, y), r)) = (PositionedRobot ((symmetricOf y, symmetricOf x), symmetricOf r))
 
 instance TeamedComparable Team where
     areSymm (a, b)
@@ -167,6 +168,7 @@ instance TeamedObject RobotAndAction where
     positionOf = positionOf . fst
     teamOf = teamOf . fst
 
+
 instance TeamedComparable RobotAndAction where
     areSymm ((xyr1, act1), (xyr2, act2)) = areSymm (xyr1, xyr2) `mappend` areSymm (act1, act2)
     symmetricOf (a, b) = (symmetricOf a, symmetricOf b)
@@ -179,14 +181,14 @@ constructTest :: Bool -> a -> TestResult a
 constructTest True = const TRSuccess
 constructTest False = TRFailure
 
-robotsOnBoard :: Board -> [(Int, Int, Robot)]
+robotsOnBoard :: Board -> [PositionedRobot]
 robotsOnBoard b = concat $ map robotExtractor $ zip coordinates $ map (robotAt b) $ coordinates
     where
     coordinates :: [(Int, Int)]
     coordinates = liftM2 (,) [0..boardSize b - 1] [0..boardSize b - 1]
-    robotExtractor :: ((Int, Int), Maybe Robot) -> [(Int, Int, Robot)]
+    robotExtractor :: ((Int, Int), Maybe Robot) -> [PositionedRobot]
     robotExtractor (_, Nothing) = []
-    robotExtractor ((x, y), Just rob) = [(x, y, rob)]
+    robotExtractor ((x, y), Just rob) = [PositionedRobot ((x, y), rob)]
 
 propOrderIndependence :: (Eq b) => ([a] -> [b]) -> [a] -> Int -> Bool
 propOrderIndependence f xs seed = sameElements originalOut shuffleOut
@@ -196,12 +198,10 @@ propOrderIndependence f xs seed = sameElements originalOut shuffleOut
 
 propConflictsResolved :: [RobotAndAction] -> (Bool, Bool)
 propConflictsResolved acts
-    = (allDifferent (map getLocation acts), allDifferent finalLocs)
+    = (allDifferent (map (getLocation . fst) acts), allDifferent finalLocs)
     where
     finalLocs :: [(Int, Int)]
     finalLocs = concat $ map (finalLocsToList . finalLocations2) $ removeConflicting acts
-    getLocation :: RobotAndAction -> (Int, Int)
-    getLocation ((x, y, _), _) = (x, y)
 
 {- Makes the given set of robots symmetric about an axis by adding extra robots.
     The resulting board is guaranteed to be symmetric and have no conflicts. -}
