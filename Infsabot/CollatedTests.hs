@@ -89,7 +89,7 @@ assertRobotSourcesAgree b
 
 assertTeamsSymmetric :: Board -> Test
 assertTeamsSymmetric b
-        = toTestCase $ teamSymmetric $map PositionedRobot $ toList $ boardRobots b
+        = toTestCase $ teamSymmetric $ map PositionedRobot $ toList $ boardRobots b
 
 
 assertBoardSymmetry :: Board -> Test
