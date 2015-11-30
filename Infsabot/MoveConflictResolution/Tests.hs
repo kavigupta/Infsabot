@@ -25,13 +25,13 @@ individualMCRChecks raas
             [propNoChangeInLength, propSymmeteryPreserving, uncurry (~~>) . propConflictsResolved, propOrganizeRobotsSame])
         ["Conflict Order Independence", "No Change In Length", "Symmetery Preserving", "Conflicts Resolved", "Organize Robots Same"]
 
-mcrChecks :: [IO ()]
+mcrChecks :: [IO Result]
 mcrChecks = [
-    putStrLn "Conflict Order Independence" >> doChecks (5 * checkCount) propConflictOrderIndependence,
-    putStrLn "No Change In Length" >> doChecks checkCount propNoChangeInLength,
-    putStrLn "Symmetery Preserving" >> doChecks (5 * checkCount) propSymmeteryPreserving,
-    putStrLn "Conflicts Resolved" >> doChecks (50 * checkCount) (uncurry (==>) . propConflictsResolved),
-    putStrLn "Organize Robots Same" >> doChecks checkCount propOrganizeRobotsSame]
+    putStrLn "Conflict Order Independence" >> doChecks 5 propConflictOrderIndependence,
+    putStrLn "No Change In Length" >> doChecks 1 propNoChangeInLength,
+    putStrLn "Symmetery Preserving" >> doChecks 5 propSymmeteryPreserving,
+    putStrLn "Conflicts Resolved" >> doChecks 50 (uncurry (==>) . propConflictsResolved),
+    putStrLn "Organize Robots Same" >> doChecks 1 propOrganizeRobotsSame]
 
 instance TeamedObject RAAFL where
     positionOf = positionOf . fst

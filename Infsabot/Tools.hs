@@ -1,4 +1,7 @@
-module Infsabot.Tools (shuffle, allDifferent, sameElements, (!-!), spanNeq, propspanNeqWorks) where
+module Infsabot.Tools (
+        shuffle, allDifferent, sameElements, (!-!), spanNeq, propspanNeqWorks,
+        doChecks, (~~>)
+    ) where
 
 import System.Random
 import Data.Array.ST hiding (newArray)
@@ -6,6 +9,7 @@ import Control.Monad
 import Control.Monad.ST
 import Data.STRef
 import Data.List(sort, (\\))
+import Test.QuickCheck hiding (shuffle)
 
 
 propspanNeqWorks :: Eq a => (a -> Bool) -> (a -> Bool) -> [a] -> Bool
@@ -65,3 +69,12 @@ allDifferent us = allDiffSorted (sort us)
 [] !-! _ = []
 (x:_) !-! 0 = x
 (_:xs) !-! n = xs !-! (n - 1)
+
+(~~>) :: Bool -> Bool -> Bool
+a ~~> b = not a || b
+
+checkCount :: Int
+checkCount = 4000
+
+doChecks :: (Test.QuickCheck.Testable prop) => Int -> prop -> IO Result
+doChecks n = quickCheckWithResult $ stdArgs { maxSuccess = n * checkCount }

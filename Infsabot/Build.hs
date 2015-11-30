@@ -3,6 +3,7 @@ module Infsabot.Build(main) where
 import System.Directory(createDirectoryIfMissing, getDirectoryContents)
 import System.Environment(getArgs)
 import System.IO(readFile)
+import System.Posix.Files(isDirectory, getFileStatus)
 
 import Data.List(elemIndex, isSuffixOf)
 
@@ -14,7 +15,7 @@ import Test.HUnit(runTestTT, failures)
 import Infsabot.Demoes(demoes)
 import Infsabot.CollatedTests(tests, stressTest, checks)
 
-import Control.Monad(forM_, when)
+import Control.Monad(forM_, forM, when)
 
 import Codec.Picture(writePng)
 
@@ -56,9 +57,7 @@ main = do
     createDirectoryIfMissing True "gen"
     createDirectoryIfMissing True "demo"
     when (performBuild whatToDo) buildAll
-    echl "Running Quick Checks"
-    when (performChecks whatToDo) checks
-    echs "Checks completed!"
+    when (performChecks whatToDo) doChecks
     when (performTests whatToDo) runTests
     when (performDemo whatToDo) demoes
     commit $ performCommit whatToDo
@@ -85,23 +84,48 @@ runTests =
         else
             echs "Test Cases Passed"
 
+doChecks :: IO ()
+doChecks =
+    do
+        putStrLn $ logColor ++ "Running Checks"
+        success <- checks
+        if success then
+            echs "QuickChecks passed!"
+        else do
+            echf "Quick Checks failed!"
+            exitFailure
+
 buildAll :: IO ()
 buildAll
     = do
-        contents <- getDirectoryContents directory
+        contents <- getAll directory
         forM_ (processHSs contents) build
         echs "Haskell Files Built Correctly"
     where
+    getAll :: FilePath -> IO [FilePath]
+    getAll path =
+        do
+            status <- getFileStatus path
+            if not $ isDirectory status then
+                do
+                    return [path]
+            else
+                do
+                    allcontents <- getDirectoryContents path
+                    let contents = map (\x -> path ++ "/" ++ x) $
+                            filter
+                                (\x -> not (isSuffixOf x ".") && not (isSuffixOf x ".."))
+                                allcontents
+                    subs <- forM contents $ getAll
+                    return . concat $ subs
     processHSs :: [String] -> [String]
-    processHSs paths = map ((directory ++ "/") ++)
-        $ filter isHaskell paths
-        where
-        isHaskell s = isSuffixOf ".hs" s && s /= "Build.hs"
+    processHSs paths = filter (isSuffixOf ".hs") paths
     build :: String -> IO ()
     build name =
         do
             echl $ "Compiling " ++ name
-            exitCode <- system $ "ghc -fno-code -Wall -fno-warn-orphans -Werror -odir bin " ++ name
+            let wall = if isSuffixOf "Build.hs" name then "" else "-Wall"
+            exitCode <- system $ "ghc -fno-code " ++ wall ++ " -fno-warn-orphans -Werror -odir bin " ++ name
                 ++ " >> " ++ stdLog
                 ++ " 2> " ++ errLog
             case exitCode of

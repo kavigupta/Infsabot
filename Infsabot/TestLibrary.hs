@@ -3,11 +3,10 @@
 
 module Infsabot.TestLibrary(
         TestResult(..),
-        doChecks, checkCount,
         TeamedObject, positionOf, teamOf,
         TeamedComparable, areSymm, symmetricOf,
-        toTestCase, robotsOnBoard, effectivePosition, teamSymmetric,
-        constructTest, (~~>)
+        toTestCase, constructTest,
+        robotsOnBoard, effectivePosition, teamSymmetric
     ) where
 
 import Infsabot.Board
@@ -21,16 +20,6 @@ import Control.Monad
 import Infsabot.RobotAction
 import Infsabot.Debug
 import Data.Function
-import Test.QuickCheck hiding (shuffle)
-
-(~~>) :: Bool -> Bool -> Bool
-a ~~> b = not a || b
-
-checkCount :: Int
-checkCount = 4000
-
-doChecks :: (Test.QuickCheck.Testable prop) => Int -> prop -> IO ()
-doChecks n = quickCheckWith $ stdArgs { maxSuccess = n }
 
 data TestResult a = TRSuccess | TRFailure a deriving (Show, Eq)
 

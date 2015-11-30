@@ -16,7 +16,6 @@ import Control.Monad(liftM)
 import qualified Data.RandomAccessList as DRal
 
 import Data.DeriveTH(derive, makeArbitrary)
---import Debug.Trace
 import Test.QuickCheck hiding (shuffle)
 
 type RAL = DRal.RandomAccessList
@@ -74,9 +73,7 @@ $( derive makeArbitrary ''SpawnAction )
 $( derive makeArbitrary ''FireAction )
 $( derive makeArbitrary ''SendAction )
 $( derive makeArbitrary ''RobotAppearance )
-$( derive makeArbitrary ''RDirection )
 $( derive makeArbitrary ''PositionedRobot )
-$( derive makeArbitrary ''Team )
 $( derive makeArbitrary ''PixelRGB8 )
 $( derive makeArbitrary ''GameSpot )
 $( derive makeArbitrary ''BoardSpot )

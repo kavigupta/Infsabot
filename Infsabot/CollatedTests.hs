@@ -16,8 +16,8 @@ import Infsabot.GamePlay(boards)
 import Infsabot.Parameters
 import Infsabot.Rendering(renderBoard)
 import Infsabot.QuickChecks()
-import Control.Monad(forM_)
-
+import Data.Functor
+import Test.QuickCheck.Test(isSuccess)
 
 --import Debug.Trace
 
@@ -105,8 +105,5 @@ assertBoardSymmetry b = TestList $ map symmetric $ zip [0.. boardSize b - 1] [0.
             (GameSpot other _) <- b !!! (y, x)
             return $ regular == other
 
-checks :: IO ()
-checks =
-    do
-        putStrLn "checking"
-        forM_ mcrChecks $ \check -> check
+checks :: IO Bool
+checks = all isSuccess <$> (sequence $ baseChecks ++ mcrChecks)
