@@ -9,6 +9,7 @@ module Infsabot.Robot (
             robotHitpoints,
             robotMessages,
         defaultRobot,
+        RobotAndAction,
         PositionedRobot(PositionedRobot),
             getLocation
     ) where
@@ -38,7 +39,10 @@ data Robot = Robot {
         robotMessages :: [(String, RDirection)]
 } deriving (Eq, Show)
 
+-- A robot associated with a given position
 newtype PositionedRobot = PositionedRobot ((Int, Int), Robot) deriving (Eq, Show)
+-- A robot associated with a given action
+type RobotAndAction = (PositionedRobot, RobotAction)
 
 getLocation :: PositionedRobot -> (Int, Int)
 getLocation (PositionedRobot (xy, _)) = xy

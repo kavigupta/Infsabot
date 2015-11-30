@@ -1,30 +1,28 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE TypeSynonymInstances #-}
 
-module Infsabot.TestLibrary(robotsOnBoard,
-    propOrderIndependence,
-    propConflictsResolved,
-    areSymm, makeSymmetric, teamSymmetric,
-    TestResult(..),
-    constructTest, toTestCase,
-    positionOf) where
+module Infsabot.TestLibrary(
+        TestResult(..),
+        TeamedObject, positionOf, teamOf,
+        TeamedComparable, areSymm, symmetricOf,
+        toTestCase, robotsOnBoard, effectivePosition, teamSymmetric
+    ) where
 
 import Infsabot.Board
 import Infsabot.Base
 import Test.HUnit
-import Data.List(nubBy, partition, sortBy)
+import Data.List
 import Data.Tuple(swap)
 import Infsabot.Robot
 import Data.Monoid
 import Control.Monad
-import Infsabot.Tools
 import Infsabot.RobotAction
 import Infsabot.Debug
 import Data.Function
-import Infsabot.MoveConflictResolution
 
 
 data TestResult a = TRSuccess | TRFailure a deriving (Show, Eq)
+
 instance Functor TestResult where
     fmap _ TRSuccess = TRSuccess
     fmap f (TRFailure x) = TRFailure (f x)
@@ -168,10 +166,10 @@ instance TeamedObject RobotAndAction where
     positionOf = positionOf . fst
     teamOf = teamOf . fst
 
-
 instance TeamedComparable RobotAndAction where
     areSymm ((xyr1, act1), (xyr2, act2)) = areSymm (xyr1, xyr2) `mappend` areSymm (act1, act2)
     symmetricOf (a, b) = (symmetricOf a, symmetricOf b)
+
 
 toTestCase :: TestResult String -> Test
 toTestCase TRSuccess = TestCase $ assertBool "" True
@@ -189,28 +187,6 @@ robotsOnBoard b = concat $ map robotExtractor $ zip coordinates $ map (robotAt b
     robotExtractor :: ((Int, Int), Maybe Robot) -> [PositionedRobot]
     robotExtractor (_, Nothing) = []
     robotExtractor ((x, y), Just rob) = [PositionedRobot ((x, y), rob)]
-
-propOrderIndependence :: (Eq b) => ([a] -> [b]) -> [a] -> Int -> Bool
-propOrderIndependence f xs seed = sameElements originalOut shuffleOut
-    where
-    originalOut = f xs
-    shuffleOut = f $ shuffle seed xs
-
-propConflictsResolved :: [RobotAndAction] -> (Bool, Bool)
-propConflictsResolved acts
-    = (allDifferent (map (getLocation . fst) acts), allDifferent finalLocs)
-    where
-    finalLocs :: [(Int, Int)]
-    finalLocs = concat $ map (finalLocsToList . finalLocations2) $ removeConflicting acts
-
-{- Makes the given set of robots symmetric about an axis by adding extra robots.
-    The resulting board is guaranteed to be symmetric and have no conflicts. -}
-makeSymmetric :: [RobotAndAction] -> [RobotAndAction]
-makeSymmetric raas = unique ++ map symmetricOf unique
-    where
-    unique = removeOpposition $ nubBy ((==) `on` (effectivePosition)) raas
-    removeOpposition [] = []
-    removeOpposition (a:us) = filter (\u -> effectivePosition a /= swap (effectivePosition u)) $ removeOpposition us
 
 effectivePosition :: (TeamedObject a) => a -> (Int, Int)
 effectivePosition x

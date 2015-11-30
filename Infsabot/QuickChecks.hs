@@ -1,6 +1,6 @@
 {-# Language TemplateHaskell #-}
 {-# Language FlexibleInstances #-}
-module Infsabot.QuickChecks (checks, propConflictsResolved, propOrderIndependence) where
+module Infsabot.QuickChecks (checks, propConflictsResolved) where
 
 import Infsabot.Tools
 
@@ -14,8 +14,6 @@ import Infsabot.MoveConflictResolution
 import Infsabot.Parameters
 import Infsabot.TestLibrary
 import Infsabot.GamePlay
-import Data.Function(on)
-import Data.List(nubBy)
 import Data.Map(fromList, Map, toList)
 import Control.Monad(forM_, liftM)
 
@@ -55,25 +53,6 @@ mcrChecks = [
     putStrLn "Symmetery Preserving" >> doChecks (5 * checkCount) propSymmeteryPreserving,
     putStrLn "Conflicts Resolved" >> doChecks (50 * checkCount) (\x -> uncurry (==>) $ propConflictsResolved x)]
 
-propSymmeteryPreserving :: [RobotAndAction] -> Bool
-propSymmeteryPreserving raas
-    = teamSymmetric
-            (removeConflicting $ makeSymmetric raas) == TRSuccess
-
-propConflictOrderIndependence :: (RAAFL, RAAFL) -> Property
-propConflictOrderIndependence (x, y) = location x /= location y
-        ==> a == c && b == d
-    where
-    (a, b) = conflictsBetween x y
-    (d, c) = conflictsBetween y x
-
-propNoChangeInLength :: [RobotAndAction] -> Bool
-propNoChangeInLength r = length raas == length (removeConflicting raas)
-    where raas = nubBy ((==) `on` positionOf) r
-
-location :: RAAFL -> (Int, Int)
-location = positionOf . fst
-
 $( derive makeArbitrary ''RDirection )
 $( derive makeArbitrary ''SpawnAction )
 $( derive makeArbitrary ''FireAction )
@@ -84,7 +63,6 @@ $( derive makeArbitrary ''Team )
 $( derive makeArbitrary ''RobotAppearance )
 $( derive makeArbitrary ''PixelRGB8 )
 $( derive makeArbitrary ''GameSpot )
-$( derive makeArbitrary ''FinalLocs )
 $( derive makeArbitrary ''BoardSpot )
 $( derive makeArbitrary ''LinearF )
 $( derive makeArbitrary ''Parameters )
