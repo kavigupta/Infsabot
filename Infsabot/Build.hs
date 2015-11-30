@@ -12,8 +12,7 @@ import System.Process(system)
 import Test.HUnit(runTestTT, failures)
 
 import Infsabot.Demoes(demoes)
-import Infsabot.Tests(tests, stressTest)
-import Infsabot.QuickChecks(checks)
+import Infsabot.CollatedTests(tests, stressTest, checks)
 
 import Control.Monad(forM_, when)
 

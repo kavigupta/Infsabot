@@ -3,11 +3,7 @@
 {-# LANGUAGE TypeSynonymInstances #-}
 
 module Infsabot.MoveConflictResolution.Tests(
-    propConflictsResolved,
-    propOrganizeRobotsSame,
-    propSymmeteryPreserving,
-    propConflictOrderIndependence,
-    propNoChangeInLength) where
+    mcrChecks, individualMCRChecks) where
 
 import Infsabot.MoveConflictResolution.Logic
 
@@ -18,8 +14,24 @@ import Data.Function(on)
 import Data.Tuple(swap)
 import Test.QuickCheck hiding (shuffle)
 import Data.DeriveTH(derive, makeArbitrary)
+import Infsabot.QuickChecks()
+import Data.Monoid(mconcat)
 
-$( derive makeArbitrary ''FinalLocs )
+individualMCRChecks :: [RobotAndAction] -> TestResult String
+individualMCRChecks raas
+    = mconcat $
+        zipWith constructTest
+        (map ($ raas)
+            [propNoChangeInLength, propSymmeteryPreserving, uncurry (~~>) . propConflictsResolved, propOrganizeRobotsSame])
+        ["Conflict Order Independence", "No Change In Length", "Symmetery Preserving", "Conflicts Resolved", "Organize Robots Same"]
+
+mcrChecks :: [IO ()]
+mcrChecks = [
+    putStrLn "Conflict Order Independence" >> doChecks (5 * checkCount) propConflictOrderIndependence,
+    putStrLn "No Change In Length" >> doChecks checkCount propNoChangeInLength,
+    putStrLn "Symmetery Preserving" >> doChecks (5 * checkCount) propSymmeteryPreserving,
+    putStrLn "Conflicts Resolved" >> doChecks (50 * checkCount) (uncurry (==>) . propConflictsResolved),
+    putStrLn "Organize Robots Same" >> doChecks checkCount propOrganizeRobotsSame]
 
 instance TeamedObject RAAFL where
     positionOf = positionOf . fst
@@ -66,7 +78,8 @@ propConflictOrderIndependence (x, y) = positionOf x /= positionOf y
     (a, b) = conflictsBetween x y
     (d, c) = conflictsBetween y x
 
-
 propNoChangeInLength :: [RobotAndAction] -> Bool
 propNoChangeInLength r = length raas == length (removeConflicting raas)
     where raas = nubBy ((==) `on` positionOf) r
+
+$( derive makeArbitrary ''FinalLocs )

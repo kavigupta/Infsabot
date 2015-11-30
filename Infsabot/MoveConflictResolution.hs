@@ -1,10 +1,6 @@
 module Infsabot.MoveConflictResolution (
     removeConflicting,
-    propConflictsResolved,
-    propOrganizeRobotsSame,
-    propSymmeteryPreserving,
-    propConflictOrderIndependence,
-    propNoChangeInLength    
+    mcrChecks, individualMCRChecks    
 ) where
 
 import Infsabot.MoveConflictResolution.Logic
