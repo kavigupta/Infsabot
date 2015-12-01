@@ -14,7 +14,7 @@ module Infsabot.Robot (
             getLocation
     ) where
 
-import Infsabot.Base
+import Infsabot.Base.Interface
 import Infsabot.RobotAction
 import qualified Data.Map as M
 import Infsabot.Parameters

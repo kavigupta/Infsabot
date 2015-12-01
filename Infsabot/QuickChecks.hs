@@ -2,7 +2,7 @@
 {-# Language FlexibleInstances #-}
 module Infsabot.QuickChecks () where
 
-import Infsabot.Base
+import Infsabot.Base.Interface
 import Codec.Picture
 import Infsabot.RobotAction
 import Infsabot.RobotStrategy

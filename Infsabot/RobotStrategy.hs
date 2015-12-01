@@ -1,7 +1,7 @@
 module Infsabot.RobotStrategy(basicProgram2, basicProgram)
     where
 
-import Infsabot.Base
+import Infsabot.Base.Interface
 import Infsabot.RobotAction
 
 basicProgram :: Team -> RobotProgram

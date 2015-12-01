@@ -1,6 +1,6 @@
-module Infsabot.MoveConflictResolution (
+module Infsabot.MoveConflictResolution.Interface (
     removeConflicting,
-    mcrChecks, individualMCRChecks    
+    mcrChecks, individualMCRChecks
 ) where
 
 import Infsabot.MoveConflictResolution.Logic

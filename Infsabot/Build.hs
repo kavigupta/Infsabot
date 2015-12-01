@@ -5,10 +5,13 @@ import System.Environment(getArgs)
 import System.IO(readFile)
 import System.Posix.Files(isDirectory, getFileStatus)
 
-import Data.List(elemIndex, isSuffixOf)
+import Data.List(elemIndex, isSuffixOf, intercalate)
 
 import System.Exit
 import System.Process(system)
+
+import Data.Functor
+import Control.Applicative
 
 import Test.HUnit(runTestTT, failures)
 
@@ -99,7 +102,9 @@ buildAll :: IO ()
 buildAll
     = do
         contents <- getAll directory
-        forM_ (processHSs contents) build
+        let hss = filter ((&&) <$> isSuffixOf ".hs" <*> not . isSuffixOf "Build.hs") contents
+        system "ghc -fno-code -fno-warn-orphans Infsabot/Build.hs -Werror"
+        build hss
         echs "Haskell Files Built Correctly"
     where
     getAll :: FilePath -> IO [FilePath]
@@ -118,19 +123,15 @@ buildAll
                                 allcontents
                     subs <- forM contents $ getAll
                     return . concat $ subs
-    processHSs :: [String] -> [String]
-    processHSs paths = filter (isSuffixOf ".hs") paths
-    build :: String -> IO ()
-    build name =
+    build :: [String] -> IO ()
+    build names =
         do
-            echl $ "Compiling " ++ name
-            let wall = if isSuffixOf "Build.hs" name then "" else "-Wall"
-            exitCode <- system $ "ghc -fno-code " ++ wall ++ " -fno-warn-orphans -Werror -odir bin " ++ name
-                ++ " >> " ++ stdLog
-                ++ " 2> " ++ errLog
+            echl $ "Compiling\n\t" ++ (intercalate "\n\t" names)
+            let command = "ghc -fno-code -Wall -fno-warn-orphans -Werror -odir bin " ++ (intercalate " " names) ++ " >> " ++ stdLog ++ " 2> " ++ errLog
+            exitCode <- system command
             case exitCode of
                 (ExitFailure _) -> do
-                    echf $ "Error compiling " ++ name
+                    echf $ "Error in compilation"
                     pErrorClean
                 _ -> return ()
 

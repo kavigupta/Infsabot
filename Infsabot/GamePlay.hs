@@ -5,8 +5,8 @@ import Infsabot.Board
 import Infsabot.Robot
 import Infsabot.RobotAction
 import Infsabot.Parameters
-import Infsabot.MoveConflictResolution
-import Infsabot.Base
+import Infsabot.MoveConflictResolution.Interface
+import Infsabot.Base.Interface
 import Data.List(sortBy)
 import Data.Function(on)
 import Data.Maybe(fromJust)

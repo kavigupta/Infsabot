@@ -1,4 +1,4 @@
-module Infsabot.Base(
+module Infsabot.Base.Interface (
                 RDirection(N,E,W,S),
                         oppositeDirection,
                 Team(A,B),

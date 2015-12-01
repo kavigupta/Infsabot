@@ -10,7 +10,7 @@ module Infsabot.TestLibrary(
     ) where
 
 import Infsabot.Board
-import Infsabot.Base
+import Infsabot.Base.Interface
 import Test.HUnit
 import Data.List
 import Data.Tuple(swap)

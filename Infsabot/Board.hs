@@ -8,7 +8,7 @@ module Infsabot.Board (
 
 import Data.RandomAccessList(RandomAccessList, lookup, update, fromList)
 import Infsabot.MathTools(isPrime)
-import Infsabot.Base
+import Infsabot.Base.Interface
 import Infsabot.Robot
 import Infsabot.RobotAction
 import Infsabot.Parameters

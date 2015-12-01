@@ -2,14 +2,14 @@ module Infsabot.CollatedTests (tests, checks, stressTest) where
 
 import Test.HUnit
 
-import Infsabot.Base
+import Infsabot.Base.Interface
 import Infsabot.RobotAction
 import Infsabot.Tools
 import Infsabot.Board
 import Infsabot.Robot
 import Infsabot.RobotStrategy
 import Infsabot.TestLibrary
-import Infsabot.MoveConflictResolution
+import Infsabot.MoveConflictResolution.Interface
 import Data.Map(fromList, toList)
 import Codec.Picture
 import Infsabot.GamePlay(boards)

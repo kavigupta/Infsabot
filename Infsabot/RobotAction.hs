@@ -13,7 +13,7 @@ module Infsabot.RobotAction (
         actionCost
     ) where
 
-import Infsabot.Base
+import Infsabot.Base.Interface
 import Infsabot.Parameters
 
 -- A robot program takes the Robot's state and returns a RobotProgramResult
