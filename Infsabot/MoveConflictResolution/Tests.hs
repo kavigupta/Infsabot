@@ -8,14 +8,17 @@ module Infsabot.MoveConflictResolution.Tests(
 import Infsabot.MoveConflictResolution.Logic
 
 import Infsabot.Tools
-import Infsabot.TestLibrary
+
 import Data.List(nubBy)
 import Data.Function(on)
 import Data.Tuple(swap)
+import Data.Monoid(mconcat)
+
 import Test.QuickCheck hiding (shuffle)
 import Data.DeriveTH(derive, makeArbitrary)
-import Infsabot.QuickChecks()
-import Data.Monoid(mconcat)
+
+import Infsabot.Test.QuickChecks()
+import Infsabot.Test.TestLibrary
 
 individualMCRChecks :: [RobotAndAction] -> TestResult String
 individualMCRChecks raas

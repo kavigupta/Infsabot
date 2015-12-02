@@ -1,6 +1,6 @@
 {-# Language TemplateHaskell #-}
 {-# Language FlexibleInstances #-}
-module Infsabot.QuickChecks () where
+module Infsabot.Test.QuickChecks () where
 
 import Infsabot.RobotAction
 import Infsabot.Robot

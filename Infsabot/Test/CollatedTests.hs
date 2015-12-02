@@ -1,4 +1,4 @@
-module Infsabot.CollatedTests (tests, checks, stressTest) where
+module Infsabot.Test.CollatedTests (tests, checks, stressTest) where
 
 import Test.HUnit
 
@@ -7,14 +7,14 @@ import Infsabot.RobotAction
 import Infsabot.Board.Interface
 import Infsabot.Robot
 import Infsabot.RobotStrategy
-import Infsabot.TestLibrary
+import Infsabot.Test.TestLibrary
 import Infsabot.MoveConflictResolution.Interface
 import Data.Map(fromList)
 import Codec.Picture
 import Infsabot.GamePlay(boards)
 import Infsabot.Parameters
 import Infsabot.Rendering(renderBoard)
-import Infsabot.QuickChecks()
+import Infsabot.Test.QuickChecks()
 import Data.Functor
 import Test.QuickCheck.Test(isSuccess)
 

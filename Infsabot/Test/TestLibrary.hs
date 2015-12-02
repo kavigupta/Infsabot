@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE TypeSynonymInstances #-}
 
-module Infsabot.TestLibrary(
+module Infsabot.Test.TestLibrary(
         TestResult(..),
         TeamedObject, positionOf, teamOf,
         TeamedComparable, areSymm, symmetricOf,

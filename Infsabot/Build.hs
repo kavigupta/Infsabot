@@ -16,7 +16,7 @@ import Control.Applicative
 import Test.HUnit(runTestTT, failures)
 
 import Infsabot.Demoes(demoes)
-import Infsabot.CollatedTests(tests, stressTest, checks)
+import Infsabot.Test.CollatedTests(tests, stressTest, checks)
 
 import Control.Monad(forM_, forM, when)
 
