@@ -1,7 +1,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# Language FlexibleInstances #-}
 module Infsabot.Board.Tests(
-    assertRobotSourcesAgree
+    assertRobotSourcesAgree, boardChecks
     ) where
 
 import Infsabot.Board.Logic
@@ -18,9 +18,34 @@ import Codec.Picture
 
 import Infsabot.Tools
 import Data.DeriveTH(derive, makeArbitrary)
+import Data.Maybe
 import Infsabot.RobotStrategy
 
 type RAL = DRal.RandomAccessList
+
+boardChecks :: [IO Result]
+boardChecks
+    = [
+            putStrLn "Get (Set) Robots" >> doChecks 1 propSetGetRobots,
+            putStrLn "Get (Set) Spots" >> doChecks 1 propSetGetBoardSpots
+        ]
+
+--- setting a robot means that you can get it out
+propSetGetRobots :: Board -> (Int, Int) -> Robot -> Bool
+propSetGetRobots b xy' rob
+    = robotAt (setRobot xy (Just rob) b) xy == (Just rob)
+        where xy = coerceIntoBoard b xy'
+
+--- setting a robot means that you can get it out
+propSetGetBoardSpots :: Board -> (Int, Int) -> BoardSpot -> Bool
+propSetGetBoardSpots b xy' spot
+    = spot == spot'
+        where
+        xy = coerceIntoBoard b xy'
+        (GameSpot spot' _) = fromJust $ updateSpot xy spot b !!! xy
+
+coerceIntoBoard :: Board -> (Int, Int) -> (Int, Int)
+coerceIntoBoard b (x, y) = (x `mod` boardSize b, y `mod` boardSize b)
 
 robotsOnBoard :: Board -> [PositionedRobot]
 robotsOnBoard b = concat $ map robotExtractor $ zip coordinates $ map (robotAt b) $ coordinates

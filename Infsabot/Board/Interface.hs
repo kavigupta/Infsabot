@@ -1,10 +1,11 @@
 module Infsabot.Board.Interface (
 		Board(Board),
-			boardRobots, boardSize, boardTime,
+			boardSize, boardTime,
 			(!!!), setRobot, robotAt, updateSpot, robotAlongPath,
+			listOfRobots,
 		startingBoard,
 		GameSpot(GameSpot), toSeenSpot,
-		assertRobotSourcesAgree
+		assertRobotSourcesAgree, boardChecks
 	) where
 
 import Infsabot.Board.Logic

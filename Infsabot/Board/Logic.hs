@@ -1,7 +1,8 @@
 module Infsabot.Board.Logic (
 		Board(Board),
-		boardContents, boardRobots, boardSize, boardTime,
-			(!!!), setRobot, robotAt, updateSpot, robotAlongPath,
+			boardContents, boardRobots, boardSize, boardTime,
+			(!!!), setRobot, robotAt, updateSpot, robotAlongPath, inBoard,
+			listOfRobots,
 		startingBoard,
 		GameSpot(GameSpot), toSeenSpot
 	) where
@@ -59,8 +60,8 @@ b !!! (x, y)
 -- This board contains one robot from each team.
 startingBoard :: Parameters -> (Team -> RobotProgram) -> Board
 startingBoard p programOf
-	= setRobot (0, paramBoardSize p - 1, bot B) $
-		setRobot (paramBoardSize p - 1, 0, bot A) $
+	= setRobot (0, paramBoardSize p - 1) (bot B) $
+		setRobot (paramBoardSize p - 1, 0) (bot A) $
 		Board {
 			boardContents 	= startingSpots,
 			boardRobots 	= M.fromList [],
@@ -83,8 +84,8 @@ startingBoard p programOf
 -- Sets the robot at the given spot to the given value, or deletes it.
 -- 		1. places the robot at the gamespot at the given coordinates
 --		2. Adds the robot to the list of robots
-setRobot :: (Int, Int, Maybe Robot) -> Board -> Board
-setRobot (x, y, rob) b = delRobot $ b !!! (x, y)
+setRobot :: (Int, Int) -> Maybe Robot -> Board -> Board
+setRobot (x, y) rob b = delRobot $ b !!! (x, y)
 	where
 	delRobot Nothing = b
 	delRobot (Just (GameSpot oldMaterial _))
@@ -117,6 +118,8 @@ robotAlongPath team b (x, y) dir n
 inBoard :: Board -> (Int, Int) -> Bool
 inBoard b (x, y) = x >= 0 && x < boardSize b && y >= 0 && y < boardSize b
 
+listOfRobots :: Board -> [PositionedRobot]
+listOfRobots b = map PositionedRobot $ M.toList $ boardRobots b
 
 type RAL = RandomAccessList
 

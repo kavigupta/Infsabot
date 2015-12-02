@@ -74,7 +74,7 @@ allDifferent us = allDiffSorted (sort us)
 a ~~> b = not a || b
 
 checkCount :: Int
-checkCount = 4000
+checkCount = 1000
 
 doChecks :: (Test.QuickCheck.Testable prop) => Int -> prop -> IO Result
 doChecks n = quickCheckWithResult $ stdArgs { maxSuccess = n * checkCount }

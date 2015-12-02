@@ -9,7 +9,7 @@ import Infsabot.Robot
 import Infsabot.RobotStrategy
 import Infsabot.TestLibrary
 import Infsabot.MoveConflictResolution.Interface
-import Data.Map(fromList, toList)
+import Data.Map(fromList)
 import Codec.Picture
 import Infsabot.GamePlay(boards)
 import Infsabot.Parameters
@@ -82,7 +82,7 @@ mcrEdgeCases = TestList $ zipWith createCase [1::Int ..]
 
 assertTeamsSymmetric :: Board -> Test
 assertTeamsSymmetric b
-        = toTestCase $ teamSymmetric $ map PositionedRobot $ toList $ boardRobots b
+        = toTestCase $ teamSymmetric $ listOfRobots b
 
 
 assertBoardSymmetry :: Board -> Test
@@ -99,4 +99,4 @@ assertBoardSymmetry b = TestList $ map symmetric $ zip [0.. boardSize b - 1] [0.
             return $ regular == other
 
 checks :: IO Bool
-checks = all isSuccess <$> (sequence $ baseChecks ++ mcrChecks)
+checks = all isSuccess <$> (sequence $ baseChecks ++ mcrChecks ++ boardChecks)

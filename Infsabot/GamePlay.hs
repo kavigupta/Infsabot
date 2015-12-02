@@ -10,7 +10,6 @@ import Infsabot.Base.Interface
 import Data.List(sortBy)
 import Data.Function(on)
 import Data.Maybe(fromJust)
-import qualified Data.Map as M
 
 import Infsabot.Debug
 
@@ -55,7 +54,7 @@ play p b
 -- of a function that mutates a board
 getAction :: Parameters -> RobotAndAction -> Board -> Board
 getAction _ (PositionedRobot ((x,y),_),Die) b
-									= setRobot (x, y, Nothing) b
+									= setRobot (x, y) Nothing b
 getAction _ (_, Noop) b		 	= b
 getAction p (PositionedRobot ((x, y), rob), Send send) b
 									= mutateRobot
@@ -89,10 +88,10 @@ getAction _ (PositionedRobot ((x, y), _), Dig) b
 		| otherwise					= b
 		where GameSpot mat _ = fromJust $ b !!! (x, y)
 getAction _ (PositionedRobot ((x, y), rob), MoveIn dir) b
-									= setRobot (x, y, Nothing) $ setRobot (newx, newy, Just rob) b
+									= setRobot (x, y) Nothing $ setRobot (newx, newy) (Just rob) b
 	where (newx, newy) = applyDirection (robotTeam rob) dir (x, y)
 getAction params (PositionedRobot ((x, y), rob), Spawn spawn) b
-									= setRobot (newx, newy, Just newRobot) b
+									= setRobot (newx, newy) (Just newRobot) b
 	where
 	newRobot = Robot {
 		robotProgram = newProgram spawn,
@@ -116,7 +115,7 @@ getAction params (PositionedRobot ((x, y), rob), Spawn spawn) b
 mutateRobot :: Team -> (Int, Int) -> RDirection -> Int -> (Robot -> Maybe Robot) -> Board -> Board
 mutateRobot team (x, y) direction distance mutator b
 		= case maybeRobot of
-			Just (_, _, toReceive) 	-> setRobot (x, y, mutator toReceive) b
+			Just (_, _, toReceive) 	-> setRobot (x, y) (mutator toReceive) b
 			Nothing					-> b
 	where
 	maybeRobot = robotAlongPath team b (x, y) direction distance
@@ -133,7 +132,7 @@ updateAllHardDrives rars = (
 	removeState (xyrob, (act, _)) = (xyrob, act)
 	updateHardDrive :: RobotAndResult -> Board -> Board
 	updateHardDrive (PositionedRobot ((x,y),rob), (_, state))
-		= setRobot (x,y,Just rob {robotMemory = state})
+		= setRobot (x,y) $ Just rob {robotMemory = state}
 
 -- Takes a parameter list and list of actions, and applies all their costs to
 -- the given board.
@@ -141,17 +140,17 @@ applyActionCosts :: Parameters -> [RobotAndAction] -> Board -> Board
 applyActionCosts params raas = foldr (.) id $ map applyActionCost raas
 	where
 	applyActionCost :: RobotAndAction -> Board -> Board
-	applyActionCost (PositionedRobot ((x, y), rob), act) = setRobot (x, y, Just newRobot)
+	applyActionCost (PositionedRobot ((x, y), rob), act) = setRobot (x, y) $ Just newRobot
 		where
 		cost = actionCost params act
 		newRobot = rob {robotMaterial = robotMaterial rob - cost}
 
 -- Gets a list of robots and their program results
 getRobotResults :: Parameters -> Board -> [RobotAndResult]
-getRobotResults p b = map getRobotResult $ M.toList $ boardRobots b
+getRobotResults p b = map getRobotResult $ listOfRobots b
 	where
-	getRobotResult ((x, y), rob) = (PositionedRobot ((x, y), rob), robotProgram rob state)
-	   where state = getKnownState p (robotTeam rob) b $ PositionedRobot ((x, y), rob)
+	getRobotResult prob@(PositionedRobot (_, rob)) = (prob, robotProgram rob state)
+	   where state = getKnownState p (robotTeam rob) b prob
 
 -- Gets the known state for the given robot
 getKnownState :: Parameters -> Team -> Board -> PositionedRobot -> KnownState

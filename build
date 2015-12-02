@@ -14,6 +14,8 @@ if PROFILING:
     system("ghc Infsabot/Build.hs -O2 -osuf p_o -prof -auto -auto-all -rtsopts -outputdir bin -main-is Infsabot.Build")
 
 try:
+    system("rm -r bin")
+    system("mkdir bin")
     rename("Infsabot/Build", "bin/Build")
 except Exception as e:
     print ("BUILD FAILED")
