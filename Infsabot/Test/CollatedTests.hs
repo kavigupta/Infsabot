@@ -12,7 +12,7 @@ import Infsabot.Test.TestLibrary
 import Infsabot.MoveConflictResolution.Interface
 import Data.Map(fromList)
 import Codec.Picture
-import Infsabot.GamePlay(boards)
+import Infsabot.GamePlay.Interface
 import Infsabot.Parameters
 import Infsabot.Rendering(renderBoard)
 import Infsabot.Test.QuickChecks()
