@@ -16,7 +16,7 @@ import Control.Monad(liftM, liftM2)
 import Test.HUnit
 import Codec.Picture
 
-import Infsabot.Tools
+import Infsabot.Tools.Interface
 import Data.DeriveTH(derive, makeArbitrary)
 import Data.Maybe
 import Infsabot.RobotStrategy

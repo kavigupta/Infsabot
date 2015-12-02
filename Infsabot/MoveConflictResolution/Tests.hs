@@ -7,7 +7,7 @@ module Infsabot.MoveConflictResolution.Tests(
 
 import Infsabot.MoveConflictResolution.Logic
 
-import Infsabot.Tools
+import Infsabot.Tools.Interface
 
 import Data.List(nubBy)
 import Data.Function(on)

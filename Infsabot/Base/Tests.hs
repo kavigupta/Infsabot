@@ -7,7 +7,7 @@ import Infsabot.Base.Logic
 import Data.Maybe
 import Data.Function(on)
 import Data.Functor
-import Infsabot.Tools
+import Infsabot.Tools.Interface
 
 import Data.DeriveTH(derive, makeArbitrary)
 import Test.QuickCheck hiding (shuffle)

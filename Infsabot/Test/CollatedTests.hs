@@ -5,6 +5,7 @@ import Test.HUnit
 import Infsabot.Base.Interface
 import Infsabot.RobotAction
 import Infsabot.Board.Interface
+import Infsabot.Tools.Interface
 import Infsabot.Robot
 import Infsabot.RobotStrategy
 import Infsabot.Test.TestLibrary
@@ -17,8 +18,6 @@ import Infsabot.Rendering(renderBoard)
 import Infsabot.Test.QuickChecks()
 import Data.Functor
 import Test.QuickCheck.Test(isSuccess)
-
---import Debug.Trace
 
 stressTest :: IO ()
 stressTest = do
@@ -99,4 +98,4 @@ assertBoardSymmetry b = TestList $ map symmetric $ zip [0.. boardSize b - 1] [0.
             return $ regular == other
 
 checks :: IO Bool
-checks = all isSuccess <$> (sequence $ baseChecks ++ mcrChecks ++ boardChecks)
+checks = all isSuccess <$> (sequence $ toolsChecks ++ baseChecks ++ mcrChecks ++ boardChecks)

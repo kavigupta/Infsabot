@@ -14,7 +14,7 @@ import Infsabot.Base.Interface
 import Data.List(groupBy, sortBy)
 import Data.Function(on)
 
-import Infsabot.Tools(spanNeq, (!-!))
+import Infsabot.Tools.Interface(spanNeq, (!-!))
 
 import Infsabot.Debug
 

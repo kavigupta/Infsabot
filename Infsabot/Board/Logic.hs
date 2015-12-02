@@ -8,7 +8,7 @@ module Infsabot.Board.Logic (
 	) where
 
 import Data.RandomAccessList(RandomAccessList, lookup, update, fromList)
-import Infsabot.MathTools(isPrime)
+import Infsabot.Tools.Interface(isPrime)
 import Infsabot.Base.Interface
 import Infsabot.Robot
 import Infsabot.RobotAction
