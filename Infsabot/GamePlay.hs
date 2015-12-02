@@ -1,7 +1,7 @@
 {-# Language TupleSections #-}
 module Infsabot.GamePlay(boards) where
 
-import Infsabot.Board
+import Infsabot.Board.Interface
 import Infsabot.Robot
 import Infsabot.RobotAction
 import Infsabot.Parameters

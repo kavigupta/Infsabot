@@ -4,8 +4,7 @@ import Test.HUnit
 
 import Infsabot.Base.Interface
 import Infsabot.RobotAction
-import Infsabot.Tools
-import Infsabot.Board
+import Infsabot.Board.Interface
 import Infsabot.Robot
 import Infsabot.RobotStrategy
 import Infsabot.TestLibrary
@@ -80,12 +79,6 @@ mcrEdgeCases = TestList $ zipWith createCase [1::Int ..]
                     ++ show cas)
                 (b == TRSuccess)
         where b = individualMCRChecks cas
-
-assertRobotSourcesAgree :: Board -> Test
-assertRobotSourcesAgree b
-    = TestCase $
-        assertBool "Robot sources boardRobots and boardContents agree" $
-        sameElements (map PositionedRobot $ toList $ boardRobots b) (robotsOnBoard b)
 
 assertTeamsSymmetric :: Board -> Test
 assertTeamsSymmetric b

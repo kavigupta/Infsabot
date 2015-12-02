@@ -1,6 +1,6 @@
-module Infsabot.Board (
+module Infsabot.Board.Logic (
 		Board(Board),
-			boardContents, boardRobots, boardSize, boardTime,
+		boardContents, boardRobots, boardSize, boardTime,
 			(!!!), setRobot, robotAt, updateSpot, robotAlongPath,
 		startingBoard,
 		GameSpot(GameSpot), toSeenSpot

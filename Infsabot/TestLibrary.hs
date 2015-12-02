@@ -6,17 +6,15 @@ module Infsabot.TestLibrary(
         TeamedObject, positionOf, teamOf,
         TeamedComparable, areSymm, symmetricOf,
         toTestCase, constructTest,
-        robotsOnBoard, effectivePosition, teamSymmetric
+        effectivePosition, teamSymmetric
     ) where
 
-import Infsabot.Board
 import Infsabot.Base.Interface
 import Test.HUnit
 import Data.List
 import Data.Tuple(swap)
 import Infsabot.Robot
 import Data.Monoid
-import Control.Monad
 import Infsabot.RobotAction
 import Infsabot.Debug
 import Data.Function
@@ -178,15 +176,6 @@ toTestCase (TRFailure x) = TestCase $ assertBool x False
 constructTest :: Bool -> a -> TestResult a
 constructTest True = const TRSuccess
 constructTest False = TRFailure
-
-robotsOnBoard :: Board -> [PositionedRobot]
-robotsOnBoard b = concat $ map robotExtractor $ zip coordinates $ map (robotAt b) $ coordinates
-    where
-    coordinates :: [(Int, Int)]
-    coordinates = liftM2 (,) [0..boardSize b - 1] [0..boardSize b - 1]
-    robotExtractor :: ((Int, Int), Maybe Robot) -> [PositionedRobot]
-    robotExtractor (_, Nothing) = []
-    robotExtractor ((x, y), Just rob) = [PositionedRobot ((x, y), rob)]
 
 effectivePosition :: (TeamedObject a) => a -> (Int, Int)
 effectivePosition x
