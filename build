@@ -22,7 +22,10 @@ if NO_OPT and PROFILING:
 system("ghc Infsabot/Build.hs " + ("" if NO_OPT else "-O2") + " -rtsopts -outputdir .bin -main-is Infsabot.Build")
 
 if PROFILING:
-    system("ghc Infsabot/Build.hs -O2 -osuf p_o -prof -auto -auto-all -rtsopts -outputdir .bin -main-is Infsabot.Build")
+    system("ghc Infsabot/Build.hs"
+        + " -O2 -osuf p_o -prof -auto -auto-all -rtsopts"
+        + " -outputdir .bin"
+        + " -main-is Infsabot.Build")
 
 try:
     system("rm -r .bin")

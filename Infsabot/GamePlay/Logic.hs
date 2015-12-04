@@ -62,7 +62,7 @@ getAction p (PositionedRobot ((x, y), rob), Send send) b
 										(robotTeam rob)
 										(x, y)
 										(sendDirection send)
-										(lineOfMessageSending p)
+										(paramLineOfMessageSending p)
 										sendAction
 										b
 	where
@@ -76,14 +76,14 @@ getAction p (PositionedRobot ((x, y), rob), Fire fire) b
 										(robotTeam rob)
 										(x, y)
 										(fireDirection fire)
-										(lineOfFire p)
+										(paramLineOfFire p)
 										fireAction
 										b
 	where
 	fireAction toReceive
 			| newHP > 0 	= Just $ toReceive { robotHitpoints = newHP }
 			| otherwise		= Nothing
-		where newHP = robotHitpoints toReceive - apply (hitpointsRemoved p) (materialExpended fire)
+		where newHP = robotHitpoints toReceive - apply (paramHPRemoved p) (materialExpended fire)
 getAction _ (PositionedRobot ((x, y), _), Dig) b
 		| mat == SpotMaterial		= updateSpot (x,y) SpotEmpty b
 		| otherwise					= b
@@ -165,7 +165,7 @@ getKnownState p team b (PositionedRobot ((x, y), rob)) = KnownState {
 	}
 	where
 	peekFn :: [RDirection] -> Maybe SeenSpot
-	peekFn directs = (limitedOffset team (lineOfSight p) directs (x, y))
+	peekFn directs = (limitedOffset team (paramLineOfSight p) directs (x, y))
 			>>= (b !!!)
 			>>= (return . toSeenSpot)
 
