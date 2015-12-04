@@ -1,7 +1,7 @@
 module Infsabot.Debug(printRobot, printAction, printRobotAndAction, displayRAAL, trace) where
 
 import Infsabot.Robot
-import Infsabot.RobotAction
+import Infsabot.RobotAction.Interface
 import qualified Debug.Trace as T
 
 isDEBUG :: Bool

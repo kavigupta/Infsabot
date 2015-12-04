@@ -3,7 +3,7 @@ module Infsabot.Test.CollatedTests (tests, checks, stressTest) where
 import Test.HUnit
 
 import Infsabot.Base.Interface
-import Infsabot.RobotAction
+import Infsabot.RobotAction.Interface
 import Infsabot.Board.Interface
 import Infsabot.Tools.Interface
 import Infsabot.Robot

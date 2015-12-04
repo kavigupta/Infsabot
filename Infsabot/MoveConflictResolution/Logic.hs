@@ -8,7 +8,7 @@ module Infsabot.MoveConflictResolution.Logic(
     ) where
 
 import Infsabot.Robot
-import Infsabot.RobotAction
+import Infsabot.RobotAction.Interface
 import Infsabot.Base.Interface
 
 import Data.List(groupBy, sortBy)

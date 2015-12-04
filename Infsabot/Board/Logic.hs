@@ -11,7 +11,7 @@ import Data.RandomAccessList(RandomAccessList, lookup, update, fromList)
 import Infsabot.Tools.Interface(isPrime)
 import Infsabot.Base.Interface
 import Infsabot.Robot
-import Infsabot.RobotAction
+import Infsabot.RobotAction.Interface
 import Infsabot.Parameters
 import qualified Data.Map as M
 

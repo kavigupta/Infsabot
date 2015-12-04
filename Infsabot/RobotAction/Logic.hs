@@ -1,6 +1,6 @@
 {-# Language TypeSynonymInstances #-}
 {-# Language FlexibleInstances #-}
-module Infsabot.RobotAction (
+module Infsabot.RobotAction.Logic (
         RobotProgram, RobotProgramResult,
         KnownState(KnownState),
             peekAtSpot, material, stateLocation, stateAge, stateMemory, stateMessages,

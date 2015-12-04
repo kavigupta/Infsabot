@@ -15,7 +15,7 @@ module Infsabot.Robot (
     ) where
 
 import Infsabot.Base.Interface
-import Infsabot.RobotAction
+import Infsabot.RobotAction.Interface
 import qualified Data.Map as M
 import Infsabot.Parameters
 

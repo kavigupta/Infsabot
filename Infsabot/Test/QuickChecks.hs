@@ -2,7 +2,7 @@
 {-# Language FlexibleInstances #-}
 module Infsabot.Test.QuickChecks () where
 
-import Infsabot.RobotAction
+import Infsabot.RobotAction.Interface
 import Infsabot.Robot
 import Infsabot.Parameters
 import Infsabot.Board.Tests()

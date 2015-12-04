@@ -15,7 +15,7 @@ import Data.List
 import Data.Tuple(swap)
 import Infsabot.Robot
 import Data.Monoid
-import Infsabot.RobotAction
+import Infsabot.RobotAction.Interface
 import Infsabot.Debug
 import Data.Function
 

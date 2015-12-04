@@ -2,7 +2,7 @@ module Infsabot.RobotStrategy(basicProgram2, basicProgram)
     where
 
 import Infsabot.Base.Interface
-import Infsabot.RobotAction
+import Infsabot.RobotAction.Interface
 
 basicProgram :: Team -> RobotProgram
 basicProgram team state
