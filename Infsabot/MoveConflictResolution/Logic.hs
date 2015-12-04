@@ -7,7 +7,8 @@ module Infsabot.MoveConflictResolution.Logic(
         conflictsBetween
     ) where
 
-import Infsabot.Robot
+import Infsabot.Robot.Interface
+
 import Infsabot.RobotAction.Interface
 import Infsabot.Base.Interface
 

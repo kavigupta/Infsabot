@@ -1,3 +1,5 @@
+{-# Language TemplateHaskell #-}
+
 module Infsabot.Parameters(
         LinearF(LinearF), apply,
         Parameters(Parameters),
@@ -15,6 +17,9 @@ module Infsabot.Parameters(
             hitpointsRemoved,
         defaultParameters
     ) where
+
+import Data.DeriveTH(derive, makeArbitrary)
+import Test.QuickCheck.Arbitrary
 
 data LinearF a = LinearF a a deriving (Eq, Show)
 
@@ -51,3 +56,6 @@ defaultParameters = Parameters {
     lineOfMessageSending = 4,
     hitpointsRemoved = LinearF 1 2
 }
+
+$( derive makeArbitrary ''LinearF )
+$( derive makeArbitrary ''Parameters )

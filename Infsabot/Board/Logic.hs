@@ -10,7 +10,8 @@ module Infsabot.Board.Logic (
 import Data.RandomAccessList(RandomAccessList, lookup, update, fromList)
 import Infsabot.Tools.Interface(isPrime)
 import Infsabot.Base.Interface
-import Infsabot.Robot
+import Infsabot.Robot.Interface
+
 import Infsabot.RobotAction.Interface
 import Infsabot.Parameters
 import qualified Data.Map as M

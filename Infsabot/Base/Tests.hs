@@ -8,6 +8,7 @@ import Data.Maybe
 import Data.Function(on)
 import Data.Functor
 import Infsabot.Tools.Interface
+import Codec.Picture (PixelRGB8(PixelRGB8))
 
 import Data.DeriveTH(derive, makeArbitrary)
 import Test.QuickCheck hiding (shuffle)
@@ -38,5 +39,7 @@ sub (a, b) (c, d) = (a - c, b - d)
 propOppositeInvolution :: RDirection -> Bool
 propOppositeInvolution x = x == (oppositeDirection . oppositeDirection $ x)
 
+$( derive makeArbitrary ''PixelRGB8 )
+$( derive makeArbitrary ''RobotAppearance )
 $( derive makeArbitrary ''RDirection )
 $( derive makeArbitrary ''Team )

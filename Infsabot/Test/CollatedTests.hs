@@ -6,7 +6,8 @@ import Infsabot.Base.Interface
 import Infsabot.RobotAction.Interface
 import Infsabot.Board.Interface
 import Infsabot.Tools.Interface
-import Infsabot.Robot
+import Infsabot.Robot.Interface
+
 import Infsabot.RobotStrategy
 import Infsabot.Test.TestLibrary
 import Infsabot.MoveConflictResolution.Interface
@@ -15,7 +16,6 @@ import Codec.Picture
 import Infsabot.GamePlay.Interface
 import Infsabot.Parameters
 import Infsabot.Rendering(renderBoard)
-import Infsabot.Test.QuickChecks()
 import Data.Functor
 import Test.QuickCheck.Test(isSuccess)
 
@@ -98,4 +98,4 @@ assertBoardSymmetry b = TestList $ map symmetric $ zip [0.. boardSize b - 1] [0.
             return $ regular == other
 
 checks :: IO Bool
-checks = all isSuccess <$> (sequence $ toolsChecks ++ baseChecks ++ mcrChecks ++ boardChecks)
+checks = all isSuccess <$> (sequence $ toolsChecks ++ baseChecks ++ robActChecks ++ mcrChecks ++ boardChecks)

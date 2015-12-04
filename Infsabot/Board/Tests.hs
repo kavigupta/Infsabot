@@ -9,17 +9,18 @@ import qualified Data.RandomAccessList as DRal
 
 import Test.QuickCheck hiding (shuffle)
 import qualified Data.Map as Map
-import Infsabot.Robot
+import Infsabot.Robot.Interface
+
 import Infsabot.Base.Interface
 
 import Control.Monad(liftM, liftM2)
 import Test.HUnit
-import Codec.Picture
 
 import Infsabot.Tools.Interface
 import Data.DeriveTH(derive, makeArbitrary)
 import Data.Maybe
-import Infsabot.RobotStrategy
+
+import Infsabot.RobotAction.Tests()
 
 type RAL = DRal.RandomAccessList
 
@@ -85,28 +86,5 @@ instance Arbitrary Board where
                 inf2 <- infiniteList
                 return $ DRal.fromList $ take size inf2
 
-instance Arbitrary Robot where
-    arbitrary = do
-        mat <- arbitrary
-        team <- arbitrary
-        appearance <- arbitrary
-        hp <- arbitrary
-        date <- arbitrary
-        state <- arbitrary
-        return $ Robot {
-            robotProgram = basicProgram team,
-            robotTeam = team,
-            robotAppearance = appearance,
-            robotMaterial = abs mat,
-            robotHitpoints = abs hp,
-            robotBirthdate = abs date,
-            robotMemory = state,
-            robotMessages = []
-        }
-
 $( derive makeArbitrary ''GameSpot )
 $( derive makeArbitrary ''BoardSpot )
-$( derive makeArbitrary ''PixelRGB8 )
-$( derive makeArbitrary ''RobotAppearance )
-instance Arbitrary (Map.Map String String) where
-    arbitrary = return (Map.fromList [])

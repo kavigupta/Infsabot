@@ -1,7 +1,8 @@
 import Infsabot.Board
 import Infsabot.Base
 import Infsabot.TestLibrary
-import Infsabot.Robot
+import Infsabot.Robot.Interface
+
 import Infsabot.RobotStrategy
 import Infsabot.RobotAction
 import Data.Map(fromList)

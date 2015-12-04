@@ -8,7 +8,9 @@ module Infsabot.RobotAction.Interface (
             fireDirection, materialExpended,
             messageToSend, sendDirection,
         orderOfOperations,
-        actionCost
+        actionCost,
+        robActChecks
     ) where
 
 import Infsabot.RobotAction.Logic
+import Infsabot.RobotAction.Tests

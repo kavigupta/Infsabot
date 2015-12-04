@@ -17,7 +17,7 @@ import Data.Monoid(mconcat)
 import Test.QuickCheck hiding (shuffle)
 import Data.DeriveTH(derive, makeArbitrary)
 
-import Infsabot.Test.QuickChecks()
+import Infsabot.RobotAction.Tests()
 import Infsabot.Test.TestLibrary
 
 individualMCRChecks :: [RobotAndAction] -> TestResult String

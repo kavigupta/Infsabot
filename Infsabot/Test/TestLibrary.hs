@@ -13,7 +13,8 @@ import Infsabot.Base.Interface
 import Test.HUnit
 import Data.List
 import Data.Tuple(swap)
-import Infsabot.Robot
+import Infsabot.Robot.Interface
+
 import Data.Monoid
 import Infsabot.RobotAction.Interface
 import Infsabot.Debug

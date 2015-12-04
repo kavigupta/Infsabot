@@ -1,6 +1,7 @@
 module Infsabot.Debug(printRobot, printAction, printRobotAndAction, displayRAAL, trace) where
 
-import Infsabot.Robot
+import Infsabot.Robot.Interface
+
 import Infsabot.RobotAction.Interface
 import qualified Debug.Trace as T
 

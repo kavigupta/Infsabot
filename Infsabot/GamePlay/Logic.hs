@@ -2,7 +2,8 @@
 module Infsabot.GamePlay.Logic(boards) where
 
 import Infsabot.Board.Interface
-import Infsabot.Robot
+import Infsabot.Robot.Interface
+
 import Infsabot.RobotAction.Interface
 import Infsabot.Parameters
 import Infsabot.MoveConflictResolution.Interface
