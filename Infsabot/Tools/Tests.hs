@@ -3,6 +3,7 @@ module Infsabot.Tools.Tests(toolsChecks) where
 
 import Test.QuickCheck
 import Infsabot.Tools.Logic
+import Control.Applicative
 
 toolsChecks :: [IO Result]
 toolsChecks = [
@@ -23,3 +24,6 @@ deleteFirst _ [] = []
 deleteFirst f (x:xs)
     | f x           = x : deleteFirst f xs
     | otherwise     = xs
+
+instance Arbitrary Natural where
+    arbitrary = makeNatural <$> arbitrary

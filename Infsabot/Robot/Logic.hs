@@ -18,6 +18,7 @@ import Infsabot.Base.Interface
 import Infsabot.RobotAction.Interface
 import qualified Data.Map as M
 import Infsabot.Parameters
+import Infsabot.Tools.Interface
 
 -- Represents a game piece, called a Robot
 data Robot = Robot {
@@ -52,8 +53,8 @@ defaultRobot p team program = Robot {
     robotProgram = program,
     robotTeam = team,
     robotAppearance = RobotAppearance $ colorOf team,
-    robotMaterial = paramInitialMaterial p,
-    robotHitpoints = paramInitialHP p,
+    robotMaterial = unNatural $ paramInitialMaterial p,
+    robotHitpoints = unNatural $ paramInitialHP p,
     robotBirthdate = 0,
     robotMemory = M.empty,
     robotMessages = []

@@ -9,6 +9,8 @@ import Infsabot.Board.Interface(Board, startingBoard)
 import Infsabot.Rendering(renderBoard)
 import Infsabot.RobotStrategy(basicProgram)
 
+import Infsabot.Tools.Interface
+
 import System.Process(system)
 
 nBoards, boardSize, boardScalingFactor, fps :: Int
@@ -35,7 +37,7 @@ createDemoBoards demoBoardSize
         forM_ ["mp4", "gif"] (system . ffmpeg)
         return ()
     where
-    params = updateBoardSize demoBoardSize . updateInitialMaterial 100 $ defaultParameters
+    params = defaultParameters {paramBoardSize = makeNatural demoBoardSize, paramInitialMaterial = makeNatural 100}
     selectedBoards
         = take nBoards $
             zip [0 :: Int ..] $

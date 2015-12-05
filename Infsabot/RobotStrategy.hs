@@ -3,6 +3,7 @@ module Infsabot.RobotStrategy(basicProgram2, basicProgram)
 
 import Infsabot.Base.Interface
 import Infsabot.RobotAction.Interface
+import Infsabot.Tools.Interface
 
 basicProgram :: Team -> RobotProgram
 basicProgram team state
@@ -25,7 +26,7 @@ basicProgram team state
         newDirection = dir,
         newProgram = basicProgram team,
         newAppearance = RobotAppearance $ colorOf team,
-        newMaterial = material state `div` 3,
+        newMaterial = makeNatural $ material state `div` 3,
         newMemory = stateMemory state
     }
 
@@ -34,7 +35,7 @@ basicProgram2 asdf state
     | mat == SpotMaterial
         = (Dig, stateMemory state)
     | enemyLoc /= Nothing
-        = (Fire $ FireAction {fireDirection = case enemyLoc of (Just loc) -> loc, materialExpended = 2}, stateMemory state)
+        = (Fire $ FireAction {fireDirection = case enemyLoc of (Just loc) -> loc, materialExpended = makeNatural 2}, stateMemory state)
     | stateAge state `mod` 11 == 0  = directionByMod createSpawn
     | stateAge state `mod` 11 == 1  = directionByMod createSendMessage
     | otherwise = directionByMod MoveIn
@@ -74,7 +75,7 @@ basicProgram2 asdf state
         newDirection = dir,
         newProgram = basicProgram asdf,
         newAppearance = ourAppearance,
-        newMaterial = material state `div` 3,
+        newMaterial = makeNatural $ material state `div` 3,
         newMemory = stateMemory state
     }
     createSendMessage dir = Send $ SendAction {

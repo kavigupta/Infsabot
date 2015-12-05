@@ -8,7 +8,7 @@ module Infsabot.Board.Logic (
 	) where
 
 import Data.RandomAccessList(RandomAccessList, lookup, update, fromList)
-import Infsabot.Tools.Interface(isPrime)
+import Infsabot.Tools.Interface(isPrime, unNatural)
 import Infsabot.Base.Interface
 import Infsabot.Robot.Interface
 
@@ -61,19 +61,19 @@ b !!! (x, y)
 -- This board contains one robot from each team.
 startingBoard :: Parameters -> (Team -> RobotProgram) -> Board
 startingBoard p programOf
-	= setRobot (0, paramBoardSize p - 1) (bot B) $
-		setRobot (paramBoardSize p - 1, 0) (bot A) $
+	= setRobot (0, unNatural (paramBoardSize p) - 1) (bot B) $
+		setRobot (unNatural (paramBoardSize p) - 1, 0) (bot A) $
 		Board {
 			boardContents 	= startingSpots,
 			boardRobots 	= M.fromList [],
-			boardSize 		= paramBoardSize p,
+			boardSize 		= unNatural $ paramBoardSize p,
 			boardTime 		= 0
 		}
 	where
 	startingSpots :: (RAL (RAL GameSpot))
-	startingSpots = fmap ys $ fromList [0..paramBoardSize p]
+	startingSpots = fmap ys $ fromList [0..unNatural (paramBoardSize p)]
 		where
-		ys x = fmap initialColor $ fromList [0..paramBoardSize p]
+		ys x = fmap initialColor $ fromList [0..unNatural (paramBoardSize p)]
 			where
 			initialColor :: Int -> GameSpot
 			initialColor y =

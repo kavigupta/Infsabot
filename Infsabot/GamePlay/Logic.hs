@@ -11,6 +11,7 @@ import Infsabot.Base.Interface
 import Data.List(sortBy)
 import Data.Function(on)
 import Data.Maybe(fromJust)
+import Infsabot.Tools.Interface
 
 import Infsabot.Debug
 
@@ -62,7 +63,7 @@ getAction p (PositionedRobot ((x, y), rob), Send send) b
 										(robotTeam rob)
 										(x, y)
 										(sendDirection send)
-										(paramLineOfMessageSending p)
+										(unNatural $ paramLineOfMessageSending p)
 										sendAction
 										b
 	where
@@ -76,14 +77,14 @@ getAction p (PositionedRobot ((x, y), rob), Fire fire) b
 										(robotTeam rob)
 										(x, y)
 										(fireDirection fire)
-										(paramLineOfFire p)
+										(unNatural $ paramLineOfFire p)
 										fireAction
 										b
 	where
 	fireAction toReceive
 			| newHP > 0 	= Just $ toReceive { robotHitpoints = newHP }
 			| otherwise		= Nothing
-		where newHP = robotHitpoints toReceive - apply (paramHPRemoved p) (materialExpended fire)
+		where newHP = robotHitpoints toReceive - (unNatural $ apply (paramHPRemoved p) (materialExpended fire))
 getAction _ (PositionedRobot ((x, y), _), Dig) b
 		| mat == SpotMaterial		= updateSpot (x,y) SpotEmpty b
 		| otherwise					= b
@@ -98,8 +99,8 @@ getAction params (PositionedRobot ((x, y), rob), Spawn spawn) b
 		robotProgram = newProgram spawn,
 		robotTeam = robotTeam rob,
 		robotAppearance = newAppearance spawn,
-		robotMaterial = paramInitialMaterial params,
-		robotHitpoints = paramInitialHP params,
+		robotMaterial = unNatural $ paramInitialMaterial params,
+		robotHitpoints = unNatural $ paramInitialHP params,
 		robotBirthdate = boardTime b,
 		robotMemory = newMemory spawn,
 		robotMessages = []
@@ -165,7 +166,7 @@ getKnownState p team b (PositionedRobot ((x, y), rob)) = KnownState {
 	}
 	where
 	peekFn :: [RDirection] -> Maybe SeenSpot
-	peekFn directs = (limitedOffset team (paramLineOfSight p) directs (x, y))
+	peekFn directs = (limitedOffset team (unNatural $ paramLineOfSight p) directs (x, y))
 			>>= (b !!!)
 			>>= (return . toSeenSpot)
 
@@ -183,9 +184,9 @@ possibleAction p (xyrob@(PositionedRobot (_, rob)), action)
 	downgrade (MoveIn _) = tryNoop
 	downgrade Dig = tryNoop
 	downgrade (Spawn s) -- TODO Potential massive inefficiency here!
-		= possibleAction p (xyrob, Spawn $ s {newMaterial = newMaterial s - 1})
+		= possibleAction p (xyrob, Spawn $ s {newMaterial = makeNatural $ unNatural (newMaterial s) - 1})
 	downgrade (Fire f)
-		= possibleAction p (xyrob, Fire $ f {materialExpended = materialExpended f - 1})
+		= possibleAction p (xyrob, Fire $ f {materialExpended = makeNatural $ unNatural (materialExpended f) - 1})
 	downgrade (Send _) = tryNoop
 	tryNoop = possibleAction p (xyrob, Noop)
 

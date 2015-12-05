@@ -15,6 +15,7 @@ module Infsabot.RobotAction.Logic (
 
 import Infsabot.Base.Interface
 import Infsabot.Parameters
+import Infsabot.Tools.Interface
 
 -- A robot program takes the Robot's state and returns a RobotProgramResult
 type RobotProgram = KnownState -> RobotProgramResult
@@ -62,7 +63,7 @@ data RobotAction =
 data FireAction = FireAction {
     -- Material devoted to this task.
     -- More material means greater blow
-    materialExpended :: Int,
+    materialExpended :: Natural,
     -- Direction to fire in
     fireDirection :: RDirection
 } deriving (Show, Eq)
@@ -82,7 +83,7 @@ data SpawnAction = SpawnAction {
     -- The appearance of the new Robot
     newAppearance :: RobotAppearance,
     -- The quantity of material to transfer to the new robot
-    newMaterial :: Int,
+    newMaterial :: Natural,
     -- The memory of the new robot
     newMemory :: InternalState
 } deriving (Show, Eq)
@@ -108,10 +109,10 @@ orderOfOperations (Spawn _) = 6
 
 -- Outputs the cost of performing the given action.
 actionCost :: Parameters -> RobotAction -> Int
-actionCost p Noop = paramNoopCost p
+actionCost p Noop = unNatural $ paramNoopCost p
 actionCost _ Die = 0
-actionCost p (MoveIn _) = paramMoveCost p
-actionCost p Dig = paramDigCost p
-actionCost p (Spawn s) = newMaterial s + paramNewRobotCost p
-actionCost p (Fire f) = materialExpended f + paramFireCost p
+actionCost p (MoveIn _) = unNatural $ paramMoveCost p
+actionCost p Dig = unNatural $ paramDigCost p
+actionCost p (Spawn s) = unNatural (newMaterial s) + unNatural (paramNewRobotCost p)
+actionCost p (Fire f) = unNatural (materialExpended f) + unNatural (paramFireCost p)
 actionCost p (Send _) = actionCost p Noop

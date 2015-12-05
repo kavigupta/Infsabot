@@ -1,5 +1,6 @@
 module Infsabot.Tools.Logic (
         isPrime,
+        Natural, makeNatural, unNatural,
         shuffle, allDifferent, sameElements, (!-!), spanNeq,
         doChecks, (~~>)
     ) where
@@ -21,6 +22,17 @@ isPrime x
         sqrtX = sqrt $ fromIntegral x
         maxFactor :: Int
         maxFactor = floor sqrtX
+
+newtype Natural = Natural Int deriving Eq
+
+makeNatural :: Int -> Natural
+makeNatural = Natural . max 0
+
+unNatural :: Natural -> Int
+unNatural (Natural x) = x
+
+instance Show Natural where
+    show = show . unNatural
 
 spanNeq :: Eq a => (a -> Bool) -> (a -> Bool) -> [a] -> ([a], [a])
 spanNeq _ _ [] = ([], [])

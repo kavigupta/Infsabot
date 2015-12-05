@@ -14,11 +14,14 @@ import Test.HUnit
 import Data.List
 import Data.Tuple(swap)
 import Infsabot.Robot.Interface
+import Infsabot.Tools.Interface
 
 import Data.Monoid
 import Infsabot.RobotAction.Interface
 import Infsabot.Debug
-import Data.Function
+import Data.Function(on)
+
+import Data.Graph.Inductive.Query.Monad((><))
 
 data TestResult a = TRSuccess | TRFailure a deriving (Show, Eq)
 
@@ -75,6 +78,10 @@ instance TeamedComparable PositionedRobot where
         | otherwise
             = areSymm (rob1, rob2)
     symmetricOf (PositionedRobot ((x, y), r)) = (PositionedRobot ((symmetricOf y, symmetricOf x), symmetricOf r))
+
+instance TeamedComparable Natural where
+    areSymm = areSymm . (unNatural >< unNatural)
+    symmetricOf = makeNatural . symmetricOf . unNatural
 
 instance TeamedComparable Team where
     areSymm (a, b)
