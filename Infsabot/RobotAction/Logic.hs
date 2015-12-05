@@ -110,7 +110,7 @@ orderOfOperations (Spawn _) = 6
 -- Outputs the cost of performing the given action.
 actionCost :: Parameters -> RobotAction -> Natural
 actionCost p Noop = paramNoopCost p
-actionCost _ Die = makeNatural 0
+actionCost _ Die = 0
 actionCost p (MoveIn _) = paramMoveCost p
 actionCost p Dig = paramDigCost p
 actionCost p (Spawn s) = newMaterial s + paramNewRobotCost p

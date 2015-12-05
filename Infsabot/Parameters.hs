@@ -1,6 +1,4 @@
 {-# Language TemplateHaskell #-}
-{-# Language CPP #-}
-
 module Infsabot.Parameters(
         LinearF(LinearF), apply,
         Parameters(Parameters),
@@ -45,18 +43,18 @@ data Parameters = Parameters {
 
 defaultParameters :: Parameters
 defaultParameters = Parameters {
-    paramBoardSize = makeNatural 75,
-    paramNoopCost = makeNatural 1,
-    paramMoveCost = makeNatural 5,
-    paramDigCost = makeNatural 10,
-    paramNewRobotCost = makeNatural 20,
-    paramFireCost = makeNatural 5,
-    paramInitialHP = makeNatural 100,
-    paramInitialMaterial = makeNatural 50,
-    paramLineOfSight = makeNatural 5,
-    paramLineOfFire = makeNatural 3,
-    paramLineOfMessageSending = makeNatural 4,
-    paramHPRemoved = LinearF (makeNatural 1) (makeNatural 2)
+    paramBoardSize = 75,
+    paramNoopCost = 1,
+    paramMoveCost = 5,
+    paramDigCost = 10,
+    paramNewRobotCost = 20,
+    paramFireCost = 5,
+    paramInitialHP = 100,
+    paramInitialMaterial = 50,
+    paramLineOfSight = 5,
+    paramLineOfFire = 3,
+    paramLineOfMessageSending = 4,
+    paramHPRemoved = LinearF 1 2
 }
 
 $( derive makeArbitrary ''LinearF )

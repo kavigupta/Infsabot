@@ -37,7 +37,7 @@ createDemoBoards demoBoardSize
         forM_ ["mp4", "gif"] (system . ffmpeg)
         return ()
     where
-    params = defaultParameters {paramBoardSize = makeNatural demoBoardSize, paramInitialMaterial = makeNatural 100}
+    params = defaultParameters {paramBoardSize = makeNatural demoBoardSize, paramInitialMaterial = 100}
     selectedBoards
         = take nBoards $
             zip [0 :: Int ..] $

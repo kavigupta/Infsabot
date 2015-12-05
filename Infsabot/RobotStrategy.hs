@@ -35,7 +35,7 @@ basicProgram2 asdf state
     | mat == SpotMaterial
         = (Dig, stateMemory state)
     | enemyLoc /= Nothing
-        = (Fire $ FireAction {fireDirection = case enemyLoc of (Just loc) -> loc, materialExpended = makeNatural 2}, stateMemory state)
+        = (Fire $ FireAction {fireDirection = case enemyLoc of (Just loc) -> loc, materialExpended = 2}, stateMemory state)
     | stateAge state `mod` 11 == 0  = directionByMod createSpawn
     | stateAge state `mod` 11 == 1  = directionByMod createSendMessage
     | otherwise = directionByMod MoveIn
