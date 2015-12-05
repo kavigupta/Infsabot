@@ -25,8 +25,8 @@ import Infsabot.Tools.Interface
 
 data LinearF a = LinearF a a deriving (Eq, Show)
 
-apply ::LinearF Natural -> Natural -> Natural
-apply (LinearF m b) x = makeNatural $ (unNatural m) * (unNatural x) + (unNatural b)
+apply :: (Num a) => LinearF a -> a -> a
+apply (LinearF m b) x = m * x + b
 
 data Parameters = Parameters {
     paramBoardSize :: Natural,

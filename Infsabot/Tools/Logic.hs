@@ -11,6 +11,7 @@ import Control.Monad
 import Control.Monad.ST
 import Data.STRef
 import Data.List(sort, (\\))
+import Data.Function(on)
 import Test.QuickCheck hiding (shuffle)
 
 isPrime :: Int -> Bool
@@ -33,6 +34,18 @@ unNatural (Natural x) = x
 
 instance Show Natural where
     show = show . unNatural
+
+
+instance Num Natural where
+    a + b = makeNatural $ unNatural a + unNatural b
+    a - b = makeNatural $ unNatural a - unNatural b
+    a * b = makeNatural $ unNatural a * unNatural b
+    abs = id
+    fromInteger = makeNatural . fromInteger
+    signum = makeNatural . signum . unNatural
+
+instance Ord Natural where
+    compare = compare `on` unNatural
 
 spanNeq :: Eq a => (a -> Bool) -> (a -> Bool) -> [a] -> ([a], [a])
 spanNeq _ _ [] = ([], [])

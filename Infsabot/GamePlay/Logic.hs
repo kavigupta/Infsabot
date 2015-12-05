@@ -145,7 +145,7 @@ applyActionCosts params raas = foldr (.) id $ map applyActionCost raas
 	applyActionCost (PositionedRobot ((x, y), rob), act) = setRobot (x, y) $ Just newRobot
 		where
 		cost = actionCost params act
-		newRobot = rob {robotMaterial = robotMaterial rob - cost}
+		newRobot = rob {robotMaterial = robotMaterial rob - unNatural cost}
 
 -- Gets a list of robots and their program results
 getRobotResults :: Parameters -> Board -> [RobotAndResult]
@@ -175,8 +175,8 @@ getKnownState p team b (PositionedRobot ((x, y), rob)) = KnownState {
 -- This may be another type of action.
 possibleAction :: Parameters -> RobotAndAction -> RobotAndAction
 possibleAction p (xyrob@(PositionedRobot (_, rob)), action)
-    | actionCost p action <= robotMaterial rob  = (xyrob, action)
-    | otherwise 								= downgrade action
+    | actionCost p action <= makeNatural (robotMaterial rob)  = (xyrob, action)
+    | otherwise 										      = downgrade action
 	where
 	downgrade :: RobotAction -> RobotAndAction
 	downgrade Die = (xyrob, Die)

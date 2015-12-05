@@ -108,11 +108,11 @@ orderOfOperations (MoveIn _) = 5
 orderOfOperations (Spawn _) = 6
 
 -- Outputs the cost of performing the given action.
-actionCost :: Parameters -> RobotAction -> Int
-actionCost p Noop = unNatural $ paramNoopCost p
-actionCost _ Die = 0
-actionCost p (MoveIn _) = unNatural $ paramMoveCost p
-actionCost p Dig = unNatural $ paramDigCost p
-actionCost p (Spawn s) = unNatural (newMaterial s) + unNatural (paramNewRobotCost p)
-actionCost p (Fire f) = unNatural (materialExpended f) + unNatural (paramFireCost p)
+actionCost :: Parameters -> RobotAction -> Natural
+actionCost p Noop = paramNoopCost p
+actionCost _ Die = makeNatural 0
+actionCost p (MoveIn _) = paramMoveCost p
+actionCost p Dig = paramDigCost p
+actionCost p (Spawn s) = newMaterial s + paramNewRobotCost p
+actionCost p (Fire f) = materialExpended f + paramFireCost p
 actionCost p (Send _) = actionCost p Noop

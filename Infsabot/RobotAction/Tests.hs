@@ -16,7 +16,7 @@ import Infsabot.Base.Tests()
 
 robActChecks :: [IO Result]
 robActChecks = [
-        doChecks 4 propActionCostPositive
+        putStrLn "Action cost positive" >> doChecks 4 propActionCostPositive
     ]
 
 propActionCostPositive :: Parameters -> RobotAction -> Bool
