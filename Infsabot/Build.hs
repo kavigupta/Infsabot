@@ -8,7 +8,8 @@ import System.Posix.Files(isDirectory, getFileStatus)
 import Data.List(elemIndex, isSuffixOf, intercalate)
 
 import System.Exit
-import System.Process(system)
+import System.Process(system, readProcessWithExitCode)
+import Text.Regex.Posix((=~))
 
 import Data.Functor
 import Control.Applicative
@@ -103,7 +104,8 @@ buildAll
     = do
         contents <- getAll directory
         let hss = filter ((&&) <$> isSuffixOf ".hs" <*> not . isSuffixOf "Build.hs") contents
-        system "ghc -fno-code -fno-warn-orphans Infsabot/Build.hs -Werror"
+        code <- system "ghc -fno-code -fno-warn-orphans Infsabot/Build.hs -Werror"
+        when (code /= ExitSuccess) $ echf "Failure in building Build"
         build hss
         echs "Haskell Files Built Correctly"
     where
@@ -126,14 +128,22 @@ buildAll
     build :: [String] -> IO ()
     build names =
         do
+            let spacesep = intercalate " " names
+            let dump = " >> " ++ stdLog ++ " 2> " ++ errLog
             echl $ "Compiling\n\t" ++ (intercalate "\n\t" names)
-            let command = "ghc -fno-code -Wall -fno-warn-orphans -Werror -odir bin " ++ (intercalate " " names) ++ " >> " ++ stdLog ++ " 2> " ++ errLog
-            exitCode <- system command
-            case exitCode of
-                (ExitFailure _) -> do
-                    echf $ "Error in compilation"
-                    pErrorClean
-                _ -> return ()
+            let ghc = "ghc -fno-code -Wall -fno-warn-orphans -Werror -odir bin " ++ spacesep ++ dump
+            ghcCode <- system ghc
+            when (ghcCode /= ExitSuccess) $ echf "Error in compilation" >> pErrorClean
+            (_,lintResult1, lintResult2) <- readProcessWithExitCode "hlint" names ""
+            let lintResult = lintResult1 ++ lintResult2
+            putStrLn $ show lintResult
+            let result = (lintResult =~ "([0-9]+)\\s+suggestions" :: [[String]])
+            putStrLn $ show result
+            let suggestionCount = head result !! 1
+            if suggestionCount /= "0" then do
+                echf $ "Hlint suggestions ==>\n" ++ lintResult
+                exitFailure
+            else return ()
 
 analyzeArguments :: IO WhatToDo
 analyzeArguments

@@ -1,2 +1,0 @@
-[20 of 20] Compiling Infsabot.Build   ( Infsabot/Build.hs, bin/Infsabot/Build.o )
-BUILD FAILED
