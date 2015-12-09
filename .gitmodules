@@ -1,0 +1,3 @@
+[submodule "SimplePreprocessor"]
+	path = SimplePreprocessor
+	url = https://github.com/kavigupta/SimplePreprocessor
