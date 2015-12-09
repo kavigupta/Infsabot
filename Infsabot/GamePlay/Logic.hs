@@ -184,9 +184,15 @@ possibleAction p (xyrob@(PositionedRobot (_, rob)), action)
 	downgrade (MoveIn _) = tryNoop
 	downgrade Dig = tryNoop
 	downgrade (Spawn s) -- TODO Potential massive inefficiency here!
-		= possibleAction p (xyrob, Spawn $ s {newMaterial = makeNatural $ unNatural (newMaterial s) - 1})
+		| newMaterial s == 0
+			= tryNoop
+		| otherwise
+			= possibleAction p (xyrob, Spawn $ s {newMaterial = makeNatural $ unNatural (newMaterial s) - 1})
 	downgrade (Fire f)
-		= possibleAction p (xyrob, Fire $ f {materialExpended = makeNatural $ unNatural (materialExpended f) - 1})
+		| materialExpended f == 0
+			= tryNoop
+		|otherwise
+			= possibleAction p (xyrob, Fire $ f {materialExpended = makeNatural $ unNatural (materialExpended f) - 1})
 	downgrade (Send _) = tryNoop
 	tryNoop = possibleAction p (xyrob, Noop)
 
