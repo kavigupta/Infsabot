@@ -39,7 +39,7 @@ data KnownState = KnownState {
     -- The robot's received messages as a list of pairs of
     -- message and direction received.
     stateMessages :: [(String, RDirection)]
-} deriving (Show)
+} deriving Show
 
 -- Represents an action a robot can take.
 -- If the action is impossible, nothing will occur
@@ -91,10 +91,10 @@ data SpawnAction = SpawnAction {
 instance Show ([RDirection] -> Maybe SeenSpot) where
     show _ = "Classified"
 
-instance Show (RobotProgram) where
+instance Show RobotProgram where
     show _ = "basicProgram A"
 
-instance Eq (RobotProgram) where
+instance Eq RobotProgram where
     _ == _ = True
 
 

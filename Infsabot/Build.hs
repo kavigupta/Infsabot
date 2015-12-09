@@ -137,10 +137,7 @@ buildAll
             (_,lintResult1, lintResult2) <- readProcessWithExitCode "hlint" names ""
             let lintResult = lintResult1 ++ lintResult2
             putStrLn $ show lintResult
-            let result = (lintResult =~ "([0-9]+)\\s+suggestions" :: [[String]])
-            putStrLn $ show result
-            let suggestionCount = head result !! 1
-            if suggestionCount /= "0" then do
+            if lintResult =~ "([0-9]+)\\s+suggestions?" then do
                 echf $ "Hlint suggestions ==>\n" ++ lintResult
                 exitFailure
             else return ()

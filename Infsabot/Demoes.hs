@@ -2,6 +2,7 @@ module Infsabot.Demoes(demoes) where
 
 import Codec.Picture(writePng)
 
+import Data.Function(on)
 import Control.Monad(forM_)
 import Infsabot.Parameters
 import Infsabot.GamePlay.Interface(boards)
@@ -16,13 +17,12 @@ import System.Process(system)
 nBoards, boardSize, boardScalingFactor, fps :: Int
 
 nBoards = 150
-boardSize = 70
+boardSize = 60
 boardScalingFactor = 1000 `div` boardSize
 fps = 5
 
 showPadded :: Int -> String
-showPadded n = (take (length (show nBoards) - length str) $ repeat '0') ++ str
-    where str = show n
+showPadded n = replicate (((-) `on` (length . show)) nBoards n) '0' ++ show n
 
 demoes :: IO ()
 demoes = createDemoBoards boardSize
@@ -31,9 +31,9 @@ createDemoBoards :: Int -> IO ()
 createDemoBoards demoBoardSize
     = do
         writeBoard "demo-starting-board.png" $ snd $ head selectedBoards
-        forM_ (tail selectedBoards) $ \(x, board) ->
-            do
-                writeBoard ("demo/demo-moves-" ++ (showPadded x) ++ ".png") board
+        forM_ (tail selectedBoards) $ \(x, board) -> do
+            print x
+            writeBoard ("demo/demo-moves-" ++ showPadded x ++ ".png") board
         forM_ ["mp4", "gif"] (system . ffmpeg)
         return ()
     where

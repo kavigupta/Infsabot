@@ -16,7 +16,7 @@ instance Arbitrary Robot where
         hp <- arbitrary
         date <- arbitrary
         state <- arbitrary
-        return $ Robot {
+        return Robot {
             robotProgram = basicProgram team,
             robotTeam = team,
             robotAppearance = appearance,

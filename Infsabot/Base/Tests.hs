@@ -28,8 +28,8 @@ propOffsetIsLimited team len dirs (x, y)
     value = (\(u, v) -> u * u + v * v > len * len) . sub (x, y) <$> final
 
 propLinearOffset :: Team -> Int -> [RDirection] -> (Int, Int) -> (Int, Int) -> Bool
-propLinearOffset team len dirs xy1 xy2
-        = ((==) `on` off) xy1 xy2
+propLinearOffset team len dirs
+        = (==) `on` off
     where
     off xy = sub xy <$> (limitedOffset team len dirs xy :: Maybe (Int, Int))
 

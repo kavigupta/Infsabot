@@ -34,7 +34,7 @@ boardChecks
 --- setting a robot means that you can get it out
 propSetGetRobots :: Board -> (Int, Int) -> Robot -> Bool
 propSetGetRobots b xy' rob
-    = robotAt (setRobot xy (Just rob) b) xy == (Just rob)
+    = robotAt (setRobot xy (Just rob) b) xy == Just rob
         where xy = coerceIntoBoard b xy'
 
 --- setting a robot means that you can get it out
@@ -49,7 +49,7 @@ coerceIntoBoard :: Board -> (Int, Int) -> (Int, Int)
 coerceIntoBoard b (x, y) = (x `mod` boardSize b, y `mod` boardSize b)
 
 robotsOnBoard :: Board -> [PositionedRobot]
-robotsOnBoard b = concat $ map robotExtractor $ zip coordinates $ map (robotAt b) $ coordinates
+robotsOnBoard b = concat $ zipWith (curry robotExtractor) coordinates $ map (robotAt b) coordinates
     where
     coordinates :: [(Int, Int)]
     coordinates = liftM2 (,) [0..boardSize b - 1] [0..boardSize b - 1]
@@ -68,13 +68,13 @@ instance Arbitrary Board where
             size <- choose (1, 30)
             time <- choose (1, 100)
             contents <- arbitraryBoard size
-            let robots = robotsOnBoard $ Board {boardSize = size, boardTime = time, boardRobots = Map.fromList [], boardContents = contents}
-            return $ Board {boardSize = size, boardTime = time, boardRobots = Map.fromList $ map (\(PositionedRobot x) -> x) robots, boardContents = contents}
+            let robots = robotsOnBoard Board {boardSize = size, boardTime = time, boardRobots = Map.fromList [], boardContents = contents}
+            return Board {boardSize = size, boardTime = time, boardRobots = Map.fromList $ map (\(PositionedRobot x) -> x) robots, boardContents = contents}
         where
         arbitraryBoard :: Int -> Gen (RAL (RAL GameSpot))
         arbitraryBoard size = liftM DRal.fromList $ arbitraryBoardL size
             where
-            arbitraryBoardL :: Int -> Gen [(RAL GameSpot)]
+            arbitraryBoardL :: Int -> Gen [RAL GameSpot]
             arbitraryBoardL 0 = return []
             arbitraryBoardL n =
                     do

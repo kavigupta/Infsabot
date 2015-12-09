@@ -60,7 +60,7 @@ spanNeq f filt (x:xs)
         = ([], x:xs)
 
 sameElements :: (Eq a) => [a] -> [a] -> Bool
-sameElements a b = length a == length b && (null $ a \\ b)
+sameElements a b = length a == length b && null (a \\ b)
 
 shuffle :: Int -> [a] -> [a]
 shuffle seed lst = fst $ stdLibShuffle lst $ mkStdGen seed

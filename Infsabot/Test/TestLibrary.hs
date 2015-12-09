@@ -15,9 +15,10 @@ import Data.List
 import Data.Tuple(swap)
 import Infsabot.Robot.Interface
 import Infsabot.Tools.Interface
-
-import Data.Monoid
 import Infsabot.RobotAction.Interface
+
+import Control.Applicative((<$>))
+import Data.Monoid
 import Infsabot.Debug
 import Data.Function(on)
 
@@ -32,7 +33,7 @@ instance Functor TestResult where
 instance Monoid (TestResult a) where
     mempty = TRSuccess
     TRSuccess `mappend` x = x
-    (TRFailure x) `mappend` _ = (TRFailure x)
+    (TRFailure x) `mappend` _ = TRFailure x
 
 class TeamedObject a where
     positionOf :: a -> (Int, Int)
@@ -69,7 +70,7 @@ instance TeamedComparable Robot where
     symmetricOf rob = rob {robotTeam = symmetricOf $ robotTeam rob}
 
 instance TeamedComparable PositionedRobot where
-    areSymm (PositionedRobot ((x1, y1), rob1), (PositionedRobot ((x2, y2), rob2)))
+    areSymm (PositionedRobot ((x1, y1), rob1), PositionedRobot ((x2, y2), rob2))
         | x1 /= y2 || y1 /= x2
             = TRFailure
                 $  "The Team A robot at "
@@ -77,7 +78,7 @@ instance TeamedComparable PositionedRobot where
                 ++ " appears to have no corresponding B robot"
         | otherwise
             = areSymm (rob1, rob2)
-    symmetricOf (PositionedRobot ((x, y), r)) = (PositionedRobot ((symmetricOf y, symmetricOf x), symmetricOf r))
+    symmetricOf (PositionedRobot ((x, y), r)) = PositionedRobot ((symmetricOf y, symmetricOf x), symmetricOf r)
 
 instance TeamedComparable Natural where
     areSymm = areSymm . (unNatural >< unNatural)
@@ -133,13 +134,13 @@ instance TeamedComparable RobotAppearance where
     symmetricOf = id
 
 instance TeamedComparable RobotAction where
-    areSymm (x, y) = fmap
+    areSymm (x, y) =
         (("The actions "
             ++ show x
             ++ " and "
             ++ show y
             ++ " do not correspond;")
-            ++) $ aS (x, y)
+            ++) <$> aS (x, y)
         where
         aS (Noop, Noop) = TRSuccess
         aS (Die, Die) = TRSuccess

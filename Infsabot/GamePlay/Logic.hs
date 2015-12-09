@@ -10,6 +10,7 @@ import Infsabot.MoveConflictResolution.Interface
 import Infsabot.Base.Interface
 import Data.List(sortBy)
 import Data.Function(on)
+import Control.Monad(liftM)
 import Data.Maybe(fromJust)
 import Infsabot.Tools.Interface
 
@@ -18,7 +19,7 @@ import Infsabot.Debug
 type RobotAndResult = (PositionedRobot, RobotProgramResult)
 
 boards :: Parameters -> Board -> [Board]
-boards params initialBoard = iterate (play params) initialBoard
+boards params = iterate (play params)
 
 -- the main play function. This executes all robot actions and updates the board.
 play :: Parameters -> Board -> Board
@@ -84,7 +85,7 @@ getAction p (PositionedRobot ((x, y), rob), Fire fire) b
 	fireAction toReceive
 			| newHP > 0 	= Just $ toReceive { robotHitpoints = newHP }
 			| otherwise		= Nothing
-		where newHP = robotHitpoints toReceive - (unNatural $ apply (paramHPRemoved p) (materialExpended fire))
+		where newHP = robotHitpoints toReceive - unNatural (apply (paramHPRemoved p) (materialExpended fire))
 getAction _ (PositionedRobot ((x, y), _), Dig) b
 		| mat == SpotMaterial		= updateSpot (x,y) SpotEmpty b
 		| otherwise					= b
@@ -128,7 +129,7 @@ mutateRobot team (x, y) direction distance mutator b
 -- This is performed before any robot actions are carried out.
 updateAllHardDrives :: [RobotAndResult] -> (Board -> Board, [RobotAndAction])
 updateAllHardDrives rars = (
-		foldr (.) id $ map updateHardDrive rars,
+		foldr ((.) . updateHardDrive) id rars,
 		map removeState rars)
 	where
 	removeState (xyrob, (act, _)) = (xyrob, act)
@@ -139,7 +140,7 @@ updateAllHardDrives rars = (
 -- Takes a parameter list and list of actions, and applies all their costs to
 -- the given board.
 applyActionCosts :: Parameters -> [RobotAndAction] -> Board -> Board
-applyActionCosts params raas = foldr (.) id $ map applyActionCost raas
+applyActionCosts params = foldr ((.) . applyActionCost) id
 	where
 	applyActionCost :: RobotAndAction -> Board -> Board
 	applyActionCost (PositionedRobot ((x, y), rob), act) = setRobot (x, y) $ Just newRobot
@@ -166,9 +167,8 @@ getKnownState p team b (PositionedRobot ((x, y), rob)) = KnownState {
 	}
 	where
 	peekFn :: [RDirection] -> Maybe SeenSpot
-	peekFn directs = (limitedOffset team (unNatural $ paramLineOfSight p) directs (x, y))
+	peekFn directs = liftM toSeenSpot $ limitedOffset team (unNatural $ paramLineOfSight p) directs (x, y)
 			>>= (b !!!)
-			>>= (return . toSeenSpot)
 
 -- Returns the closest approximation to the requested action that is possible
     -- given the robot's level of material

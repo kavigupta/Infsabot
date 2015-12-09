@@ -153,7 +153,7 @@ removeLcl current (l, c, r)
     luse' = zipWith noopifyIf lneigh confOtherL
     cuse' = zipWith noopifyIf cneigh confOtherC
     ruse' = zipWith noopifyIf rneigh confOtherR
-    effOther = any (any id)
+    effOther = any or
         [zipWith effectOf confOtherL (map fst lneigh),
             zipWith effectOf confOtherC (map fst cneigh),
             zipWith effectOf confOtherR (map fst rneigh)]
@@ -216,8 +216,7 @@ inNeighborhood (x1, y1) (x2, y2)
     -}
 organizeRobots :: [RobotAndAction] -> [[RAAFL]]
 organizeRobots =
-        map (map $ \x -> (x, finalLocations x)) .
-        map (sortBy (compare `on` yc)) .
+        map (map (\x -> (x, finalLocations x)) . sortBy (compare `on` yc)) .
         groupBy ((==) `on` xc) .
         sortBy (compare `on` xc)
     where
@@ -225,7 +224,7 @@ organizeRobots =
     yc = snd . getLocation . fst
 
 finalLocations :: RobotAndAction -> FinalLocs
-finalLocations ((PositionedRobot ((x,y),rob)), act) = locs act
+finalLocations (PositionedRobot ((x,y),rob), act) = locs act
     where
     locs (MoveIn dir)
         = let (newx, newy) = applyDirection (robotTeam rob) dir (x,y)

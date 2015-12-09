@@ -59,7 +59,7 @@ applyDirection team dir = applyOffset (getOffset team dir)
 
 -- get the overall offset of the given list of directions, summed up
 overallOffset :: Team -> [RDirection] -> Offset
-overallOffset team = foldr (addOffset) (Offset (0, 0)) . map (getOffset team)
+overallOffset team = foldr (addOffset . getOffset team) (Offset (0, 0))
 
 -- Gets the coordinate pair of offsets representing the given Team's understanding of the given direction
 getOffset :: Team -> RDirection -> Offset

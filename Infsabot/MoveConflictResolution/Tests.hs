@@ -49,9 +49,13 @@ instance TeamedComparable RAAFL where
 makeSymmetric :: [RobotAndAction] -> [RobotAndAction]
 makeSymmetric raas = unique ++ map symmetricOf unique
     where
-    unique = removeOpposition $ nubBy ((==) `on` (effectivePosition)) raas
-    removeOpposition [] = []
-    removeOpposition (a:us) = filter (\u -> effectivePosition a /= swap (effectivePosition u)) $ removeOpposition us
+    unique = removeOpposition $ nubBy ((==) `on` effectivePosition) raas
+    removeOpposition
+        = foldr
+            remover
+            []
+    remover :: RobotAndAction -> [RobotAndAction] -> [RobotAndAction]
+    remover a = filter (\ u -> effectivePosition a /= swap (effectivePosition u))
 
 finalLocsToList :: FinalLocs -> [(Int, Int)]
 finalLocsToList (FinalLocs x y) = tl x ++ tl y
@@ -64,7 +68,7 @@ propConflictsResolved acts
     = (allDifferent (map (positionOf . fst) acts), allDifferent finalLocs)
     where
     finalLocs :: [(Int, Int)]
-    finalLocs = concat $ map (finalLocsToList . finalLocations) $ removeConflicting acts
+    finalLocs = concatMap (finalLocsToList . finalLocations) $ removeConflicting acts
 
 propOrganizeRobotsSame :: [RobotAndAction] -> Bool
 propOrganizeRobotsSame us = sameElements us . map fst . concat . organizeRobots $ us

@@ -1,6 +1,9 @@
 module Infsabot.RobotStrategy(basicProgram2, basicProgram)
     where
 
+import Control.Monad(liftM)
+import Data.Maybe
+
 import Infsabot.Base.Interface
 import Infsabot.RobotAction.Interface
 import Infsabot.Tools.Interface
@@ -22,7 +25,7 @@ basicProgram team state
         = case peekAtSpot state [] of
             Nothing -> SpotEmpty
             Just (SeenSpot current _) -> current
-    createSpawn dir = Spawn $ SpawnAction {
+    createSpawn dir = Spawn SpawnAction {
         newDirection = dir,
         newProgram = basicProgram team,
         newAppearance = RobotAppearance $ colorOf team,
@@ -34,8 +37,8 @@ basicProgram2 :: Team -> RobotProgram
 basicProgram2 asdf state
     | mat == SpotMaterial
         = (Dig, stateMemory state)
-    | enemyLoc /= Nothing
-        = (Fire $ FireAction {fireDirection = case enemyLoc of (Just loc) -> loc, materialExpended = 2}, stateMemory state)
+    | isJust enemyLoc
+        = (Fire FireAction {fireDirection = case enemyLoc of (Just loc) -> loc, materialExpended = 2}, stateMemory state)
     | stateAge state `mod` 11 == 0  = directionByMod createSpawn
     | stateAge state `mod` 11 == 1  = directionByMod createSendMessage
     | otherwise = directionByMod MoveIn
@@ -54,7 +57,7 @@ basicProgram2 asdf state
                 5 -> E
                 6 -> W
                 7 -> S
-    enemyLoc = (enemyRobot $ concat $ map duplicator [N, S, E, W]) >>= (return . head)
+    enemyLoc = liftM head $ enemyRobot (concatMap duplicator [N, S, E, W])
         where
         duplicator :: RDirection -> [[RDirection]]
         duplicator x = [[x], [x,x]]
@@ -71,14 +74,14 @@ basicProgram2 asdf state
             Nothing -> SpotEmpty
             Just (SeenSpot current _) -> current
     ourAppearance = RobotAppearance $ colorOf asdf
-    createSpawn dir = Spawn $ SpawnAction{
+    createSpawn dir = Spawn SpawnAction{
         newDirection = dir,
         newProgram = basicProgram asdf,
         newAppearance = ourAppearance,
         newMaterial = makeNatural $ material state `div` 3,
         newMemory = stateMemory state
     }
-    createSendMessage dir = Send $ SendAction {
+    createSendMessage dir = Send SendAction {
         messageToSend = show (stateAge state),
         sendDirection = dir
     }
