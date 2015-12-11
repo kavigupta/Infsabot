@@ -44,8 +44,7 @@ data ExprInt =
     (:-) ExprInt ExprInt |
     (:/) ExprInt ExprInt |
     Mod ExprInt ExprInt |
-    IfInt ExprBool ExprInt ExprInt |
-    SwitchInt ExprDir ExprInt ExprInt ExprInt ExprInt
+    IfInt ExprBool ExprInt ExprInt
 
 -- Basically [ExprDir]
     -- Written like this to make the tree more explicit
@@ -81,16 +80,6 @@ evalIf state cond ifso ifelse
 exprPeek :: KnownState -> ExprPath -> Maybe SeenSpot
 exprPeek state path = peekAtSpot state (eval state path :: [RDirection])
 
-evalSwitch :: (Evaluable a exd RDirection, Evaluable a exo o)
-        => a -> exd -> exo -> exo -> exo -> exo -> o
-evalSwitch state dir n s e w
-    = eval state $
-        case eval state dir of
-            N -> n
-            S -> s
-            E -> e
-            W -> w
-
 instance Evaluable KnownState ExprInt (Ratio Int) where
     -- Evaluates to a Ratio, or fraction, for precision reasons.
     -- Round to get an actual integer
@@ -108,7 +97,6 @@ instance Evaluable KnownState ExprInt (Ratio Int) where
     eval state (x :/ y) = eval state x / eval state y
     eval state (x `Mod` y) = eval state x `mod'` eval state y
     eval state (IfInt cond ifso ifelse) = evalIf state cond ifso ifelse
-    eval state (SwitchInt dir n s e w) = evalSwitch state dir n s e w
 
 instance Evaluable KnownState ExprBool Bool where
     eval _ (ConstBool x) = x
