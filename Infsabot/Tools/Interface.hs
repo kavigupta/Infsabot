@@ -1,5 +1,5 @@
 module Infsabot.Tools.Interface (
-        isPrime,
+        isPrime, mod',
         Natural, makeNatural, unNatural,
         shuffle, allDifferent, sameElements, (!-!), spanNeq,
         doChecks, (~~>),

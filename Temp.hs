@@ -3,7 +3,7 @@ import Infsabot.Base
 import Infsabot.TestLibrary
 import Infsabot.Robot.Interface
 
-import Infsabot.RobotStrategy
+import Infsabot.Strategy.BasicStrategy
 import Infsabot.RobotAction
 import Data.Map(fromList)
 import Codec.Picture

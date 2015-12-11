@@ -8,7 +8,7 @@ import Infsabot.Parameters
 import Infsabot.GamePlay.Interface(boards)
 import Infsabot.Board.Interface(Board, startingBoard)
 import Infsabot.Rendering(renderBoard)
-import Infsabot.RobotStrategy(basicProgram)
+import Infsabot.Strategy.BasicStrategy(basicProgram)
 
 import Infsabot.Tools.Interface
 

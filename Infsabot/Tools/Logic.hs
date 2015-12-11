@@ -1,5 +1,5 @@
 module Infsabot.Tools.Logic (
-        isPrime,
+        isPrime, mod',
         Natural, makeNatural, unNatural,
         shuffle, allDifferent, sameElements, (!-!), spanNeq,
         doChecks, (~~>)
@@ -12,6 +12,7 @@ import Control.Monad.ST
 import Data.STRef
 import Data.List(sort, (\\))
 import Data.Function(on)
+import Data.Ratio
 import Test.QuickCheck hiding (shuffle)
 
 isPrime :: Int -> Bool
@@ -110,3 +111,9 @@ checkCount = 1000
 
 doChecks :: (Test.QuickCheck.Testable prop) => Int -> prop -> IO Result
 doChecks n = quickCheckWithResult $ stdArgs { maxSuccess = n * checkCount }
+
+mod' :: (Integral a) => Ratio a -> Ratio a -> Ratio a
+mod' x y = x - y * fromIntegral xoy
+    where
+    xoy :: Integer
+    xoy = floor (x / y)

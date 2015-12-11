@@ -1,4 +1,4 @@
-module Infsabot.RobotStrategy(basicProgram2, basicProgram)
+module Infsabot.Strategy.BasicStrategy(basicProgram2, basicProgram)
     where
 
 import Control.Monad(liftM)
@@ -38,7 +38,7 @@ basicProgram2 asdf state
     | mat == SpotMaterial
         = (Dig, stateMemory state)
     | isJust enemyLoc
-        = (Fire FireAction {fireDirection = case enemyLoc of (Just loc) -> loc, materialExpended = 2}, stateMemory state)
+        = (Fire FireAction {fireDirection = fromJust enemyLoc, materialExpended = 2}, stateMemory state)
     | stateAge state `mod` 11 == 0  = directionByMod createSpawn
     | stateAge state `mod` 11 == 1  = directionByMod createSendMessage
     | otherwise = directionByMod MoveIn
@@ -56,7 +56,7 @@ basicProgram2 asdf state
                 4 -> E
                 5 -> E
                 6 -> W
-                7 -> S
+                _ -> S
     enemyLoc = liftM head $ enemyRobot (concatMap duplicator [N, S, E, W])
         where
         duplicator :: RDirection -> [[RDirection]]

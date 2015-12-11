@@ -1,11 +1,10 @@
+{-# LANGUAGE DoAndIfThenElse #-}
 module Infsabot.Build(main) where
 
-import System.Directory(createDirectoryIfMissing, getDirectoryContents)
+import System.Directory(createDirectoryIfMissing, getDirectoryContents, doesDirectoryExist)
 import System.Environment(getArgs)
-import System.IO(readFile)
-import System.Posix.Files(isDirectory, getFileStatus)
 
-import Data.List(elemIndex, isSuffixOf, intercalate)
+import Data.List(isSuffixOf, intercalate)
 
 import System.Exit
 import System.Process(system, readProcessWithExitCode)
@@ -19,11 +18,9 @@ import Test.HUnit(runTestTT, failures)
 import Infsabot.Demoes(demoes)
 import Infsabot.Test.CollatedTests(tests, stressTest, checks)
 
-import Control.Monad(forM_, forM, when)
+import Control.Monad(forM, when)
 
-import Codec.Picture(writePng)
-
-demoBoardSize = 100
+stdLog, errLog, errColor, logColor, sucColor, noColor, directory :: String
 
 stdLog="gen/___std.log"
 errLog="gen/___err.log"
@@ -45,6 +42,7 @@ data WhatToDo = WhatToDo {
     performBuild :: Bool
 } deriving(Show)
 
+defaultWhatToDo :: WhatToDo
 defaultWhatToDo = WhatToDo {
     performCommit = Nothing,
     performDemo=False,
@@ -55,6 +53,7 @@ defaultWhatToDo = WhatToDo {
     performBuild=True
 }
 
+main :: IO ()
 main = do
     whatToDo <- analyzeArguments
     when (performClean whatToDo) cleanUp
@@ -112,8 +111,8 @@ buildAll
     getAll :: FilePath -> IO [FilePath]
     getAll path =
         do
-            status <- getFileStatus path
-            if not $ isDirectory status then
+            direxists <- doesDirectoryExist path
+            if not direxists then
                 do
                     return [path]
             else
@@ -196,6 +195,7 @@ echs s = putStrLn $ sucColor ++ s ++ noColor
 echf :: String -> IO ()
 echf s = putStrLn $ errColor ++ s ++ noColor
 
+pErrorClean :: IO ()
 pErrorClean =
     do
         putStrLn errColor

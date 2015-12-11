@@ -3,7 +3,7 @@
 module Infsabot.Robot.Tests() where
 
 import Infsabot.Robot.Logic
-import Infsabot.RobotStrategy
+import Infsabot.Strategy.BasicStrategy
 
 import Test.QuickCheck hiding (shuffle)
 import Data.DeriveTH(derive, makeArbitrary)

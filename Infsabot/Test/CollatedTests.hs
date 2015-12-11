@@ -8,7 +8,7 @@ import Infsabot.Board.Interface
 import Infsabot.Tools.Interface
 import Infsabot.Robot.Interface
 
-import Infsabot.RobotStrategy
+import Infsabot.Strategy.BasicStrategy
 import Infsabot.Test.TestLibrary
 import Infsabot.MoveConflictResolution.Interface
 import Data.Map(fromList)
