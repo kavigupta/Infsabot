@@ -5,13 +5,11 @@ import System.Directory(createDirectoryIfMissing, getDirectoryContents, doesDire
 import System.Environment(getArgs)
 
 import Data.List(isSuffixOf, intercalate)
+import Data.Maybe(isJust)
 
 import System.Exit
 import System.Process(system, readProcessWithExitCode)
 import Text.Regex.Posix((=~))
-
-import Data.Functor
-import Control.Applicative
 
 import Test.HUnit(runTestTT, failures)
 
@@ -102,9 +100,7 @@ buildAll :: IO ()
 buildAll
     = do
         contents <- getAll directory
-        let hss = filter ((&&) <$> isSuffixOf ".hs" <*> not . isSuffixOf "Build.hs") contents
-        code <- system "ghc -fno-code -fno-warn-orphans Infsabot/Build.hs -Werror"
-        when (code /= ExitSuccess) $ echf "Failure in building Build"
+        let hss = filter (isSuffixOf ".hs") contents
         build hss
         echs "Haskell Files Built Correctly"
     where
@@ -113,33 +109,31 @@ buildAll
         do
             direxists <- doesDirectoryExist path
             if not direxists then
-                do
-                    return [path]
+                return [path]
             else
                 do
                     allcontents <- getDirectoryContents path
                     let contents = map (\x -> path ++ "/" ++ x) $
                             filter
-                                (\x -> not (isSuffixOf x ".") && not (isSuffixOf x ".."))
+                                (\x -> not (x `isSuffixOf` ".") && not (x `isSuffixOf` ".."))
                                 allcontents
-                    subs <- forM contents $ getAll
+                    subs <- forM contents getAll
                     return . concat $ subs
     build :: [String] -> IO ()
     build names =
         do
-            let spacesep = intercalate " " names
+            let spacesep = unwords names
             let dump = " >> " ++ stdLog ++ " 2> " ++ errLog
-            echl $ "Compiling\n\t" ++ (intercalate "\n\t" names)
+            echl $ "Compiling\n\t" ++ intercalate "\n\t" names
             let ghc = "ghc -fno-code -Wall -fno-warn-orphans -Werror -odir bin " ++ spacesep ++ dump
             ghcCode <- system ghc
             when (ghcCode /= ExitSuccess) $ echf "Error in compilation" >> pErrorClean
             (_,lintResult1, lintResult2) <- readProcessWithExitCode "hlint" names ""
             let lintResult = lintResult1 ++ lintResult2
-            putStrLn $ show lintResult
-            if lintResult =~ "([0-9]+)\\s+suggestions?" then do
+            print lintResult
+            when (lintResult =~ "([0-9]+)\\s+suggestions?") $ do
                 echf $ "Hlint suggestions ==>\n" ++ lintResult
                 exitFailure
-            else return ()
 
 analyzeArguments :: IO WhatToDo
 analyzeArguments
@@ -151,7 +145,7 @@ analyzeArguments
 
 enforceConsistency :: WhatToDo -> Either String WhatToDo
 enforceConsistency wtd
-    | performCommit wtd /= Nothing =
+    | isJust $ performCommit wtd =
         if not (performClean wtd)
             && performDemo wtd
             && performChecks wtd
