@@ -35,6 +35,13 @@
   (major1) == 4 && (major2) <  6 || \
   (major1) == 4 && (major2) == 6 && (minor) <= 0)
 
+/* package combinat-0.2.7.2 */
+#define VERSION_combinat "0.2.7.2"
+#define MIN_VERSION_combinat(major1,major2,minor) (\
+  (major1) <  0 || \
+  (major1) == 0 && (major2) <  2 || \
+  (major1) == 0 && (major2) == 2 && (minor) <= 7)
+
 /* package containers-0.5.0.0 */
 #define VERSION_containers "0.5.0.0"
 #define MIN_VERSION_containers(major1,major2,minor) (\
@@ -97,6 +104,13 @@
   (major1) <  0 || \
   (major1) == 0 && (major2) <  95 || \
   (major1) == 0 && (major2) == 95 && (minor) <= 2)
+
+/* package template-haskell-2.8.0.0 */
+#define VERSION_template_haskell "2.8.0.0"
+#define MIN_VERSION_template_haskell(major1,major2,minor) (\
+  (major1) <  2 || \
+  (major1) == 2 && (major2) <  8 || \
+  (major1) == 2 && (major2) == 8 && (minor) <= 0)
 
 /* tool cpphs-1.19.3 */
 #define TOOL_VERSION_cpphs "1.19.3"
