@@ -254,3 +254,426 @@ dependencies: bytestring-0.10.0.2 base-4.6.0.1
 install-outcome: InstallOk
 docs-outcome: NotTried
 tests-outcome: NotTried
+
+package: combinat-0.2.7.2
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+flags: -withquickcheck base4
+dependencies: transformers-0.4.3.0 random-1.1 containers-0.5.0.0
+              base-4.6.0.1 array-0.4.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: MonadPrompt-1.0.0.5
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+dependencies: mtl-2.2.1 base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: MonadRandom-0.4.1
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+dependencies: transformers-compat-0.4.0.4 transformers-0.4.3.0
+              random-1.1 mtl-2.2.1 base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: StateVar-1.1.0.1
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+dependencies: transformers-0.4.3.0 stm-2.4.4 base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: base-orphans-0.4.4
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+dependencies: ghc-prim-0.3.0.0 base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: bifunctors-5.1
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+flags: tagged semigroups
+dependencies: template-haskell-2.8.0.0 tagged-0.8.2
+              semigroups-0.18.0.1 containers-0.5.0.0 base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: bytes-0.15.1
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+flags: test-doctests
+dependencies: void-0.7.1 unordered-containers-0.2.5.1
+              transformers-compat-0.4.0.4 transformers-0.4.3.0 time-1.4.0.1
+              text-1.2.1.3 scientific-0.3.4.4 mtl-2.2.1 hashable-1.2.3.3
+              containers-0.5.0.0 cereal-0.5.1.0 bytestring-0.10.0.2
+              binary-0.5.1.1 base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: cereal-0.5.1.0
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+dependencies: ghc-prim-0.3.0.0 containers-0.5.0.0
+              bytestring-0.10.0.2 base-4.6.0.1 array-0.4.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: comonad-4.2.7.2
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+flags: test-doctests distributive contravariant containers
+dependencies: transformers-compat-0.4.0.4 transformers-0.4.3.0
+              tagged-0.8.2 semigroups-0.18.0.1 distributive-0.4.4
+              contravariant-1.3.3 containers-0.5.0.0 base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: contravariant-1.3.3
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+flags: tagged statevar semigroups
+dependencies: void-0.7.1 transformers-compat-0.4.0.4
+              transformers-0.4.3.0 tagged-0.8.2 semigroups-0.18.0.1 base-4.6.0.1
+              StateVar-1.1.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: distributive-0.4.4
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+flags: -lib-werror
+dependencies: transformers-compat-0.4.0.4 transformers-0.4.3.0
+              tagged-0.8.2 ghc-prim-0.3.0.0 base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: erf-2.0.0.0
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+dependencies: base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: flexible-defaults-0.0.1.1
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+dependencies: transformers-0.4.3.0 th-extras-0.0.0.2
+              template-haskell-2.8.0.0 containers-0.5.0.0 base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: hashable-extras-0.2.2
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+flags: test-doctests
+dependencies: transformers-0.4.3.0 hashable-1.2.3.3
+              bytestring-0.10.0.2 bifunctors-5.1 base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: log-domain-0.10.3.1
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+flags: test-doctests ffi
+dependencies: vector-0.11.0.0 semigroups-0.18.0.1
+              semigroupoids-5.0.0.4 safecopy-0.9.0.1 hashable-extras-0.2.2
+              hashable-1.2.3.3 distributive-0.4.4 deepseq-1.3.0.1 comonad-4.2.7.2
+              cereal-0.5.1.0 bytes-0.15.1 binary-0.5.1.1 base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: math-functions-0.1.5.2
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+dependencies: vector-th-unbox-0.2.1.3 vector-0.11.0.0 erf-2.0.0.0
+              deepseq-1.3.0.1 base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: mersenne-random-pure64-0.2.0.4
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+flags: -small_base
+dependencies: random-1.1 old-time-1.1.0.1 base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: monad-loops-0.4.3
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+flags: base4
+dependencies: base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: mwc-random-0.13.3.2
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+dependencies: vector-0.11.0.0 time-1.4.0.1 primitive-0.6.1.0
+              base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: nats-1.1
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+flags: template-haskell hashable binary
+dependencies: template-haskell-2.8.0.0 hashable-1.2.3.3
+              binary-0.5.1.1 base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: random-extras-0.19
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+dependencies: random-source-0.3.0.6 random-fu-0.2.6.2
+              containers-0.5.0.0 base-4.6.0.1 array-0.4.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: random-fu-0.2.6.2
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+flags: mtl2 base4_2
+dependencies: vector-0.11.0.0 transformers-0.4.3.0
+              template-haskell-2.8.0.0 syb-0.6 rvar-0.2.0.2 random-source-0.3.0.6
+              random-shuffle-0.0.4 mtl-2.2.1 monad-loops-0.4.3
+              math-functions-0.1.5.2 log-domain-0.10.3.1 erf-2.0.0.0 base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: random-shuffle-0.0.4
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+dependencies: random-1.1 base-4.6.0.1 MonadRandom-0.4.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: random-source-0.3.0.6
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+flags: mtl2 base4
+dependencies: th-extras-0.0.0.2 template-haskell-2.8.0.0 syb-0.6
+              stateref-0.3 random-1.1 mwc-random-0.13.3.2 mtl-2.2.1
+              mersenne-random-pure64-0.2.0.4 flexible-defaults-0.0.1.1
+              base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: rvar-0.2.0.2
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+flags: mtl2
+dependencies: transformers-0.4.3.0 random-source-0.3.0.6 mtl-2.2.1
+              base-4.6.0.1 MonadPrompt-1.0.0.5
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: safecopy-0.9.0.1
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+dependencies: vector-0.11.0.0 time-1.4.0.1 text-1.2.1.3
+              template-haskell-2.8.0.0 old-time-1.1.0.1 containers-0.5.0.0
+              cereal-0.5.1.0 bytestring-0.10.0.2 base-4.6.0.1 array-0.4.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: scientific-0.3.4.4
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+flags: -integer-simple bytestring-builder
+dependencies: vector-0.11.0.0 text-1.2.1.3 integer-gmp-0.5.0.0
+              hashable-1.2.3.3 ghc-prim-0.3.0.0 deepseq-1.3.0.1
+              containers-0.5.0.0 bytestring-0.10.0.2 binary-0.5.1.1 base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: semigroupoids-5.0.0.4
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+flags: tagged doctests distributive contravariant containers
+       comonad
+dependencies: transformers-compat-0.4.0.4 transformers-0.4.3.0
+              tagged-0.8.2 semigroups-0.18.0.1 distributive-0.4.4
+              contravariant-1.3.3 containers-0.5.0.0 comonad-4.2.7.2
+              bifunctors-5.1 base-orphans-0.4.4 base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: semigroups-0.18.0.1
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+flags: unordered-containers text tagged hashable deepseq containers
+       bytestring
+dependencies: unordered-containers-0.2.5.1 text-1.2.1.3
+              tagged-0.8.2 nats-1.1 hashable-1.2.3.3 deepseq-1.3.0.1
+              containers-0.5.0.0 bytestring-0.10.0.2 base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: stateref-0.3
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+flags: usetmvar usestm
+dependencies: stm-2.4.4 mtl-2.2.1 base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: stm-2.4.4
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+dependencies: base-4.6.0.1 array-0.4.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: tagged-0.8.2
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+flags: deepseq
+dependencies: template-haskell-2.8.0.0 deepseq-1.3.0.1 base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: th-extras-0.0.0.2
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+flags: base4
+dependencies: template-haskell-2.8.0.0 syb-0.6 base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: transformers-compat-0.4.0.4
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+flags: -two -three mtl
+dependencies: transformers-0.4.3.0 base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: vector-th-unbox-0.2.1.3
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+dependencies: vector-0.11.0.0 template-haskell-2.8.0.0 base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
+
+package: void-0.7.1
+os: linux
+arch: x86_64
+compiler: ghc-7.6.3
+client: cabal-install-1.22.6.0
+flags: -safe
+dependencies: semigroups-0.18.0.1 hashable-1.2.3.3 ghc-prim-0.3.0.0
+              deepseq-1.3.0.1 base-4.6.0.1
+install-outcome: InstallOk
+docs-outcome: NotTried
+tests-outcome: NotTried
