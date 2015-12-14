@@ -2,17 +2,20 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE DoAndIfThenElse #-}
 {-# LANGUAGE OverlappingInstances #-}
+
 module Infsabot.Strategy.Random.Logic (
         complexity, getDeltas, applyDeltas, constantToParameter, simplify, complicate
     ) where
 
 import Infsabot.RobotAction.Interface
 import Infsabot.Strategy.ExprTree.Interface
+import Infsabot.Base.Interface
 
 import Data.Graph.Inductive.Query.Monad((><))
 
 import Control.Monad.State.Lazy
 import Control.Applicative((<$>))
+import Control.Monad(liftM3)
 
 import Data.Ratio
 
@@ -47,15 +50,23 @@ class (Random a) => Expr a where
 srand :: (ComplexityRandom a, RandomGen g) => Int -> State g a
 srand = state . cRandom
 
+instance Random RDirection where
+    randomR = const random
+    random gen= (case val of 0 -> N; 1 -> E; 2 -> W; _ -> S, gen')
+        where
+        (val, gen') = randomR (0 :: Int, 3) gen
+
+{-
 instance ComplexityRandom ExprDir where
     complexity (ConstDir _) = 1
     complexity (IfDir a b c) = 1 + complexity a + complexity b + complexity c
     cRandom a = runState $ do
-        bb <- state $ random
+        bb <- state random
         if bb && a >= 1 then
             ConstDir <$> state random
-        else
-            liftM3 IfDir (srand (a, b)) (srand (a,b)) (srand (a,b))
+        else do
+            [a', b', c'] <- state $ getPartition a 3
+            liftM3 IfDir (srand a') (srand b') (srand c')
 
 instance ComplexityRandom ExprBool where
     complexity (ConstBool _) = 1
@@ -68,16 +79,30 @@ instance ComplexityRandom ExprBool where
     complexity (x :& y) = 1 + complexity x + complexity y
     complexity (x :| y) = 1 + complexity x + complexity y
     complexity (Not x) = 1 + complexity x
-    cRandom (a, b) = undefined
+    cRandom cxty = runState $ do
+        which <- state $ randomR (0, 8)
+        case which of
+            0 -> ConstBool <$> state random
+            1 -> CanSee <$> cRandom
+-}
 
-getPartition :: (Random g) => Int -> Int -> State g [Int]
-getPartition n k = state $ runRVarT (choice parts)
+getPartition :: (RandomGen g) => Int -> Int -> g -> ([Int], g)
+getPartition n k = value
     where
-    parts = partitionsWithKParts k n
+    value :: (RandomGen g) => g  -> ([Int], g)
+    value = choice parts
+    parts :: [[Int]]
+    parts = map departition $ partitionsWithKParts k n
+    departition (Partition x) = x
+
 toList :: ExprPath -> [ExprDir]
 toList Here = []
 toList (Offset dir rest) = dir:toList rest
 
 fromList :: [ExprDir] -> ExprPath
-fromList [] = Here
-fromList (x:xs) = Offset x (fromList xs)
+fromList = foldr Offset Here
+
+choice :: (RandomGen g) => [a] -> g -> (a, g)
+choice xs = runState $ do
+    index <- state $ randomR (0, length xs - 1)
+    return $ xs !! index
