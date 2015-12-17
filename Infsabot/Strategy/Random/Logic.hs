@@ -2,6 +2,7 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE DoAndIfThenElse #-}
 {-# LANGUAGE OverlappingInstances #-}
+{-# LANGUAGE TemplateHaskell #-}
 
 module Infsabot.Strategy.Random.Logic (
         complexity, getDeltas, applyDeltas, constantToParameter, simplify, complicate
@@ -11,16 +12,14 @@ import Infsabot.RobotAction.Interface
 import Infsabot.Strategy.ExprTree.Interface
 import Infsabot.Base.Interface
 
-import Data.Graph.Inductive.Query.Monad((><))
-
 import Control.Monad.State.Lazy
-import Control.Applicative((<$>))
-import Control.Monad(liftM3)
 
 import Data.Ratio
 
 import System.Random
 import Math.Combinat.Partitions.Integer
+
+import Infsabot.Strategy.Random.Templates
 
 type HistoricalStates = [KnownState]
 
@@ -46,9 +45,6 @@ class (Random a) => Expr a where
     constantToParameter :: HistoricalStates -> a -> StdGen -> (a, StdGen)
     simplify :: HistoricalStates -> a -> StdGen -> (a, StdGen)
     complicate :: Int -> a -> StdGen -> (a, StdGen)
-
-srand :: (ComplexityRandom a, RandomGen g) => Int -> State g a
-srand = state . cRandom
 
 instance Random RDirection where
     randomR = const random
@@ -95,14 +91,14 @@ getPartition n k = value
     parts = map departition $ partitionsWithKParts k n
     departition (Partition x) = x
 
-toList :: ExprPath -> [ExprDir]
-toList Here = []
-toList (Offset dir rest) = dir:toList rest
-
-fromList :: [ExprDir] -> ExprPath
-fromList = foldr Offset Here
-
 choice :: (RandomGen g) => [a] -> g -> (a, g)
 choice xs = runState $ do
     index <- state $ randomR (0, length xs - 1)
     return $ xs !! index
+
+$(crDecls ''ExprBool)
+$(crDecls ''ExprDir)
+$(crDecls ''ExprInt)
+$(crDecls ''ExprPath)
+$(crDecls ''RP)
+$(crDecls ''ActionType)
