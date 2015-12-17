@@ -40,15 +40,11 @@ allComplex name = do
 complex :: (Name, [Type]) -> Match
 complex (constructor, types) = Match (ConP constructor patterns) (NormalB body) []
         where
-        names = zipWith variableName decls [1..length types]
+        names = map (mkName . ("x" ++) . show) [1..length types]
         patterns = map VarP names
-        decls :: [(Exp, Bool)]
-        decls = zipWith getComplexity (map fromType types) names
-        body = foldr (+++) (LitE $ IntegerL 1) . filter snd $ decls
-        (x, _) +++ y = InfixE (Just x) (VarE $ mkName "+") (Just y)
-        variableName :: (a, Bool) -> Int -> Name
-        variableName (_, real) n = mkName varN
-            where varN = if real then "x" ++ show n else "_"
+        body = foldr (+++) (LitE $ IntegerL 1) exps
+        exps = zipWith getComplexity (map fromType types) names
+        x +++ y = InfixE (Just x) (VarE $ mkName "+") (Just y)
 
 cRand :: Name -> Q Dec
 cRand name = do
@@ -102,10 +98,10 @@ getRandom typ (n, m) = (BindS (VarP $ mkName $ "u" ++ show (n + 1)) $ AppE (sym 
             = (AppE `on` VarE) (mkName "cRandom") $ mkName $ "n" ++ show (n + 1)
         | otherwise = sym "random"
 
-getComplexity :: Name -> Name -> (Exp, Bool)
+getComplexity :: Name -> Name -> Exp
 getComplexity typ nam
-    | isExpr typ               = (AppE (sym "complexity") (VarE nam), True)
-    | otherwise                = (LitE $ IntegerL 0, False)
+    | isExpr typ               = AppE (sym "complexity") (VarE nam)
+    | otherwise                = LitE $ IntegerL 0
 
 fromType :: Type -> Name
 fromType (ConT typ) = typ
