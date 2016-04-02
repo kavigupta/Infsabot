@@ -1,5 +1,5 @@
 {-# LANGUAGE DoAndIfThenElse #-}
-module Infsabot.Build(main) where
+module Main(main) where
 
 import System.Directory(createDirectoryIfMissing)
 import System.Environment(getArgs)
@@ -98,8 +98,8 @@ doChecks =
             exitFailure
 
 buildAll :: IO ()
-buildAll
-    = do
+buildAll = return ()
+{-    = do
         contents <- getAll directory
         let hss = filter (isSuffixOf ".hs") contents
         build hss
@@ -120,7 +120,7 @@ buildAll
             when (lintResult =~ "([0-9]+)\\s+suggestions?") $ do
                 echf $ "Hlint suggestions ==>\n" ++ lintResult
                 exitFailure
-
+-}
 analyzeArguments :: IO WhatToDo
 analyzeArguments
     = do
