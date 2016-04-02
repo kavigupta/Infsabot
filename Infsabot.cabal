@@ -16,7 +16,17 @@ build-type:          Simple
 cabal-version:       >=1.8
 
 library
-  exposed-modules:     Infsabot.Strategy.Random.Logic, Infsabot.Build, Infsabot.Strategy.BasicStrategy, Infsabot.Demoes, Infsabot.Rendering, Infsabot.Debug, Infsabot.Parameters, Infsabot.MoveConflictResolution.Tests, Infsabot.MoveConflictResolution.Interface, Infsabot.MoveConflictResolution.Logic, Infsabot.Tools.Tests, Infsabot.Tools.Interface, Infsabot.Tools.Logic, Infsabot.Board.Tests, Infsabot.Board.Interface, Infsabot.Board.Logic, Infsabot.GamePlay.Interface, Infsabot.GamePlay.Logic, Infsabot.RobotAction.Tests, Infsabot.RobotAction.Interface, Infsabot.RobotAction.Logic, Infsabot.Robot.Tests, Infsabot.Robot.Interface, Infsabot.Robot.Logic, Infsabot.Base.Tests, Infsabot.Base.Interface, Infsabot.Base.Logic, Infsabot.Test.CollatedTests, Infsabot.Test.TestLibrary
-  -- other-modules:
-  build-depends:       base, derive, mtl, fgl, regex-posix, process, directory, JuicyPixels, QuickCheck, random, array, random-access-list, containers, HUnit, combinat, template-haskell
-  ghc-options:     -Wall -Werror -fno-warn-orphans -fno-warn-unused-do-bind
+    exposed-modules:     Infsabot.Strategy.Random.Logic, Infsabot.Build, Infsabot.Strategy.BasicStrategy, Infsabot.Demoes, Infsabot.Rendering, Infsabot.Debug, Infsabot.Parameters, Infsabot.MoveConflictResolution.Tests, Infsabot.MoveConflictResolution.Interface, Infsabot.MoveConflictResolution.Logic, Infsabot.Tools.Tests, Infsabot.Tools.Interface, Infsabot.Tools.Logic, Infsabot.Board.Tests, Infsabot.Board.Interface, Infsabot.Board.Logic, Infsabot.GamePlay.Interface, Infsabot.GamePlay.Logic, Infsabot.RobotAction.Tests, Infsabot.RobotAction.Interface, Infsabot.RobotAction.Logic, Infsabot.Robot.Tests, Infsabot.Robot.Interface, Infsabot.Robot.Logic, Infsabot.Base.Tests, Infsabot.Base.Interface, Infsabot.Base.Logic, Infsabot.Test.CollatedTests, Infsabot.Test.TestLibrary
+    -- other-modules:
+    build-depends:       base, utf8-string==0.2, derive, mtl, fgl, regex-posix,
+        process, directory, JuicyPixels, QuickCheck, random, array, random-access-list, containers,
+        HUnit, combinat, template-haskell, doctest
+    ghc-options:     -Wall -Werror -fno-warn-orphans -fno-warn-unused-do-bind
+
+test-suite test
+    Type:                 exitcode-stdio-1.0
+    Default-Language:     Haskell2010
+    HS-Source-Dirs:       test
+    Ghc-Options:          -threaded -Wall -Werror
+    Main-Is:              Doctests.hs
+    Build-Depends:        directory, base, doctest >= 0.9.3, Infsabot
