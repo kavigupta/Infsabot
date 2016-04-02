@@ -5,3 +5,4 @@ gen
 bin
 temp.txt
 dist
+.cabal-sandbox
