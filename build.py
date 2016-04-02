@@ -19,20 +19,20 @@ if NO_OPT and PROFILING:
     print ("Invalid argument combination: noopt and profiling!")
     sys.exit()
 
-system("cabal configure %s %s"
+assert not system("cabal configure %s %s"
         % ("--enable-executable-profiling" if PROFILING else "",
            "-f noopt" if NO_OPT else ""))
 
-system("cabal build")
+assert not system("cabal build")
 
-system("mv dist/build/infsabot-build/infsabot-build bin/Build")
+assert not system("mv dist/build/infsabot-build/infsabot-build bin/Build")
 
 try:
     mkdir("bin")
 except FileExistsError:
     pass # exists
 
-system("chmod +x bin/Build")
+assert not system("chmod +x bin/Build")
 
 if PROFILING:
     args += ["+RTS", "-xc", "-p", "-RTS"]

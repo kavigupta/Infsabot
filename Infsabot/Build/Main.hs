@@ -19,9 +19,8 @@ import Infsabot.Test.CollatedTests(tests, stressTest, checks)
 import Control.Monad(when)
 import Infsabot.Tools.Interface(getAll)
 
-stdLog, errLog, errColor, logColor, sucColor, noColor, directory :: String
+errLog, errColor, logColor, sucColor, noColor, directory :: String
 
-stdLog="gen/___std.log"
 errLog="gen/___err.log"
 
 errColor="\x1b[0;31m"
@@ -58,7 +57,7 @@ main = do
     when (performClean whatToDo) cleanUp
     createDirectoryIfMissing True "gen"
     createDirectoryIfMissing True "demo"
-    when (performBuild whatToDo) buildAll
+    when (performBuild whatToDo) lintAll
     when (performChecks whatToDo) doChecks
     when (performTests whatToDo) runTests
     when (performDemo whatToDo) demoes
@@ -97,30 +96,24 @@ doChecks =
             echf "Quick Checks failed!"
             exitFailure
 
-buildAll :: IO ()
-buildAll = return ()
-{-    = do
+lintAll :: IO ()
+lintAll = do
         contents <- getAll directory
         let hss = filter (isSuffixOf ".hs") contents
-        build hss
+        lint hss
         echs "Haskell Files Built Correctly"
     where
-    build :: [String] -> IO ()
-    build names =
+    lint :: [String] -> IO ()
+    lint names =
         do
-            let spacesep = unwords names
-            let dump = " >> " ++ stdLog ++ " 2> " ++ errLog
-            echl $ "Compiling\n\t" ++ intercalate "\n\t" names
-            let ghc = "ghc -fno-code -Wall -fno-warn-orphans -Werror -odir bin " ++ spacesep ++ dump
-            ghcCode <- system ghc
-            when (ghcCode /= ExitSuccess) $ echf "Error in compilation" >> pErrorClean
+            echl $ "Linting\n\t" ++ intercalate "\n\t" names
             (_,lintResult1, lintResult2) <- readProcessWithExitCode "hlint" names ""
             let lintResult = lintResult1 ++ lintResult2
             print lintResult
-            when (lintResult =~ "([0-9]+)\\s+suggestions?") $ do
+            when (lintResult =~ "([0-9]+)\\s+hints?") $ do
                 echf $ "Hlint suggestions ==>\n" ++ lintResult
                 exitFailure
--}
+
 analyzeArguments :: IO WhatToDo
 analyzeArguments
     = do

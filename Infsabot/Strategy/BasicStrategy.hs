@@ -1,7 +1,7 @@
 module Infsabot.Strategy.BasicStrategy(basicProgram2, basicProgram)
     where
 
-import Control.Monad(liftM)
+import Control.Applicative((<$>))
 import Data.Maybe
 
 import Infsabot.Base.Interface
@@ -57,7 +57,7 @@ basicProgram2 asdf state
                 5 -> E
                 6 -> W
                 _ -> S
-    enemyLoc = liftM head $ enemyRobot (concatMap duplicator [N, S, E, W])
+    enemyLoc = head <$> enemyRobot (concatMap duplicator [N, S, E, W])
         where
         duplicator :: RDirection -> [[RDirection]]
         duplicator x = [[x], [x,x]]

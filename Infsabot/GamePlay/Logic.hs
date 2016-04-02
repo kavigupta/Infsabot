@@ -10,7 +10,7 @@ import Infsabot.MoveConflictResolution.Interface
 import Infsabot.Base.Interface
 import Data.List(sortBy)
 import Data.Function(on)
-import Control.Monad(liftM)
+import Control.Applicative((<$>))
 import Data.Maybe(fromJust)
 import Infsabot.Tools.Interface
 
@@ -167,8 +167,8 @@ getKnownState p team b (PositionedRobot ((x, y), rob)) = KnownState {
 	}
 	where
 	peekFn :: [RDirection] -> Maybe SeenSpot
-	peekFn directs = liftM toSeenSpot $ limitedOffset team (unNatural $ paramLineOfSight p) directs (x, y)
-			>>= (b !!!)
+	peekFn directs = toSeenSpot <$> (limitedOffset team (unNatural $ paramLineOfSight p) directs (x, y)
+			>>= (b !!!))
 
 -- Returns the closest approximation to the requested action that is possible
     -- given the robot's level of material

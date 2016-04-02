@@ -7,6 +7,7 @@ import Language.Haskell.TH
 import Data.List
 import Data.Function
 import Control.Monad.State.Lazy
+import Control.Applicative((<$>))
 
 import Control.Arrow(second)
 import Infsabot.Strategy.ExprTree.Interface()
@@ -25,7 +26,7 @@ declarationsFor (TyConI (DataD _ _ _ declarations _)) = declarations
 declarationsFor u = error . ("Error here: " ++) . show $ u
 
 crDecls :: Name -> Q [Dec]
-crDecls name = liftM (: []) $ instanceD (cxt []) inst clauses
+crDecls name = (: []) <$> instanceD (cxt []) inst clauses
     where
     inst = return $ AppT (ConT $ mkName "ComplexityRandom") (ConT name)
     clauses = map ($ name) [cRand, allComplex]

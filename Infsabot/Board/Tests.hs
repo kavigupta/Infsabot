@@ -13,7 +13,8 @@ import Infsabot.Robot.Interface
 
 import Infsabot.Base.Interface
 
-import Control.Monad(liftM, liftM2)
+import Control.Monad(liftM2)
+import Control.Applicative((<$>))
 import Test.HUnit
 
 import Infsabot.Tools.Interface
@@ -72,7 +73,7 @@ instance Arbitrary Board where
             return Board {boardSize = size, boardTime = time, boardRobots = Map.fromList $ map (\(PositionedRobot x) -> x) robots, boardContents = contents}
         where
         arbitraryBoard :: Int -> Gen (RAL (RAL GameSpot))
-        arbitraryBoard size = liftM DRal.fromList $ arbitraryBoardL size
+        arbitraryBoard size = DRal.fromList <$> arbitraryBoardL size
             where
             arbitraryBoardL :: Int -> Gen [RAL GameSpot]
             arbitraryBoardL 0 = return []

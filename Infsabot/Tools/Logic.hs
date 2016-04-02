@@ -9,6 +9,7 @@ module Infsabot.Tools.Logic (
 import System.Random
 import Data.Array.ST hiding (newArray)
 import Control.Monad
+import Control.Applicative((<$>))
 import Control.Monad.ST
 import Data.STRef
 import Data.Function(on)
@@ -74,7 +75,7 @@ stdLibShuffle :: [a] -> StdGen -> ([a],StdGen)
 stdLibShuffle xs gen = runST (do
         g <- newSTRef gen
         let randomRST lohi = do
-              (a,s') <- liftM (randomR lohi) (readSTRef g)
+              (a,s') <- randomR lohi <$> readSTRef g
               writeSTRef g s'
               return a
         ar <- newArray n xs
