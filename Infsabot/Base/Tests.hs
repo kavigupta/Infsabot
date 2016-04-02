@@ -16,8 +16,7 @@ import Test.QuickCheck hiding (shuffle)
 baseChecks :: [IO Result]
 baseChecks = [
     putStrLn "Offset Is Limited" >> doChecks 1 propOffsetIsLimited,
-    putStrLn "Linear Offset" >> doChecks 3 propLinearOffset,
-    putStrLn "Opposite of Opposite Is id" >> doChecks 1 propOppositeInvolution]
+    putStrLn "Linear Offset" >> doChecks 3 propLinearOffset]
 
 propOffsetIsLimited :: Team -> Int -> [RDirection] -> (Int, Int) -> Bool
 propOffsetIsLimited team len dirs (x, y)
@@ -35,9 +34,6 @@ propLinearOffset team len dirs
 
 sub :: (Int, Int) -> (Int, Int) -> (Int, Int)
 sub (a, b) (c, d) = (a - c, b - d)
-
-propOppositeInvolution :: RDirection -> Bool
-propOppositeInvolution x = x == (oppositeDirection . oppositeDirection $ x)
 
 $( derive makeArbitrary ''PixelRGB8 )
 $( derive makeArbitrary ''RobotAppearance )

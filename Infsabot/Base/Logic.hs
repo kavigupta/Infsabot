@@ -14,36 +14,42 @@ import Data.Tuple(swap)
 import Data.Map(Map)
 import Codec.Picture (PixelRGB8(PixelRGB8))
 
--- Represents one of the 4 potential directions, relative to the Robot itself
+-- | Represents one of the 4 potential directions, relative to the Robot itself
 data RDirection = N | E | W | S deriving (Show, Eq)
 
--- Represents a Team
+-- | Represents a Team
 data Team = A | B deriving (Show, Eq)
 
--- A spot on the Board. This is either empty or contains material.
+-- | A spot on the Board. This is either empty or contains material.
 data BoardSpot = SpotEmpty | SpotMaterial
         deriving (Eq, Show)
 
--- Represents an offset from the original position.
+-- | Represents an offset from the original position.
 newtype Offset = Offset (Int, Int)
 
--- The robot's internal state. This is represented by a Stringly-typed Map
+-- | The robot's internal state. This is represented by a Stringly-typed Map
 type InternalState = Map String String
 
--- The robot's appearance. Currently just contains a color.
+-- | The robot's appearance. Currently just contains a color.
 data RobotAppearance = RobotAppearance PixelRGB8 deriving (Show, Eq)
 
--- Represents a Spot on the Board as seen by a robot.
--- This contains a Board Spot, which the Robot can always see,
---      contains a robot's appearance iff there is a robot at that spot.
+{- | Represents a Spot on the Board as seen by a robot.
+    This contains a Board Spot, which the Robot can always see,
+    contains a robot's appearance iff there is a robot at that spot.
+-}
 data SeenSpot = SeenSpot BoardSpot (Maybe RobotAppearance)
 
 
-{-
+{- |
     Offsets the given coordinate by the given directions, if the length of the overall
     offset is less than the given length
 -}
-limitedOffset :: Team -> Int -> [RDirection] -> (Int, Int) -> Maybe (Int, Int)
+limitedOffset ::
+    Team -- ^ The team to use in determining the offsets of the path
+     -> Int -- ^ The maximum allowable length of the path
+     -> [RDirection] -- ^ The path to offset the original by
+     -> (Int, Int) -- ^ The original location
+     -> Maybe (Int, Int)
 limitedOffset team len directs to
         | withinRange   = Just $ applyOffset offs to
         | otherwise     = Nothing
@@ -51,17 +57,21 @@ limitedOffset team len directs to
     withinRange = squareNorm offs <= len * len
     offs = overallOffset team directs
 
-{-
+{- |
     Apply the given direction to the given coordinate pair
 -}
-applyDirection :: Team -> RDirection -> (Int, Int) -> (Int, Int)
+applyDirection ::
+    Team -- ^ The team to use in analyzing the direction
+    -> RDirection -- ^ The direction to travel in
+    -> (Int, Int) -- ^ The original position
+    -> (Int, Int) -- ^ The offset position
 applyDirection team dir = applyOffset (getOffset team dir)
 
--- get the overall offset of the given list of directions, summed up
+-- | The overall offset of the given list of directions, which is the vector sum of its components
 overallOffset :: Team -> [RDirection] -> Offset
 overallOffset team = foldr (addOffset . getOffset team) (Offset (0, 0))
 
--- Gets the coordinate pair of offsets representing the given Team's understanding of the given direction
+-- | Gets the coordinate pair of offsets representing the given Team's understanding of the given direction
 getOffset :: Team -> RDirection -> Offset
 getOffset B N = Offset (0, -1)
 getOffset B E = Offset (1, 0)
@@ -69,17 +79,20 @@ getOffset B dir = negateOff . getOffset B . oppositeDirection $ dir
 getOffset A dir = swapsset $ getOffset B dir
     where swapsset (Offset x) = Offset . swap $ x
 
--- applies the given offset to the given coordinate
+-- | Applies the given offset to the given coordinate
 applyOffset :: Offset -> (Int, Int) -> (Int, Int)
 applyOffset (Offset (offx, offy)) (x, y) = (x + offx, y + offy)
 
--- negates the given offset
+-- | Negates the given offset
 negateOff :: Offset -> Offset
 negateOff (Offset (offx, offy)) = Offset (-offx, -offy)
 
+-- | Adds the given two offsets
 addOffset :: Offset -> Offset -> Offset
 addOffset a (Offset b) = Offset $ applyOffset a b
 
+-- | The opposite direction to the given direction
+-- prop> oppositeDirection (oppositeDirection x) == x
 oppositeDirection :: RDirection -> RDirection
 oppositeDirection N = S
 oppositeDirection S = N

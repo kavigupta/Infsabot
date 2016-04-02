@@ -1,7 +1,7 @@
 {-# LANGUAGE DoAndIfThenElse #-}
 module Infsabot.Build(main) where
 
-import System.Directory(createDirectoryIfMissing, getDirectoryContents, doesDirectoryExist)
+import System.Directory(createDirectoryIfMissing)
 import System.Environment(getArgs)
 
 import Data.List(isSuffixOf, intercalate)
@@ -16,7 +16,8 @@ import Test.HUnit(runTestTT, failures)
 import Infsabot.Demoes(demoes)
 import Infsabot.Test.CollatedTests(tests, stressTest, checks)
 
-import Control.Monad(forM, when)
+import Control.Monad(when)
+import Infsabot.Tools.Interface(getAll)
 
 stdLog, errLog, errColor, logColor, sucColor, noColor, directory :: String
 
@@ -104,21 +105,6 @@ buildAll
         build hss
         echs "Haskell Files Built Correctly"
     where
-    getAll :: FilePath -> IO [FilePath]
-    getAll path =
-        do
-            direxists <- doesDirectoryExist path
-            if not direxists then
-                return [path]
-            else
-                do
-                    allcontents <- getDirectoryContents path
-                    let contents = map (\x -> path ++ "/" ++ x) $
-                            filter
-                                (\x -> not (x `isSuffixOf` ".") && not (x `isSuffixOf` ".."))
-                                allcontents
-                    subs <- forM contents getAll
-                    return . concat $ subs
     build :: [String] -> IO ()
     build names =
         do

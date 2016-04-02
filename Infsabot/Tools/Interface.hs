@@ -3,7 +3,7 @@ module Infsabot.Tools.Interface (
         Natural, makeNatural, unNatural,
         shuffle, allDifferent, sameElements, (!-!), spanNeq,
         doChecks, (~~>),
-        toolsChecks
+        toolsChecks, getAll
     ) where
 
 import Infsabot.Tools.Logic

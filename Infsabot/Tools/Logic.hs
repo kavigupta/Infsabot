@@ -1,8 +1,9 @@
+{-# LANGUAGE DoAndIfThenElse #-}
 module Infsabot.Tools.Logic (
         isPrime, mod',
         Natural, makeNatural, unNatural,
         shuffle, allDifferent, sameElements, (!-!), spanNeq,
-        doChecks, (~~>)
+        doChecks, (~~>), getAll
     ) where
 
 import System.Random
@@ -10,10 +11,11 @@ import Data.Array.ST hiding (newArray)
 import Control.Monad
 import Control.Monad.ST
 import Data.STRef
-import Data.List(sort, (\\))
 import Data.Function(on)
 import Data.Ratio
 import Test.QuickCheck hiding (shuffle)
+import System.Directory
+import Data.List
 
 isPrime :: Int -> Bool
 isPrime x
@@ -117,3 +119,19 @@ mod' x y = x - y * fromIntegral xoy
     where
     xoy :: Integer
     xoy = floor (x / y)
+
+getAll :: FilePath -> IO [FilePath]
+getAll path =
+    do
+        direxists <- doesDirectoryExist path
+        if not direxists then
+            return [path]
+        else
+            do
+                allcontents <- getDirectoryContents path
+                let contents = map (\x -> path ++ "/" ++ x) $
+                        filter
+                            (\x -> not (x `isSuffixOf` ".") && not (x `isSuffixOf` ".."))
+                            allcontents
+                subs <- forM contents getAll
+                return . concat $ subs
