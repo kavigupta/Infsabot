@@ -7,3 +7,4 @@ temp.txt
 dist
 .cabal-sandbox
 .dist-buildwrapper
+cabal.sandbox.config
