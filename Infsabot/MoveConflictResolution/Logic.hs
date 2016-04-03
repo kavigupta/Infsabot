@@ -163,9 +163,6 @@ removeLcl current (l, c, r)
 
 effectOf :: Bool -> RobotAndAction -> Bool
 effectOf True (_, MoveIn _) = True
-    -- | x /= 0    = Effect False True
-    -- | y /= 0    = Effect True False
-        --where (Offset x, Offset y) = getOffset (robotTeam rob) dir
 effectOf _ _ = False
 
 noopifyIf :: RAAFL -> Bool -> RAAFL

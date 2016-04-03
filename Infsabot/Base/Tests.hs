@@ -37,5 +37,4 @@ sub (a, b) (c, d) = (a - c, b - d)
 
 $( derive makeArbitrary ''PixelRGB8 )
 $( derive makeArbitrary ''RobotAppearance )
-$( derive makeArbitrary ''RDirection )
 $( derive makeArbitrary ''Team )

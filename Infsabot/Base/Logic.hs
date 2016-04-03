@@ -1,3 +1,4 @@
+{-# LANGUAGE TemplateHaskell #-}
 module Infsabot.Base.Logic(
                 RDirection(N,E,W,S),
                         oppositeDirection,
@@ -13,6 +14,9 @@ module Infsabot.Base.Logic(
 import Data.Tuple(swap)
 import Data.Map(Map)
 import Codec.Picture (PixelRGB8(PixelRGB8))
+import Test.QuickCheck hiding (shuffle)
+
+import Data.DeriveTH(derive, makeArbitrary)
 
 -- | Represents one of the 4 potential directions, relative to the Robot itself
 data RDirection = N | E | W | S deriving (Show, Eq)
@@ -125,3 +129,5 @@ instance Colored RobotAppearance where
 instance Colored SeenSpot where
     colorOf (SeenSpot _ (Just rob)) 			= colorOf rob
     colorOf (SeenSpot x Nothing) 		        = colorOf x
+
+$( derive makeArbitrary ''RDirection )
