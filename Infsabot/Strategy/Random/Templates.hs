@@ -12,6 +12,11 @@ import Control.Applicative((<$>))
 import Control.Arrow(second)
 import Infsabot.Strategy.ExprTree.Interface()
 
+{-
+    Takes a name of a constructor and outputs a list of constructors,
+        in the form of a tuple of the name of the constructor and the
+        types it takes as arguments.
+-}
 constructorsFor :: Name -> Q [(Name, [Type])]
 constructorsFor name = do
         info <- reify name
@@ -20,19 +25,26 @@ constructorsFor name = do
     where
     constructor (NormalC cons types) = (cons, types)
     constructor _ = error "Non-basic constructor syntax not supported"
+    -- Gets the declarations for the given reified name
+    declarationsFor :: Info -> [Con]
+    declarationsFor (TyConI (DataD _ _ _ declarations _)) = declarations
+    declarationsFor u = error . ("Error here: " ++) . show $ u
 
-declarationsFor :: Info -> [Con]
-declarationsFor (TyConI (DataD _ _ _ declarations _)) = declarations
-declarationsFor u = error . ("Error here: " ++) . show $ u
-
+{-
+    Generates ComplexityRandom declarations for the given name.
+-}
 crDecls :: Name -> Q [Dec]
 crDecls name = (: []) <$> instanceD (cxt []) inst clauses
     where
     inst = return $ AppT (ConT $ mkName "ComplexityRandom") (ConT name)
-    clauses = map ($ name) [cRand, allComplex]
+    clauses = map ($ name) [generateCRandom, generateComplexity]
 
-allComplex :: Name -> Q Dec
-allComplex name = do
+{-
+    Fills in the complexity function for the ComplexityRandom
+        class.
+-}
+generateComplexity :: Name -> Q Dec
+generateComplexity name = do
     constructors <- constructorsFor name
     let matches = map complex constructors
     let body = NormalB $ CaseE (sym "tree") matches
@@ -41,6 +53,10 @@ allComplex name = do
 complex :: (Name, [Type]) -> Match
 complex (constructor, types) = Match (ConP constructor patterns) (NormalB body) []
         where
+        {-
+            The names of the local variables to this function. They represent
+                the children of the given expression tree
+        -}
         originalNames = map (mkName . ("x" ++) . show) [1..length types]
         patterns = zipWith getUnder originalNames exps
         body = foldr (+++) (LitE $ IntegerL 1) exps
@@ -49,18 +65,16 @@ complex (constructor, types) = Match (ConP constructor patterns) (NormalB body) 
         getUnder :: Name -> (a, Bool) -> Pat
         getUnder name (_, use) = VarP $ if use then name else mkName "_"
 
-cRand :: Name -> Q Dec
-cRand name = do
+generateCRandom :: Name -> Q Dec
+generateCRandom name = do
         constructors <- constructorsFor name
         minCR <- mapM getMinCRand constructors
         let lessThan = InfixE Nothing (sym "<=") (Just $ sym "currentComplexity")
-        let filtList = AppE (sym "filter") (InfixE (Just lessThan) (sym ".") (Just $ sym "snd"))
-        let unfilteredList = ListE minCR
-        let filteredList = AppE filtList unfilteredList
-        let appropriateConstructors = AppE (AppE (sym "mapM") (sym "fst")) filteredList
+        let filteredList = sym "filter" $$ infi lessThan (sym ".") (sym "snd") $$ ListE minCR
+        let appropriateConstructors = sym "mapM" $$ sym "fst" $$ filteredList
         let bindConstructors = BindS (VarP . mkName $ "cons") appropriateConstructors
-        let retVal = AppE (sym "state") $ AppE (sym "choice") (sym "cons")
-        let doexpr = AppE (sym "runState") $ DoE [bindConstructors, NoBindS retVal]
+        let retVal = sym "state" $$ (sym "choice" $$ sym "cons")
+        let doexpr = sym "runState" $$ DoE [bindConstructors, NoBindS retVal]
         return $ FunD (mkName "cRandom") . return $ Clause [VarP $ mkName "currentComplexity"] (NormalB doexpr) []
 
 sym :: String -> Exp
@@ -74,7 +88,12 @@ getMinCRand (n, ts) = do
                 length .  filter (isExpr . fromType) $ ts
     return . TupE $ [cRandForThis, minCExpression]
 
+infixl 0 $$
+($$) :: Exp -> Exp -> Exp
+($$) = AppE
 
+infi :: Exp -> Exp -> Exp -> Exp
+infi x op y = InfixE (Just x) op (Just y)
 
 getCRandForSingleConstructor :: (Name, [Type]) -> Exp
 getCRandForSingleConstructor (name, types)= DoE $ [part] ++ assignments ++ [construct]
@@ -106,9 +125,11 @@ getComplexity typ nam
     | isExpr typ               = (AppE (sym "complexity") (VarE nam), True)
     | otherwise                = (LitE $ IntegerL 0, False)
 
+-- Gets the name of the given type
 fromType :: Type -> Name
 fromType (ConT typ) = typ
 fromType _ = error "Non-basic constructor syntax not supported"
 
+-- Whether or not a name is an expression type or a primitive.
 isExpr :: Name -> Bool
 isExpr name = "Expr" `isPrefixOf` nameBase name  || "RP" == nameBase name
