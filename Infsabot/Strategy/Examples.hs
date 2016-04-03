@@ -2,21 +2,14 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
 
-module Strategy.GeneratedStrategy.Logic(
+module Infsabot.Strategy.Examples(
         digStrategy
     ) where
 
-import Infsabot.RobotAction.Interface
 import Infsabot.Base.Interface
-import Infsabot.Tools.Interface(mod')
-
-import Data.Maybe(fromMaybe, isJust)
-import Data.Ratio
-import Control.Applicative((<$>))
-import System.Random
-
 
 import Infsabot.Strategy.ExprTree.Interface
+import Infsabot.Strategy.Random.Interface
 
 digStrategy :: RP
 digStrategy
