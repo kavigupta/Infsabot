@@ -10,6 +10,7 @@ module Infsabot.Strategy.ExprTree.Logic(
 import Infsabot.Base.Interface
 
 data ActionType = TDie | TNoop | TFire | TDig | TMoveIn | TSpawn
+    deriving (Show)
 
 data RP =
     DefaultRepresentation ActionType |
@@ -20,6 +21,7 @@ data RP =
     ModifyAppearance ExprInt RP |
         -- Applies to Spawn. RGB treated as a single integer.
     IfRP ExprBool RP RP
+        deriving (Show)
 
 data ExprInt =
     ConstInt Int |
@@ -32,16 +34,19 @@ data ExprInt =
     (:/) ExprInt ExprInt |
     Mod ExprInt ExprInt |
     IfInt ExprBool ExprInt ExprInt
+        deriving (Show)
 
 -- Basically [ExprDir]
     -- Written like this to make the tree more explicit
 data ExprPath =
     Here |
     Offset ExprDir ExprPath
+        deriving (Show)
 
 data ExprDir =
     ConstDir RDirection |
     IfDir ExprBool ExprDir ExprDir
+        deriving (Show)
 
 data ExprBool =
     ConstBool Bool |
@@ -54,3 +59,4 @@ data ExprBool =
     Not ExprBool |
     (:&) ExprBool ExprBool |
     (:|) ExprBool ExprBool
+        deriving (Show)
