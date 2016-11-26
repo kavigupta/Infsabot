@@ -5,7 +5,7 @@ module Infsabot.Base.Logic(
                 Team(A,B),
                 BoardSpot(SpotEmpty, SpotMaterial),
                         applyDirection, limitedOffset,
-                InternalState,
+                InternalState(InternalState),
                 RobotAppearance(RobotAppearance),
                 SeenSpot(SeenSpot),
                 colorOf
@@ -32,7 +32,7 @@ data BoardSpot = SpotEmpty | SpotMaterial
 newtype Offset = Offset (Int, Int)
 
 -- | The robot's internal state. This is represented by a Stringly-typed Map
-type InternalState = Map String String
+newtype InternalState = InternalState (Map String String) deriving (Show, Eq)
 
 -- | The robot's appearance. Currently just contains a color.
 data RobotAppearance = RobotAppearance PixelRGB8 deriving (Show, Eq)

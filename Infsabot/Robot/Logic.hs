@@ -56,6 +56,6 @@ defaultRobot p team program = Robot {
     robotMaterial = unNatural $ paramInitialMaterial p,
     robotHitpoints = unNatural $ paramInitialHP p,
     robotBirthdate = 0,
-    robotMemory = M.empty,
+    robotMemory = InternalState M.empty,
     robotMessages = []
 }

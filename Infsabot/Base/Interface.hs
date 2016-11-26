@@ -4,7 +4,7 @@ module Infsabot.Base.Interface (
                 Team(A,B),
                 BoardSpot(SpotEmpty, SpotMaterial),
                         applyDirection, limitedOffset,
-                InternalState,
+                InternalState(..),
                 RobotAppearance(RobotAppearance),
                 SeenSpot(SeenSpot),
                 colorOf,
