@@ -63,7 +63,7 @@ complex (constructor, types) = Match (ConP constructor patterns) (NormalB body) 
         exps = zipWith getComplexity (map fromType types) originalNames
         (x, _) +++ y = InfixE (Just x) (VarE $ mkName "+") (Just y)
         getUnder :: Name -> (a, Bool) -> Pat
-        getUnder name (_, use) = VarP $ if use then name else mkName "_"
+        getUnder name (_, use) = VarP $ if use then name else mkName "_unused"
 
 generateCRandom :: Name -> Q Dec
 generateCRandom name = do
