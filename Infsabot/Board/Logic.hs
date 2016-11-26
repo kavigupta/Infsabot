@@ -7,7 +7,7 @@ module Infsabot.Board.Logic (
 		GameSpot(GameSpot), toSeenSpot
 	) where
 
-import Data.Vector(Vector, lookup, update, fromList)
+import Data.Vector(Vector, (!), (//), fromList)
 import Infsabot.Tools.Interface(isPrime, unNatural)
 import Infsabot.Base.Interface
 import Infsabot.Robot.Interface
@@ -126,4 +126,7 @@ listOfRobots b = map PositionedRobot $ M.toList $ boardRobots b
 type RAL = Vector
 
 (.!.) :: RAL a -> Int -> a
-(.!.) = flip Data.RandomAccessList.lookup
+(.!.) = (!)
+
+update :: Int -> a -> RAL a -> RAL a
+update n x v = v // [(n, x)]
