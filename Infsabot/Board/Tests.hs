@@ -5,7 +5,7 @@ module Infsabot.Board.Tests(
     ) where
 
 import Infsabot.Board.Logic
-import qualified Data.RandomAccessList as DRal
+import qualified Data.Vector as DRal
 
 import Test.QuickCheck hiding (shuffle)
 import qualified Data.Map as Map
@@ -14,7 +14,7 @@ import Infsabot.Robot.Interface
 import Infsabot.Base.Interface
 
 import Control.Monad(liftM2)
-import Control.Applicative((<$>))
+
 import Test.HUnit
 
 import Infsabot.Tools.Interface
@@ -23,7 +23,7 @@ import Data.Maybe
 
 import Infsabot.RobotAction.Tests()
 
-type RAL = DRal.RandomAccessList
+type RAL = DRal.Vector
 
 boardChecks :: [IO Result]
 boardChecks
