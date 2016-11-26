@@ -69,7 +69,7 @@ generateCRandom :: Name -> Q Dec
 generateCRandom name = do
         constructors <- constructorsFor name
         minCR <- mapM getMinCRand constructors
-        let lessThan = InfixE Nothing (sym "<=") (Just $ sym "currentComplexity")
+        let lessThan = InfixE Nothing (sym "<=") (Just $ infi (sym "currentComplexity") (sym "-") (LitE $ IntegerL 1))
         let filteredList = sym "filter" $$ infi lessThan (sym ".") (sym "snd") $$ ListE minCR
         let appropriateConstructors = sym "mapM" $$ sym "fst" $$ filteredList
         let bindConstructors = BindS (VarP . mkName $ "cons") appropriateConstructors
@@ -100,7 +100,7 @@ getCRandForSingleConstructor (name, types)= DoE $ [part] ++ assignments ++ [cons
     where
     vars = map (("n"++) . show) [1..numberOfNs]
     part = BindS (ListP $ map (VarP . mkName) vars)
-        $ AppE (sym "state") $ AppE (AppE (sym "getPartition") (sym "currentComplexity"))
+        $ AppE (sym "state") $ AppE (AppE (sym "getPartition") (infi (sym "currentComplexity") (sym "-") (LitE $ IntegerL 1)))
         $ LitE . IntegerL . fromIntegral $ numberOfNs
     (assignments, (numberOfNs, numberOfUs)) = runState (mapM (state . getRandom) types) (0, 0)
     construct = NoBindS $ AppE (sym "return")

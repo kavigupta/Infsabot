@@ -5,12 +5,16 @@
 {-# LANGUAGE TemplateHaskell #-}
 
 module Infsabot.Strategy.Random.Logic (
-        complexity, getDeltas, applyDeltas, constantToParameter, simplify, complicate
+        complexity, cRandom,
+        getDeltas, applyDeltas, constantToParameter, simplify, complicate,
+        getPartition
     ) where
 
 import Infsabot.RobotAction.Interface
 import Infsabot.Strategy.ExprTree.Interface
 import Infsabot.Base.Interface
+
+import Infsabot.Debug
 
 import Control.Monad.State.Lazy
 
@@ -83,15 +87,21 @@ instance ComplexityRandom ExprBool where
 -}
 
 getPartition :: (RandomGen g) => Int -> Int -> g -> ([Int], g)
-getPartition n k = value
+getPartition n k
+        | trace ("getPartition " ++ show n ++ " " ++ show k) False = undefined
+        | k == 0    = \g -> ([], g)
+        | otherwise = value
     where
     value :: (RandomGen g) => g  -> ([Int], g)
-    value = choice parts
+    value = case parts of
+        [] -> \g -> ([], g)
+        pts -> choice pts
     parts :: [[Int]]
     parts = map departition $ partitionsWithKParts k n
     departition (Partition x) = x
 
 choice :: (RandomGen g) => [a] -> g -> (a, g)
+choice [] = error "choice on empty list"
 choice xs = runState $ do
     index <- state $ randomR (0, length xs - 1)
     return $ xs !! index
