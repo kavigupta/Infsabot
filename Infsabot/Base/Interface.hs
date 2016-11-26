@@ -8,7 +8,8 @@ module Infsabot.Base.Interface (
                 RobotAppearance(RobotAppearance),
                 SeenSpot(SeenSpot),
                 colorOf,
-                baseChecks
+                baseChecks,
+                get, insert
         ) where
 
 import Infsabot.Base.Logic

@@ -8,11 +8,12 @@ module Infsabot.Base.Logic(
                 InternalState(InternalState),
                 RobotAppearance(RobotAppearance),
                 SeenSpot(SeenSpot),
-                colorOf
+                colorOf,
+                get, insert
         ) where
 
 import Data.Tuple(swap)
-import Data.Map(Map)
+import qualified Data.Map as M
 import Codec.Picture (PixelRGB8(PixelRGB8))
 import Test.QuickCheck hiding (shuffle)
 
@@ -32,7 +33,13 @@ data BoardSpot = SpotEmpty | SpotMaterial
 newtype Offset = Offset (Int, Int)
 
 -- | The robot's internal state. This is represented by a Stringly-typed Map
-newtype InternalState = InternalState (Map String String) deriving (Show, Eq)
+newtype InternalState = InternalState (M.Map String String) deriving (Show, Eq)
+
+get :: InternalState -> String -> Maybe String
+get (InternalState x) = flip M.lookup x
+
+insert :: InternalState -> String -> String -> InternalState
+insert (InternalState x) k v = InternalState $ M.insert k v x
 
 -- | The robot's appearance. Currently just contains a color.
 data RobotAppearance = RobotAppearance PixelRGB8 deriving (Show, Eq)
