@@ -23,19 +23,19 @@ import Infsabot.Tools.Interface
 -- Represents a game piece, called a Robot
 data Robot = Robot {
         -- The program this Robot will use
-		robotProgram :: RobotProgram,
+        robotProgram :: RobotProgram,
         -- The team this robot belongs to
-		robotTeam :: Team,
+        robotTeam :: Team,
         -- How this robot appears to its surroundings
-		robotAppearance :: RobotAppearance,
+        robotAppearance :: RobotAppearance,
         -- The quantity of material this robot contains
-		robotMaterial :: Int,
+        robotMaterial :: Int,
         -- The hitpoints of this robot
         robotHitpoints :: Int,
         -- The birthdate of this robot
         robotBirthdate :: Int,
         -- The memory of this robot
-		robotMemory :: InternalState,
+        robotMemory :: InternalState,
         -- The messages this robot has on the stack
         robotMessages :: [(String, RDirection)]
 } deriving (Eq, Show)

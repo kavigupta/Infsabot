@@ -124,10 +124,10 @@ instance Colored RobotAppearance where
     colorOf (RobotAppearance x) = x
 
     -- Gets the display color of the given spot.
-	-- If there is a robot, then the color is that of the robot
-	-- Otherwise, the color is that of the underlying material
+    -- If there is a robot, then the color is that of the robot
+    -- Otherwise, the color is that of the underlying material
 instance Colored SeenSpot where
-    colorOf (SeenSpot _ (Just rob)) 			= colorOf rob
-    colorOf (SeenSpot x Nothing) 		        = colorOf x
+    colorOf (SeenSpot _ (Just rob))             = colorOf rob
+    colorOf (SeenSpot x Nothing)                = colorOf x
 
 $( derive makeArbitrary ''RDirection )

@@ -27,15 +27,15 @@ type RobotProgramResult = (RobotAction, InternalState)
 data KnownState = KnownState {
     -- Function the Robot can use to see around it.
     -- Returns Nothing if the robot can't see that far.
-	peekAtSpot :: [RDirection] -> Maybe SeenSpot,
-	-- The quantity of material the robot has
-	material :: Int,
-	-- The current location of the robot
-	stateLocation :: (Int, Int),
-	-- The robot's age
-	stateAge :: Int,
-	-- The robot's memory
-	stateMemory :: InternalState,
+    peekAtSpot :: [RDirection] -> Maybe SeenSpot,
+    -- The quantity of material the robot has
+    material :: Int,
+    -- The current location of the robot
+    stateLocation :: (Int, Int),
+    -- The robot's age
+    stateAge :: Int,
+    -- The robot's memory
+    stateMemory :: InternalState,
     -- The robot's received messages as a list of pairs of
     -- message and direction received.
     stateMessages :: [(String, RDirection)]
