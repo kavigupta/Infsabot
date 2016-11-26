@@ -3,7 +3,7 @@ module Infsabot.Tools.Tests(toolsChecks) where
 
 import Test.QuickCheck
 import Infsabot.Tools.Logic
-import Control.Applicative
+
 
 toolsChecks :: [IO Result]
 toolsChecks = [

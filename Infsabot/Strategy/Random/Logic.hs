@@ -1,7 +1,6 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE DoAndIfThenElse #-}
-{-# LANGUAGE OverlappingInstances #-}
 {-# LANGUAGE TemplateHaskell #-}
 
 module Infsabot.Strategy.Random.Logic (

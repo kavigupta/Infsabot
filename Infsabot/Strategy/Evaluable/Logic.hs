@@ -12,7 +12,7 @@ import Infsabot.Tools.Interface(mod')
 
 import Data.Maybe(fromMaybe, isJust)
 import Data.Ratio
-import Control.Applicative((<$>))
+
 
 import Codec.Picture(PixelRGB8(..))
 

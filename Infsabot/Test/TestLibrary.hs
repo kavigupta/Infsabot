@@ -17,7 +17,7 @@ import Infsabot.Robot.Interface
 import Infsabot.Tools.Interface
 import Infsabot.RobotAction.Interface
 
-import Control.Applicative((<$>))
+
 import Data.Monoid
 import Infsabot.Debug
 import Data.Function(on)

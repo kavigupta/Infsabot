@@ -10,7 +10,7 @@ import Infsabot.MoveConflictResolution.Interface
 import Infsabot.Base.Interface
 import Data.List(sortBy)
 import Data.Function(on)
-import Control.Applicative((<$>))
+
 import Data.Maybe(fromJust)
 import Infsabot.Tools.Interface
 

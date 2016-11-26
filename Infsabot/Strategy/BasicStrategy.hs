@@ -1,7 +1,7 @@
 module Infsabot.Strategy.BasicStrategy(basicProgram2, basicProgram)
     where
 
-import Control.Applicative((<$>))
+
 import Data.Maybe
 
 import Infsabot.Base.Interface

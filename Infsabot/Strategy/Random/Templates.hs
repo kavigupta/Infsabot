@@ -7,7 +7,7 @@ import Language.Haskell.TH
 import Data.List
 import Data.Function
 import Control.Monad.State.Lazy
-import Control.Applicative((<$>))
+
 
 import Control.Arrow(second)
 import Infsabot.Strategy.ExprTree.Interface()

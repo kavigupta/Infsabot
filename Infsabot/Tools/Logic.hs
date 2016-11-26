@@ -9,7 +9,6 @@ module Infsabot.Tools.Logic (
 import System.Random
 import Data.Array.ST hiding (newArray)
 import Control.Monad
-import Control.Applicative((<$>))
 import Control.Monad.ST
 import Data.STRef
 import Data.Function(on)
