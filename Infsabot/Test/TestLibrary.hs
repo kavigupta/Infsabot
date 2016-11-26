@@ -18,7 +18,6 @@ import Infsabot.Tools.Interface
 import Infsabot.RobotAction.Interface
 
 
-import Data.Monoid
 import Infsabot.Debug
 import Data.Function(on)
 

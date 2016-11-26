@@ -12,7 +12,6 @@ import Infsabot.Tools.Interface
 import Data.List(nubBy)
 import Data.Function(on)
 import Data.Tuple(swap)
-import Data.Monoid(mconcat)
 
 import Test.QuickCheck hiding (shuffle)
 import Data.DeriveTH(derive, makeArbitrary)

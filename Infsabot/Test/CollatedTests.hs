@@ -17,7 +17,6 @@ import Codec.Picture
 import Infsabot.GamePlay.Interface
 import Infsabot.Parameters
 import Infsabot.Rendering(renderBoard)
-import Data.Functor
 import Test.QuickCheck.Test(isSuccess)
 import Control.Monad(liftM2)
 

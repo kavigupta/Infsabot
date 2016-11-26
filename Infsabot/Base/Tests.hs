@@ -6,7 +6,6 @@ module Infsabot.Base.Tests (
 import Infsabot.Base.Logic
 import Data.Maybe
 import Data.Function(on)
-import Data.Functor
 import Infsabot.Tools.Interface
 import Codec.Picture (PixelRGB8(PixelRGB8))
 
