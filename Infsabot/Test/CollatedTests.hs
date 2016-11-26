@@ -17,7 +17,7 @@ import Codec.Picture
 import Infsabot.GamePlay.Interface
 import Infsabot.Parameters
 import Infsabot.Rendering(renderBoard)
-import Test.QuickCheck.Test(isSuccess)
+import Test.QuickCheck.Test(isSuccess, Result(Success))
 import Control.Monad(liftM2)
 
 stressTest :: IO ()
@@ -105,4 +105,4 @@ checks = all isSuccess <$> sequence (
         robActChecks ++
         mcrChecks ++
         boardChecks ++
-        if False then randomChecks else [putStrLn "Disabled cRandom checks (for now)"])
+        if False then randomChecks else [putStrLn "Disabled cRandom checks (for now)" >> return (Success 0 [] "")])
