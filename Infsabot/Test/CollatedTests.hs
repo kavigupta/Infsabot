@@ -20,13 +20,17 @@ import Infsabot.Rendering(renderBoard)
 import Test.QuickCheck.Test(isSuccess, Result(Success))
 import Control.Monad(liftM2)
 
+import System.Process
+
 stressTest :: IO ()
-stressTest =
+stressTest = do
     writePng "temp.png" . renderBoard 1
         $ boards
                 defaultParameters
                 (startingBoard defaultParameters basicProgram)
             !! 200
+    _ <- system "rm temp.png"
+    return ()
 
 tests :: Test
 tests = TestList [generalGameTest, mcrEdgeCases]
