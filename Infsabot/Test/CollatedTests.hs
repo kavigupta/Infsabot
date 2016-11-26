@@ -7,6 +7,7 @@ import Infsabot.RobotAction.Interface
 import Infsabot.Board.Interface
 import Infsabot.Tools.Interface
 import Infsabot.Robot.Interface
+import Infsabot.Strategy.Random.Interface
 
 import Infsabot.Strategy.BasicStrategy
 import Infsabot.Test.TestLibrary
@@ -99,4 +100,10 @@ assertBoardSymmetry b = TestList $ liftM2 symmetric [0.. boardSize b - 1] [0..bo
             return $ regular == other
 
 checks :: IO Bool
-checks = all isSuccess <$> sequence (toolsChecks ++ baseChecks ++ robActChecks ++ mcrChecks ++ boardChecks)
+checks = all isSuccess <$> sequence (
+        toolsChecks ++
+        baseChecks ++
+        robActChecks ++
+        mcrChecks ++
+        boardChecks ++
+        randomChecks)
