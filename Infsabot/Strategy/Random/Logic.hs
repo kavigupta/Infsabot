@@ -1,6 +1,5 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE UndecidableInstances #-}
-{-# LANGUAGE OverlappingInstances #-}
 {-# LANGUAGE DoAndIfThenElse #-}
 {-# LANGUAGE TemplateHaskell #-}
 
@@ -32,7 +31,7 @@ class ComplexityRandom a where
     complexity :: a -> Int
     cRandom :: (RandomGen g) => Int -> g -> (a, g)
 
-instance (ComplexityRandom a) => Random a where
+instance {-# OVERLAPPABLE #-} (ComplexityRandom a) => Random a where
     randomR (a, b) = runState $ do
             c <- state $ randomR (ca, cb)
             state $ cRandom c
