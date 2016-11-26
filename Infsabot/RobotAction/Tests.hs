@@ -1,4 +1,5 @@
 {-# Language TemplateHaskell #-}
+{-# Language OverlappingInstances #-}
 {-# Language FlexibleInstances #-}
 module Infsabot.RobotAction.Tests(
         robActChecks

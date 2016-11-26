@@ -1,5 +1,6 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE OverlappingInstances #-}
 {-# LANGUAGE DoAndIfThenElse #-}
 {-# LANGUAGE TemplateHaskell #-}
 
