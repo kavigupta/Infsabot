@@ -125,7 +125,7 @@ mutateRobot team (x, y) direction distance mutator b
 
 -- Takes a list of robots and results and outputs
     -- (a function that updates a board to one with hard drives updated,
-    -- 	a list of robots and their actions)
+    --  a list of robots and their actions)
 -- This is performed before any robot actions are carried out.
 updateAllHardDrives :: [RobotAndResult] -> (Board -> Board, [RobotAndAction])
 updateAllHardDrives rars = (

@@ -42,14 +42,14 @@ data Board = Board {
 -- Gets the game spot at the given board location
 (!!!) :: Board -> (Int, Int) -> Maybe GameSpot
 b !!! (x, y)
-    | inBoard b (x, y)	= Just $ boardContents b .!. x .!. y
-    | otherwise			= Nothing
+    | inBoard b (x, y)  = Just $ boardContents b .!. x .!. y
+    | otherwise         = Nothing
 
 -- Sets the game spot at the given board location to the given value
 (!->) :: Board -> (Int, Int) -> GameSpot -> Board
 (b !-> (x, y)) gs
-    | inBoard b (x, y)	= b {boardContents = newcontents}
-    | otherwise			= b
+    | inBoard b (x, y)  = b {boardContents = newcontents}
+    | otherwise         = b
     where
     -- The old column x
     oldx = boardContents b .!. x
@@ -65,10 +65,10 @@ startingBoard p programOf
     = setRobot (0, unNatural (paramBoardSize p) - 1) (bot B) $
         setRobot (unNatural (paramBoardSize p) - 1, 0) (bot A)
         Board {
-            boardContents 	= startingSpots,
-            boardRobots 	= M.fromList [],
-            boardSize 		= unNatural $ paramBoardSize p,
-            boardTime 		= 0
+            boardContents   = startingSpots,
+            boardRobots     = M.fromList [],
+            boardSize       = unNatural $ paramBoardSize p,
+            boardTime       = 0
         }
     where
     startingSpots :: (RAL (RAL GameSpot))
@@ -84,8 +84,8 @@ startingBoard p programOf
     bot team = Just $ defaultRobot p team (programOf team)
 
 -- Sets the robot at the given spot to the given value, or deletes it.
--- 		1. places the robot at the gamespot at the given coordinates
---		2. Adds the robot to the list of robots
+--      1. places the robot at the gamespot at the given coordinates
+--      2. Adds the robot to the list of robots
 setRobot :: (Int, Int) -> Maybe Robot -> Board -> Board
 setRobot (x, y) rob b = delRobot $ b !!! (x, y)
     where
@@ -94,8 +94,8 @@ setRobot (x, y) rob b = delRobot $ b !!! (x, y)
             = newB {boardRobots = newRobots rob}
         where
         newB = b !-> (x, y) $ GameSpot oldMaterial rob
-        newRobots Nothing 		=  M.delete (x, y) oldRobots
-        newRobots (Just robot) 	= M.insert (x, y) robot oldRobots
+        newRobots Nothing       =  M.delete (x, y) oldRobots
+        newRobots (Just robot)  = M.insert (x, y) robot oldRobots
         oldRobots = boardRobots newB
 
 --Updates the given spot to the new value
@@ -113,8 +113,8 @@ robotAlongPath :: Team -> Board -> (Int, Int) -> RDirection -> Int -> Maybe (Int
 robotAlongPath _ _ _ _ 0 = Nothing
 robotAlongPath team b (x, y) dir n
     = case robotAt b (x, y) of
-        Nothing 	-> robotAlongPath team b (applyDirection team dir (x, y)) dir (n-1)
-        Just rob 	-> Just (x, y, rob)
+        Nothing     -> robotAlongPath team b (applyDirection team dir (x, y)) dir (n-1)
+        Just rob    -> Just (x, y, rob)
 
 -- Returns true iff the given coordinate pair is in the board
 inBoard :: Board -> (Int, Int) -> Bool
