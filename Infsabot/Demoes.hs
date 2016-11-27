@@ -5,6 +5,8 @@ import Codec.Picture(writePng)
 import Data.Function(on)
 import Control.Monad(forM_)
 import Infsabot.Parameters
+import Infsabot.RobotAction.Interface
+import Infsabot.Base.Interface(Team(A, B))
 import Infsabot.GamePlay.Interface(boards)
 import Infsabot.Board.Interface(Board, startingBoard)
 import Infsabot.Rendering(renderBoard)
@@ -14,37 +16,49 @@ import Infsabot.Tools.Interface
 
 import System.Process(system)
 
-nBoards, boardSize, boardScalingFactor, fps :: Int
-
-nBoards = 150
-boardSize = 60
-boardScalingFactor = 1000 `div` boardSize
+fps :: Int
 fps = 5
 
-showPadded :: Int -> String
-showPadded n = replicate (((-) `on` (length . show)) nBoards n) '0' ++ show n
+writeBoard :: Int -> String -> Board -> IO ()
+writeBoard scale s = writePng s . renderBoard scale
 
 demoes :: IO ()
-demoes = createDemoBoards boardSize
+demoes = do
+    writeBoard 16 "demo-starting-board.png" $ startingBoard (defaultParameters {paramBoardSize = makeNatural 60}) basicProgram
+    simulateGame SP {nBoards=150, boardSize=60, pathToImage="./demo/demo-moves", strategyA=basicProgram A, strategyB=basicProgram B}
 
-createDemoBoards :: Int -> IO ()
-createDemoBoards demoBoardSize
+data SimulationParams = SP {
+    nBoards :: Int,
+    boardSize :: Int,
+    pathToImage :: String,
+    strategyA :: RobotProgram,
+    strategyB :: RobotProgram
+}
+
+simulateGame :: SimulationParams -> IO ()
+simulateGame SP {nBoards=nB, boardSize=size, pathToImage=path, strategyA=sA, strategyB=sB}
     = do
-        writeBoard "demo-starting-board.png" $ snd $ head selectedBoards
         forM_ (tail selectedBoards) $ \(x, board) -> do
             print x
-            writeBoard ("demo/demo-moves-" ++ showPadded x ++ ".png") board
+            writeBoard boardScalingFactor (path ++ "-" ++ showPadded x ++ ".png") board
         forM_ ["mp4", "gif"] (system . ffmpeg)
         return ()
     where
-    params = defaultParameters {paramBoardSize = makeNatural demoBoardSize, paramInitialMaterial = 100}
+    showPadded :: Int -> String
+    showPadded n = replicate (((-) `on` (length . show)) nB n) '0' ++ show n
+    boardScalingFactor = 1000 `div` size
+    params = defaultParameters {paramBoardSize = makeNatural size, paramInitialMaterial = 100}
     selectedBoards
-        = take nBoards $
+        = take nB $
             zip [0 :: Int ..] $
-            boards params $ startingBoard params basicProgram
+            boards params . startingBoard params $ \x ->
+                case x of
+                    A -> sA
+                    B -> sB
 
-writeBoard :: String -> Board -> IO ()
-writeBoard s = writePng s . renderBoard boardScalingFactor
-
-ffmpeg :: String -> String
-ffmpeg ext = "ffmpeg -f image2 -r " ++ show fps ++ " -pattern_type glob -i './demo/demo-moves-*.png'  demo/demo-moves."++ ext ++ " -y"
+    ffmpeg :: String -> String
+    ffmpeg ext = "ffmpeg -f image2 -r "
+            ++ show fps
+            ++ " -pattern_type glob -i "
+            ++ "'" ++ path ++ "-*.png' "
+            ++ path ++ "."++ ext ++ " -y"
