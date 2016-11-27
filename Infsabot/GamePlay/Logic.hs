@@ -32,15 +32,13 @@ play p b
         actionApplier .
         -- apply all action costs
         actionCostApplier .
-        -- update all hard drives
-        hardDriveUpdater .
         -- apply the time tick
         applyTimeTick $
         b
     where
         -- actions := results - state.
         -- hardDriveUpdater updates the hard drive
-        (hardDriveUpdater, actions)
+        actions
             = updateAllHardDrives $ getRobotResults p b
         -- resolves and sorts the actions
         resolvedAndSortedActions
@@ -123,19 +121,13 @@ mutateRobot team (x, y) direction distance mutator b
     where
     maybeRobot = robotAlongPath team b (x, y) direction distance
 
--- Takes a list of robots and results and outputs
-    -- (a function that updates a board to one with hard drives updated,
-    --  a list of robots and their actions)
--- This is performed before any robot actions are carried out.
-updateAllHardDrives :: [RobotAndResult] -> (Board -> Board, [RobotAndAction])
-updateAllHardDrives rars = (
-        foldr ((.) . updateHardDrive) id rars,
-        map removeState rars)
+-- Takes a list of robots and results and outputs a list of robots with updated
+    -- hard drives and their actions
+updateAllHardDrives :: [RobotAndResult] -> [RobotAndAction]
+updateAllHardDrives = map removeState
     where
-    removeState (xyrob, (act, _)) = (xyrob, act)
-    updateHardDrive :: RobotAndResult -> Board -> Board
-    updateHardDrive (PositionedRobot ((x,y),rob), (_, state))
-        = setRobot (x,y) $ Just rob {robotMemory = state}
+    removeState :: RobotAndResult -> RobotAndAction
+    removeState (PositionedRobot (xy, rob), (act, state)) = (PositionedRobot (xy, rob {robotMemory = state}), act)
 
 -- Takes a parameter list and list of actions, and applies all their costs to
 -- the given board.
