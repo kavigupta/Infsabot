@@ -47,8 +47,16 @@ type RAA3Col = ([RAAFL], [RAAFL], [RAAFL])
     If two robots try to move or spawn into the same position,
         both are cancelled.
 -}
-removeConflicting :: [RobotAndAction] -> [RobotAndAction]
-removeConflicting = map fst . concat . completeColumnSweeper . organizeRobots
+removeConflicting :: Maybe Int -> [RobotAndAction] -> [RobotAndAction]
+removeConflicting size = map fst . concat . completeColumnSweeper . organizeRobots . fmap (removeOutOfBounds size)
+
+removeOutOfBounds :: Maybe Int -> RobotAndAction -> RobotAndAction
+removeOutOfBounds Nothing act = act
+removeOutOfBounds (Just size) act = fst . noopifyIf (act, FinalLocs a b) $ any outOfBounds [a, b]
+    where
+    (FinalLocs a b) = finalLocations act
+    outOfBounds (Just (x, y))   = x < 0 || y < 0 || x >= size || y >= size
+    outOfBounds Nothing         = False
 
 completeColumnSweeper :: [[RAAFL]] -> [[RAAFL]]
 completeColumnSweeper d

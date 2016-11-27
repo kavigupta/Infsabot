@@ -26,7 +26,7 @@ play :: Parameters -> Board -> Board
 play p b
     | trace ("actions = " ++ show actions ++ "\n\t"
         ++ show (map (possibleAction p) actions) ++ "\n\t"
-        ++ show (map printRobotAndAction $ removeConflicting $ map (possibleAction p) actions)) False = undefined
+        ++ show (map printRobotAndAction $ removeConflicting (Just $ boardSize b) $ map (possibleAction p) actions)) False = undefined
      | otherwise =
         -- apply actions
         actionApplier .
@@ -45,7 +45,7 @@ play p b
         -- resolves and sorts the actions
         resolvedAndSortedActions
             = sortBy (compare `on` (orderOfOperations . snd))
-                $ removeConflicting
+                $ removeConflicting (Just $ boardSize b)
                 $ map (possibleAction p) actions
         -- gets the function which applies the costs of the actions
         actionCostApplier = applyActionCosts p resolvedAndSortedActions

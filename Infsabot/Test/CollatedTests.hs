@@ -76,13 +76,14 @@ mcrEdgeCases = TestList $ zipWith createCase [1::Int ..]
             [(PositionedRobot ((-52,0), Robot {robotProgram = basicProgram A, robotTeam = A, robotAppearance = RobotAppearance $ PixelRGB8 94 250 23, robotMaterial = 35, robotHitpoints = 42, robotBirthdate = 48, robotMemory = InternalState (fromList []), robotMessages = []}),Spawn SpawnAction {newDirection = E, newProgram = basicProgram A, newAppearance = RobotAppearance $ PixelRGB8 42 190 236, newMaterial = -68, newMemory = InternalState (fromList [])}),(PositionedRobot ((-52,-2), Robot {robotProgram = basicProgram A, robotTeam = B, robotAppearance = RobotAppearance $ PixelRGB8 242 34 8, robotMaterial = 30, robotHitpoints = 16, robotBirthdate = 39, robotMemory = InternalState (fromList []), robotMessages = []}),Noop),(PositionedRobot ((-51,0), Robot {robotProgram = basicProgram A, robotTeam = B, robotAppearance = RobotAppearance $ PixelRGB8 174 233 27, robotMaterial = 13, robotHitpoints = 38, robotBirthdate = 43, robotMemory = InternalState (fromList []), robotMessages = []}),MoveIn W)]
         ]
     where
+    createCase :: Int -> [RobotAndAction] -> Test
     createCase n cas
             = TestCase $ assertBool
                 ("MCR Edge Case " ++ show n
                     ++ "; Result = " ++ show b ++ "\n\t"
                     ++ show cas)
                 (b == TRSuccess)
-        where b = individualMCRChecks cas
+        where b = individualMCRChecks Nothing cas
 
 assertTeamsSymmetric :: Board -> Test
 assertTeamsSymmetric b

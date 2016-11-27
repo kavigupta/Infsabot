@@ -19,12 +19,12 @@ import Data.DeriveTH(derive, makeArbitrary)
 import Infsabot.RobotAction.Tests()
 import Infsabot.Test.TestLibrary
 
-individualMCRChecks :: [RobotAndAction] -> TestResult String
-individualMCRChecks raas
+individualMCRChecks :: Maybe Int -> [RobotAndAction] -> TestResult String
+individualMCRChecks size raas
     = mconcat $
         zipWith constructTest
         (map ($ raas)
-            [propNoChangeInLength, propSymmeteryPreserving, uncurry (~~>) . propConflictsResolved, propOrganizeRobotsSame])
+            [propNoChangeInLength size, propSymmeteryPreserving size, uncurry (~~>) . propConflictsResolved size, propOrganizeRobotsSame])
         ["Conflict Order Independence", "No Change In Length", "Symmetery Preserving", "Conflicts Resolved", "Organize Robots Same"]
 
 mcrChecks :: [IO Result]
@@ -32,7 +32,8 @@ mcrChecks = [
     putStrLn "Conflict Order Independence" >> doChecks 5 propConflictOrderIndependence,
     putStrLn "No Change In Length" >> doChecks 1 propNoChangeInLength,
     putStrLn "Symmetery Preserving" >> doChecks 5 propSymmeteryPreserving,
-    putStrLn "Conflicts Resolved" >> doChecks 50 (uncurry (==>) . propConflictsResolved),
+    putStrLn "Conflicts Resolved" >> doChecks 50 (uncurry (==>) . propConflictsResolved (Just 100)),
+    putStrLn "Conflicts Resolved" >> doChecks 50 (uncurry (==>) . propConflictsResolved Nothing),
     putStrLn "Organize Robots Same" >> doChecks 1 propOrganizeRobotsSame]
 
 instance TeamedObject RAAFL where
@@ -62,20 +63,20 @@ finalLocsToList (FinalLocs x y) = tl x ++ tl y
     tl Nothing = []
     tl (Just l) = [l]
 
-propConflictsResolved :: [RobotAndAction] -> (Bool, Bool)
-propConflictsResolved acts
+propConflictsResolved :: Maybe Int -> [RobotAndAction] -> (Bool, Bool)
+propConflictsResolved size acts
     = (allDifferent (map (positionOf . fst) acts), allDifferent finalLocs)
     where
     finalLocs :: [(Int, Int)]
-    finalLocs = concatMap (finalLocsToList . finalLocations) $ removeConflicting acts
+    finalLocs = concatMap (finalLocsToList . finalLocations) $ removeConflicting size acts
 
 propOrganizeRobotsSame :: [RobotAndAction] -> Bool
 propOrganizeRobotsSame us = sameElements us . map fst . concat . organizeRobots $ us
 
-propSymmeteryPreserving :: [RobotAndAction] -> Bool
-propSymmeteryPreserving raas
+propSymmeteryPreserving :: Maybe Int -> [RobotAndAction] -> Bool
+propSymmeteryPreserving size raas
     = teamSymmetric
-            (removeConflicting $ makeSymmetric raas) == TRSuccess
+            (removeConflicting size $ makeSymmetric raas) == TRSuccess
 
 propConflictOrderIndependence :: (RAAFL, RAAFL) -> Property
 propConflictOrderIndependence (x, y) = positionOf x /= positionOf y
@@ -84,8 +85,8 @@ propConflictOrderIndependence (x, y) = positionOf x /= positionOf y
     (a, b) = conflictsBetween x y
     (d, c) = conflictsBetween y x
 
-propNoChangeInLength :: [RobotAndAction] -> Bool
-propNoChangeInLength r = length raas == length (removeConflicting raas)
+propNoChangeInLength :: Maybe Int -> [RobotAndAction] -> Bool
+propNoChangeInLength size r = length raas == length (removeConflicting size raas)
     where raas = nubBy ((==) `on` positionOf) r
 
 $( derive makeArbitrary ''FinalLocs )
