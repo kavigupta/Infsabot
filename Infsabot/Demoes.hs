@@ -5,16 +5,18 @@ import Codec.Picture(writePng)
 import Data.Function(on)
 import Control.Monad(forM_)
 import Infsabot.Parameters
+import Infsabot.Base.Interface
 import Infsabot.RobotAction.Interface
-import Infsabot.Base.Interface(Team(A, B))
 import Infsabot.GamePlay.Interface(boards)
 import Infsabot.Board.Interface(Board, startingBoard)
 import Infsabot.Rendering(renderBoard)
 import Infsabot.Strategy.BasicStrategy(basicProgram)
+import Infsabot.Strategy.StandardStrategies
 
 import Infsabot.Tools.Interface
 
 import System.Process(system)
+import System.Random
 
 fps :: Int
 fps = 5
@@ -25,6 +27,14 @@ writeBoard scale s = writePng s . renderBoard scale
 demoes :: IO ()
 demoes = do
     writeBoard 16 "demo-starting-board.png" $ startingBoard (defaultParameters {paramBoardSize = makeNatural 60}) basicProgram
+    system "mkdir -p ./strategies/random-v-random"
+    simulateGame SP {
+        nBoards=30,
+        boardSize=10,
+        pathToImage="./strategies/random-v-random/rvr",
+        strategyA=randomMoves (replicate 6 (1/6)) (mkStdGen 0),
+        strategyB=randomMoves (replicate 6 (1/6)) (mkStdGen 1)
+    }
     simulateGame SP {nBoards=150, boardSize=60, pathToImage="./demo/demo-moves", strategyA=basicProgram A, strategyB=basicProgram B}
 
 data SimulationParams = SP {
