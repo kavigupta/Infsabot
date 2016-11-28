@@ -8,20 +8,16 @@ import Infsabot.Robot.Interface(Robot(..))
 import Codec.Picture.Types
 
 import Data.Maybe(fromJust)
-import Control.Monad.ST
-import Control.Monad
 
 -- Renders the given board as an image
 renderBoard :: Int -> Board -> Image PixelRGB8
-renderBoard n b = runST $ do
-        img <- newMutableImage (n * boardSize b) (n * boardSize b)
-        forM_ [0..boardSize b - 1] $ \x ->
-            forM_ [0..boardSize b - 1] $ \y -> do
-                let square = renderSquare n . fromJust $ b !!! (x, y)
-                forM_ [0..n-1] $ \offx ->
-                    forM_ [0..n-1] $ \offy ->
-                        writePixel img (x * n + offx) (y * n + offy) (square offx offy)
-        unsafeFreezeImage img
+renderBoard n b = generateImage colorAt (n * size) (n * size)
+    where
+    colorAt x y = renderSquare n (fromJust $ b !!! (blockX, blockY)) offX offY
+        where
+        (blockX, blockY) = (x `div` n, y `div` n)
+        (offX, offY) = (x `mod` n, y `mod` n)
+    size = boardSize b
 
 renderSquare :: Int -> GameSpot -> Int -> Int -> PixelRGB8
 renderSquare _ (GameSpot spot Nothing) _ _
