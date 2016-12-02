@@ -1,5 +1,5 @@
 {-# Language TupleSections #-}
-module Infsabot.GamePlay.Logic(boards) where
+module Infsabot.GamePlay.Logic(boards, boardsAndActions) where
 
 import Infsabot.Board.Interface
 import Infsabot.Robot.Interface
@@ -19,25 +19,33 @@ import Infsabot.Debug
 type RobotAndResult = (PositionedRobot, RobotProgramResult)
 
 boards :: Parameters -> Board -> [Board]
-boards params = iterate (play params)
+boards params = map fst . boardsAndActions params
+
+boardsAndActions :: Parameters -> Board -> [(Board, [((Int, Int), RobotAction)])]
+boardsAndActions params b = (b, a) : boardsAndActions params b'
+    where
+    (b', a) = play params b
 
 -- the main play function. This executes all robot actions and updates the board.
-play :: Parameters -> Board -> Board
+play :: Parameters -> Board -> (Board, [((Int, Int), RobotAction)])
 play p b
     | trace ("actions = " ++ show actions ++ "\n\t"
         ++ show (map (possibleAction p) actions) ++ "\n\t"
         ++ show (map printRobotAndAction $ removeConflicting (Just $ boardSize b) $ map (possibleAction p) actions)) False = undefined
      | otherwise =
-        -- apply actions
-        actionApplier .
-        -- apply all action costs
-        actionCostApplier .
-        -- apply the time tick
-        applyTimeTick $
-        b
+        (newBoard, map extractXYrob actions)
     where
+        newBoard =
+            -- apply actions
+            actionApplier .
+            -- apply all action costs
+            actionCostApplier .
+            -- apply the time tick
+            applyTimeTick $
+            b
         -- actions := results - state.
         -- hardDriveUpdater updates the hard drive
+        extractXYrob (PositionedRobot (xy, r), u) = (xy, deRelativize (robotTeam r) u)
         actions
             = updateAllHardDrives $ getRobotResults p b
         -- resolves and sorts the actions
@@ -50,6 +58,23 @@ play p b
         -- gets the function which applies all actions
         actionApplier
             = foldl (.) id $ map (getAction p) resolvedAndSortedActions
+
+deRelativize :: Team -> RobotAction -> RobotAction
+deRelativize team act = case act of
+        (MoveIn d) -> MoveIn $ derel d
+        (Fire f) -> Fire f {fireDirection=derel $ fireDirection f}
+        (Send s) -> Send s {sendDirection=derel $ sendDirection s}
+        (Spawn s) -> Spawn s {newDirection=derel $ newDirection s, newProgram= derelInFirst . newProgram s}
+        x -> x
+    where
+    derelInFirst (x, y) = (deRelativize team x, y)
+    derel x = oppositeDirection $ case team of
+        B -> x
+        A -> case x of
+            N -> W
+            W -> N
+            E -> S
+            S -> E
 
 -- gets the action associated with the given robotandaction in the form
 -- of a function that mutates a board
