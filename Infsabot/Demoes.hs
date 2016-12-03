@@ -7,9 +7,9 @@ import Control.Monad(forM_)
 import Infsabot.Parameters
 import Infsabot.Base.Interface
 import Infsabot.RobotAction.Interface
-import Infsabot.GamePlay.Interface(boards)
+import Infsabot.GamePlay.Interface(boardsAndActions)
 import Infsabot.Board.Interface(Board, startingBoard)
-import Infsabot.Rendering(renderBoard)
+import Infsabot.Rendering(renderBoardAndActions)
 import Infsabot.Strategy.BasicStrategy(basicProgram)
 import Infsabot.Strategy.StandardStrategies
 
@@ -21,12 +21,17 @@ import System.Random
 fps :: Int
 fps = 5
 
-writeBoard :: Int -> String -> Board -> IO ()
-writeBoard scale s = writePng s . renderBoard scale
+writeBoard :: Int -> String -> (Board, [((Int, Int), RobotAction)]) -> IO ()
+writeBoard scale s = writePng s . renderer
+    where
+    renderer (x, y) = renderBoardAndActions scale x y
+
+writeOnlyBoard :: Int -> String -> Board -> IO ()
+writeOnlyBoard scale s b = writeBoard scale s (b, [])
 
 demoes :: IO ()
 demoes = do
-    writeBoard 16 "demo-starting-board.png" $ startingBoard (defaultParameters {paramBoardSize = makeNatural 60}) basicProgram
+    writeOnlyBoard 16 "demo-starting-board.png" $ startingBoard (defaultParameters {paramBoardSize = makeNatural 60}) basicProgram
     system "mkdir -p ./strategies/random-v-random"
     simulateGame SP {
         nBoards=30,
@@ -61,7 +66,7 @@ simulateGame SP {nBoards=nB, boardSize=size, pathToImage=path, strategyA=sA, str
     selectedBoards
         = take nB $
             zip [0 :: Int ..] $
-            boards params . startingBoard params $ \x ->
+            boardsAndActions params . startingBoard params $ \x ->
                 case x of
                     A -> sA
                     B -> sB
