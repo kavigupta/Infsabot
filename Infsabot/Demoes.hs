@@ -38,7 +38,7 @@ demoes = do
         boardSize=10,
         pathToImage="./strategies/random-v-random/rvr",
         strategyA=randomMoves (replicate 6 (1/6)) (mkStdGen 0),
-        strategyB=randomMoves (replicate 6 (1/6)) (mkStdGen 1)
+        strategyB=randomMoves (replicate 6 (1/6)) (mkStdGen 4)
     }
     simulateGame SP {nBoards=150, boardSize=60, pathToImage="./demo/demo-moves", strategyA=basicProgram A, strategyB=basicProgram B}
 
