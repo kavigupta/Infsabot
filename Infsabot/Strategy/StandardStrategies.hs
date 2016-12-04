@@ -33,23 +33,23 @@ randomMoves newPro distr startGen KnownState {stateMemory=state, material=mat}
             let moveType = fst . head . dropWhile ((< r) . snd) $ cDistr
             case moveType of
                 0 -> return Noop
-                1 -> Fire <$> (FireAction <$> (makeNatural <$> S.state (randomR (0, mat))) <*> S.state random)
-                2 -> do
+                1 -> return Dig
+                2 -> MoveIn <$> S.state random
+                3 -> do
+                    dir <- S.state random
+                    app <- S.state random
+                    newMat <- S.state $ randomR (0, mat-1)
+                    newGen <- S.state split
+                    return . Spawn $ SpawnAction
+                        dir
+                        (fromMaybe (randomMoves newPro distr gen) newPro)
+                        app
+                        (makeNatural newMat)
+                        (insert state "gen" (show newGen))
+                4 -> Fire <$> (FireAction <$> (makeNatural <$> S.state (randomR (0, mat))) <*> S.state random)
+                5 -> do
                     len <- S.state $ randomR (0, 40)
                     Send <$> (SendAction <$> S.replicateM len (S.state random) <*> S.state random)
-                3 -> return Dig
-                4 -> MoveIn <$> S.state random
-                5 -> do
-                        dir <- S.state random
-                        app <- S.state random
-                        newMat <- S.state $ randomR (0, mat-1)
-                        newGen <- S.state split
-                        return . Spawn $ SpawnAction
-                            dir
-                            (fromMaybe (randomMoves newPro distr gen) newPro)
-                            app
-                            (makeNatural newMat)
-                            (insert state "gen" (show newGen))
                 _ -> error "Doesn't work"
     cDistr :: [(Int, Double)]
     cDistr = zip [0..] . tail . scanl (+) 0 $ distr
