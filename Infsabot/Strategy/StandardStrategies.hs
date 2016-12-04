@@ -11,6 +11,8 @@ import Codec.Picture.Types(PixelRGB8(..))
 import qualified Control.Monad.State as S
 import System.Random
 
+import Data.Maybe(fromMaybe)
+
 instance (Random RDirection) where
     random = S.runState $ do
         index <- S.state $ randomR (0, 3 :: Int)
@@ -22,8 +24,8 @@ instance (Random RobotAppearance) where
         where s = S.state random
     randomR _ = random
 
-randomMoves :: [Double] -> StdGen -> RobotProgram
-randomMoves distr startGen KnownState {stateMemory=state, material=mat}
+randomMoves :: Maybe RobotProgram -> [Double] -> StdGen -> RobotProgram
+randomMoves newPro distr startGen KnownState {stateMemory=state, material=mat}
         = (result, newState)
     where
     (result, state') = flip S.runState gen $ do
@@ -44,7 +46,7 @@ randomMoves distr startGen KnownState {stateMemory=state, material=mat}
                         newGen <- S.state split
                         return . Spawn $ SpawnAction
                             dir
-                            (randomMoves distr gen)
+                            (fromMaybe (randomMoves newPro distr gen) newPro)
                             app
                             (makeNatural newMat)
                             (insert state "gen" (show newGen))
