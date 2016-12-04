@@ -1,7 +1,7 @@
-module Infsabot.Rendering (renderBoard, renderBoardAndActions) where
+module Infsabot.Rendering (renderBoard, renderBoardAndActions, renderVictory) where
 
 
-import Infsabot.Base.Interface(colorOf, RDirection(..))
+import Infsabot.Base.Interface(colorOf, RDirection(..), Team, colorOf)
 import Infsabot.Board.Interface(Board, GameSpot(..), boardSize, (!!!))
 import Infsabot.Robot.Interface(Robot(..))
 import Infsabot.RobotAction.Interface(RobotAction(..), FireAction(..), SendAction(..), SpawnAction(..))
@@ -11,6 +11,12 @@ import Codec.Picture.Types
 import qualified Data.Map as M
 
 import Data.Maybe(fromJust)
+
+renderVictory :: Int -> Maybe Team -> Image PixelRGB8
+renderVictory size victor = generateImage (\_ _ -> color) size size
+    where color = case victor of
+            Nothing -> PixelRGB8 255 255 255
+            Just x -> colorOf x
 
 renderBoard :: Int -> Board -> Image PixelRGB8
 renderBoard n b = renderBoardAndActions n b []

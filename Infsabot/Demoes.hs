@@ -7,9 +7,9 @@ import Control.Monad(forM_)
 import Infsabot.Parameters
 import Infsabot.Base.Interface
 import Infsabot.RobotAction.Interface
-import Infsabot.GamePlay.Interface(boardsAndActions)
+import Infsabot.GamePlay.Interface(boardsAndActions, Game(..), limit)
 import Infsabot.Board.Interface(Board, startingBoard)
-import Infsabot.Rendering(renderBoardAndActions)
+import Infsabot.Rendering(renderBoardAndActions, renderVictory)
 import Infsabot.Strategy.BasicStrategy(basicProgram)
 import Infsabot.Strategy.StandardStrategies
 
@@ -66,6 +66,7 @@ simulateGame SP {nBoards=nB, boardSize=size, pathToImage=path, strategyA=sA, str
         forM_ (tail selectedBoards) $ \(x, board) -> do
             print x
             writeBoard boardScalingFactor (path ++ "-" ++ showPadded x ++ ".png") board
+        writePng (path ++ "-" ++ showPadded nB ++ ".png") $ renderVictory 1000 victor
         forM_ ["mp4", "gif"] (system . ffmpeg)
         return ()
     where
@@ -73,9 +74,9 @@ simulateGame SP {nBoards=nB, boardSize=size, pathToImage=path, strategyA=sA, str
     showPadded n = replicate (((-) `on` (length . show)) nB n) '0' ++ show n
     boardScalingFactor = 1000 `div` size
     params = defaultParameters {paramBoardSize = makeNatural size, paramInitialMaterial = 100}
-    selectedBoards
-        = take nB $
-            zip [0 :: Int ..] $
+    victor :: Maybe Team
+    (victor, selectedBoards)
+        = limit nB $ labelGame $
             boardsAndActions params . startingBoard params $ \x ->
                 case x of
                     A -> sA
@@ -87,3 +88,9 @@ simulateGame SP {nBoards=nB, boardSize=size, pathToImage=path, strategyA=sA, str
             ++ " -pattern_type glob -i "
             ++ "'" ++ path ++ "-*.png' "
             ++ path ++ "."++ ext ++ " -y"
+
+labelGame :: Game a -> Game (Int, a)
+labelGame = zipGameFrom 0
+    where
+    zipGameFrom _ (Victory t) = Victory t
+    zipGameFrom n (a :~ g) = (n, a) :~ zipGameFrom (n + 1) g

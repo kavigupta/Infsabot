@@ -24,11 +24,10 @@ import System.Process
 
 stressTest :: IO ()
 stressTest = do
-    writePng "temp.png" . renderBoard 1
+    writePng "temp.png" . renderBoard 1 . (!! 200) . snd . limit 1000
         $ boards
                 defaultParameters
                 (startingBoard defaultParameters basicProgram)
-            !! 200
     _ <- system "rm temp.png"
     return ()
 
@@ -45,7 +44,7 @@ generalGameTest
                 assertBoardSymmetry b,
                 assertRobotSourcesAgree b]) neededBoards
     where
-    neededBoards = take nTurns $ boards params initialBoard
+    neededBoards = snd . limit nTurns $ boards params initialBoard
     nTurns = 100
     params :: Parameters
     params = defaultParameters {paramBoardSize = 60, paramInitialMaterial = 1000}

@@ -1,5 +1,8 @@
 {-# Language TupleSections #-}
-module Infsabot.GamePlay.Logic(boards, boardsAndActions) where
+{-# Language DeriveFunctor #-}
+module Infsabot.GamePlay.Logic(
+        boards, boardsAndActions, Game(..), isVictory, limit
+    ) where
 
 import Infsabot.Board.Interface
 import Infsabot.Robot.Interface
@@ -18,11 +21,19 @@ import Infsabot.Debug
 
 type RobotAndResult = (PositionedRobot, RobotProgramResult)
 
-boards :: Parameters -> Board -> [Board]
-boards params = map fst . boardsAndActions params
+data Game a = Victory Team | a :~ Game a
+    deriving Functor
 
-boardsAndActions :: Parameters -> Board -> [(Board, [((Int, Int), RobotAction)])]
-boardsAndActions params b = (b, a) : boardsAndActions params b'
+limit :: Int -> Game a -> (Maybe Team, [a])
+limit _ (Victory t) = (Just t, [])
+limit 0 _ = (Nothing, [])
+limit n (x:~xs) = let (u, v) = limit (n-1) xs in (u, x:v)
+
+boards :: Parameters -> Board -> Game Board
+boards params = fmap fst . boardsAndActions params
+
+boardsAndActions :: Parameters -> Board -> Game (Board, [((Int, Int), RobotAction)])
+boardsAndActions params b = (b, a) :~ boardsAndActions params b'
     where
     (b', a) = play params b
 
@@ -58,6 +69,16 @@ play p b
         -- gets the function which applies all actions
         actionApplier
             = foldl (.) id $ map (getAction p) resolvedAndSortedActions
+
+isVictory :: Board -> Maybe Team
+isVictory b = case foldr combine (False, False) $ listOfRobots b of
+        (True, False) -> Just A
+        (False, True) -> Just B
+        _             -> Nothing
+    where
+    combine :: PositionedRobot -> (Bool, Bool) -> (Bool, Bool)
+    combine (PositionedRobot (_, r)) (e, f) = (e || t == A, f || t == B)
+        where t = robotTeam r
 
 deRelativize :: Team -> RobotAction -> RobotAction
 deRelativize team act = case act of
