@@ -24,7 +24,7 @@ executable infsabot-build
     main-is: Infsabot/Build/Main.hs
     build-depends: base, utf8-string==0.2, derive, mtl, fgl, regex-posix,
         process, directory, JuicyPixels, QuickCheck, random, array, vector, containers,
-        HUnit, combinat, template-haskell, doctest
+        HUnit, combinat, template-haskell, doctest, filepath
     if !flag(noopt)
         Ghc-Options: -O2 -Wall -Werror -fno-warn-orphans -fno-warn-unused-do-bind
     else
@@ -34,7 +34,7 @@ library
     -- other-modules:
     build-depends:       base, utf8-string==0.2, derive, mtl, fgl, regex-posix,
         process, directory, JuicyPixels, QuickCheck, random, array, vector, containers,
-        HUnit, combinat, template-haskell, doctest
+        HUnit, combinat, template-haskell, doctest, filepath
     ghc-options:     -Wall -Werror -fno-warn-orphans -fno-warn-unused-do-bind
 
 test-suite test
