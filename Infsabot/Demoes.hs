@@ -35,6 +35,13 @@ demoes = do
     writeOnlyBoard 16 "demo-starting-board.png" $ startingBoard (defaultParameters {paramBoardSize = makeNatural 60}) basicProgram
     system "mkdir -p ./strategies/random-v-random"
     simulateGame SP {
+        nBoards=100,
+        boardSize=6,
+        pathToImage="./strategies/digger-v-digger/dvd",
+        strategyA=fix $ \d -> digger $ randomMoves (Just d) (0:repeat (1/3)) (mkStdGen 0),
+        strategyB=fix $ \d -> digger $ randomMoves (Just d) (0:repeat (1/3)) (mkStdGen 2)
+    }
+    simulateGame SP {
         nBoards=30,
         boardSize=10,
         pathToImage="./strategies/random-v-random/rvr",
