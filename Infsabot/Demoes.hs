@@ -63,7 +63,7 @@ simulateGame SP {nBoards=nB, boardSize=size, pathToImage=path, strategyA=sA, str
     = do
         system $ "rm -r " ++ takeDirectory path
         system $ "mkdir -p " ++ takeDirectory path
-        forM_ (tail selectedBoards) $ \(x, board) -> do
+        forM_ selectedBoards $ \(x, board) -> do
             print x
             writeBoard boardScalingFactor (path ++ "-" ++ showPadded x ++ ".png") board
         writePng (path ++ "-" ++ showPadded nB ++ ".png") $ renderVictory 1000 victor
