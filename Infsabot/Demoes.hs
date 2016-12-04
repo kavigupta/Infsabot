@@ -66,12 +66,12 @@ simulateGame SP {nBoards=nB, boardSize=size, pathToImage=path, strategyA=sA, str
         forM_ selectedBoards $ \(x, board) -> do
             print x
             writeBoard boardScalingFactor (path ++ "-" ++ showPadded x ++ ".png") board
-        writePng (path ++ "-" ++ showPadded nB ++ ".png") $ renderVictory 1000 victor
+        writePng (path ++ "-" ++ showPadded (length selectedBoards) ++ ".png") $ renderVictory 1000 victor
         forM_ ["mp4", "gif"] (system . ffmpeg)
         return ()
     where
     showPadded :: Int -> String
-    showPadded n = replicate (((-) `on` (length . show)) nB n) '0' ++ show n
+    showPadded n = replicate (((-) `on` (length . show)) (length selectedBoards) n) '0' ++ show n
     boardScalingFactor = 1000 `div` size
     params = defaultParameters {paramBoardSize = makeNatural size, paramInitialMaterial = 100}
     victor :: Maybe Team
