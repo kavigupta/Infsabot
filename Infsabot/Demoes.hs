@@ -2,7 +2,7 @@ module Infsabot.Demoes(demoes) where
 
 import Codec.Picture(writePng)
 
-import Data.Function(on)
+import Data.Function(on, fix)
 import Control.Monad(forM_)
 import Infsabot.Parameters
 import Infsabot.Base.Interface
@@ -17,6 +17,7 @@ import Infsabot.Tools.Interface
 
 import System.Process(system)
 import System.Random
+import System.FilePath
 
 fps :: Int
 fps = 5
@@ -53,6 +54,8 @@ data SimulationParams = SP {
 simulateGame :: SimulationParams -> IO ()
 simulateGame SP {nBoards=nB, boardSize=size, pathToImage=path, strategyA=sA, strategyB=sB}
     = do
+        system $ "rm -r " ++ takeDirectory path
+        system $ "mkdir -p " ++ takeDirectory path
         forM_ (tail selectedBoards) $ \(x, board) -> do
             print x
             writeBoard boardScalingFactor (path ++ "-" ++ showPadded x ++ ".png") board
