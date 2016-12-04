@@ -33,7 +33,9 @@ boards :: Parameters -> Board -> Game Board
 boards params = fmap fst . boardsAndActions params
 
 boardsAndActions :: Parameters -> Board -> Game (Board, [((Int, Int), RobotAction)])
-boardsAndActions params b = (b, a) :~ boardsAndActions params b'
+boardsAndActions params b = case isVictory b of
+        Nothing -> (b, a) :~ boardsAndActions params b'
+        Just team -> Victory team
     where
     (b', a) = play params b
 
