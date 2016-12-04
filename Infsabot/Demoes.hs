@@ -67,7 +67,7 @@ simulateGame SP {nBoards=nB, boardSize=size, pathToImage=path, strategyA=sA, str
             print x
             writeBoard boardScalingFactor (path ++ "-" ++ showPadded x ++ ".png") board
         writePng (path ++ "-" ++ showPadded (length selectedBoards) ++ ".png") $ renderVictory 1000 victor
-        forM_ ["mp4", "gif"] (system . ffmpeg)
+        system . ffmpeg $ ["mp4", "gif"]
         return ()
     where
     showPadded :: Int -> String
@@ -82,12 +82,12 @@ simulateGame SP {nBoards=nB, boardSize=size, pathToImage=path, strategyA=sA, str
                     A -> sA
                     B -> sB
 
-    ffmpeg :: String -> String
-    ffmpeg ext = "ffmpeg -f image2 -r "
+    ffmpeg :: [String] -> String
+    ffmpeg exts = "ffmpeg -f image2 -r "
             ++ show fps
             ++ " -pattern_type glob -i "
             ++ "'" ++ path ++ "-*.png' "
-            ++ path ++ "."++ ext ++ " -y"
+            ++ unwords (map (\ext -> path ++ "."++ ext ++ " -y") exts)
 
 labelGame :: Game a -> Game (Int, a)
 labelGame = zipGameFrom 0
