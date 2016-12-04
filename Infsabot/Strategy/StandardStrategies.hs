@@ -1,5 +1,6 @@
 module Infsabot.Strategy.StandardStrategies(
-        randomMoves
+        randomMoves,
+        digger
     ) where
 
 import Infsabot.Base.Interface
@@ -23,6 +24,13 @@ instance (Random RobotAppearance) where
     random = S.runState $ RobotAppearance <$> S.liftM3 PixelRGB8 s s s
         where s = S.state random
     randomR _ = random
+
+digger :: RobotProgram -> RobotProgram
+digger pro st@KnownState {stateMemory=state, peekAtSpot=peeker}
+    = case peeker [] of
+        Nothing -> (Noop, state)
+        (Just (SeenSpot SpotEmpty _)) -> pro st
+        (Just (SeenSpot SpotMaterial _)) -> (Dig, state)
 
 randomMoves :: Maybe RobotProgram -> [Double] -> StdGen -> RobotProgram
 randomMoves newPro distr startGen KnownState {stateMemory=state, material=mat}
