@@ -1,3 +1,4 @@
+{-# LANGUAGE TupleSections #-}
 module Infsabot.Strategy.StandardStrategies(
         randomMoves,
         digger
@@ -13,6 +14,8 @@ import qualified Control.Monad.State as S
 import System.Random
 
 import Data.Maybe(fromMaybe)
+
+type RandomRobotProgram = KnownState -> S.State StdGen RobotProgramResult
 
 instance (Random RDirection) where
     random = S.runState $ do
@@ -32,11 +35,25 @@ digger pro st@KnownState {stateMemory=state, peekAtSpot=peeker}
         (Just (SeenSpot SpotEmpty _)) -> pro st
         (Just (SeenSpot SpotMaterial _)) -> (Dig, state)
 
-randomMoves :: Maybe RobotProgram -> [Double] -> StdGen -> RobotProgram
-randomMoves newPro distr startGen KnownState {stateMemory=state, material=mat}
-        = (result, newState)
+randomize :: StdGen -> RandomRobotProgram -> RobotProgram
+randomize startGen randpro s@KnownState {stateMemory=state} = (result, newState)
     where
-    (result, state') = flip S.runState gen $ do
+    result :: RobotAction
+    ((result, state'), gen') = S.runState (randpro s) gen
+    gen = case get state "gen" of
+        Nothing -> startGen
+        Just x -> read x
+    newState = insert state' "gen" (show gen')
+
+randomMoves :: Maybe RobotProgram -> [Double] -> StdGen -> RobotProgram
+randomMoves newPro distr startGen
+        = randomize startGen $ randomMovesRandom (fromMaybe thisProgram newPro) distr
+    where
+    thisProgram = randomMoves newPro distr startGen
+
+randomMovesRandom :: RobotProgram -> [Double] -> RandomRobotProgram
+randomMovesRandom newPro distr KnownState {stateMemory=state, material=mat}
+        = (, state) <$> do
             r <- S.state $ randomR (0, 1)
             let moveType = fst . head . dropWhile ((< r) . snd) $ cDistr
             case moveType of
@@ -50,7 +67,7 @@ randomMoves newPro distr startGen KnownState {stateMemory=state, material=mat}
                     newGen <- S.state split
                     return . Spawn $ SpawnAction
                         dir
-                        (fromMaybe (randomMoves newPro distr gen) newPro)
+                        newPro
                         app
                         (makeNatural newMat)
                         (insert state "gen" (show newGen))
@@ -59,9 +76,6 @@ randomMoves newPro distr startGen KnownState {stateMemory=state, material=mat}
                     len <- S.state $ randomR (0, 40)
                     Send <$> (SendAction <$> S.replicateM len (S.state random) <*> S.state random)
                 _ -> error "Doesn't work"
+    where
     cDistr :: [(Int, Double)]
     cDistr = zip [0..] . tail . scanl (+) 0 $ distr
-    gen = case get state "gen" of
-        Nothing -> startGen
-        Just x -> read x
-    newState = insert state "gen" (show state')
