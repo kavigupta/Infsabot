@@ -24,7 +24,7 @@ import System.Process
 
 stressTest :: IO ()
 stressTest = do
-    writePng "temp.png" . renderBoard 1 . (!! 200) . snd . limit 1000
+    writePng "temp.png" . renderBoard defaultParameters 1 . (!! 200) . snd . limit 1000
         $ boards
                 defaultParameters
                 (startingBoard defaultParameters basicProgram)

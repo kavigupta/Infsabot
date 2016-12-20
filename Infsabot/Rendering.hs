@@ -2,6 +2,8 @@ module Infsabot.Rendering (renderBoard, renderBoardAndActions, renderVictory) wh
 
 
 import Infsabot.Base.Interface(colorOf, RDirection(..), Team, colorOf)
+import Infsabot.Tools.Interface(Natural, unNatural)
+import Infsabot.Parameters(Parameters(..))
 import Infsabot.Board.Interface(Board, GameSpot(..), boardSize, (!!!))
 import Infsabot.Robot.Interface(Robot(..))
 import Infsabot.RobotAction.Interface(RobotAction(..), FireAction(..), SendAction(..), SpawnAction(..))
@@ -18,29 +20,29 @@ renderVictory size victor = generateImage (\_ _ -> color) size size
             Nothing -> PixelRGB8 255 255 255
             Just x -> colorOf x
 
-renderBoard :: Int -> Board -> Image PixelRGB8
-renderBoard n b = renderBoardAndActions n b []
+renderBoard :: Parameters -> Int -> Board -> Image PixelRGB8
+renderBoard p n b = renderBoardAndActions p n b []
 
 -- Renders the given board as an image
-renderBoardAndActions :: Int -> Board -> [((Int, Int), RobotAction)] -> Image PixelRGB8
-renderBoardAndActions n b acts = generateImage colorAt (n * size) (n * size)
+renderBoardAndActions :: Parameters -> Int -> Board -> [((Int, Int), RobotAction)] -> Image PixelRGB8
+renderBoardAndActions p n b acts = generateImage colorAt (n * size) (n * size)
     where
-    colorAt x y = renderActionSquare ((blockX, blockY) `M.lookup` actsMap) n (fromJust $ b !!! (blockX, blockY)) offX offY
+    colorAt x y = renderActionSquare p ((blockX, blockY) `M.lookup` actsMap) n (fromJust $ b !!! (blockX, blockY)) offX offY
         where
         (blockX, blockY) = (x `div` n, y `div` n)
         (offX, offY) = (x `mod` n, y `mod` n)
     size = boardSize b
     actsMap = M.fromList acts
 
-renderActionSquare :: Maybe RobotAction -> Int -> GameSpot -> Int -> Int -> PixelRGB8
-renderActionSquare act n g x y = case act of
+renderActionSquare :: Parameters -> Maybe RobotAction -> Int -> GameSpot -> Int -> Int -> PixelRGB8
+renderActionSquare p act n g x y = case act of
         Nothing -> background
         (Just a) ->
             if renderAction a n (x, y)
             then PixelRGB8 0 0 0
             else background
     where
-    background = renderSquare n g (x, y)
+    background = renderSquare p n g (x, y)
 
 renderAction :: RobotAction -> Int -> (Int, Int) -> Bool
 renderAction a n (x, y) = case a of
@@ -71,12 +73,47 @@ renderAction a n (x, y) = case a of
     rotate E = (y, n-x)
     rotate S = (n-x, n-y)
     rotate W = (n-y, x)
+    
+onBorderRectangle :: Int -> Int -> Int -> Int -> Int -> Int -> Bool
+onBorderRectangle minX maxX minY maxY x y
+    | x < minX || x > maxX      = False
+    | x == minX || x == maxX    = minY <= y && y <= maxY
+    | otherwise                 = minY == y || maxY == y
 
-renderSquare :: Int -> GameSpot -> (Int, Int) -> PixelRGB8
-renderSquare _ (GameSpot spot Nothing) _
+inRectangle :: Int -> Int -> Int -> Int -> Int -> Int -> Bool
+inRectangle minX maxX minY maxY x y
+    = minX <= x && x <= maxX && minY <= y && y <= maxY
+    
+renderBar :: Int -> Int -> Int -> Double -> PixelRGB8
+renderBar minY maxY y ratio
+        | loc < 1 - ratio   = PixelRGB8 255 0 0
+        | otherwise         = PixelRGB8 0 255 0
+    where
+    loc = fromIntegral (y - minY) / fromIntegral (maxY - minY)
+
+divin :: Int -> Natural -> Double
+divin x y = fromIntegral x / fromIntegral (unNatural y)
+
+renderSquare :: Parameters -> Int -> GameSpot -> (Int, Int) -> PixelRGB8
+renderSquare _ _ (GameSpot spot Nothing) _
     = colorOf spot
-renderSquare size (GameSpot _ (Just Robot {robotTeam=team, robotAppearance=app})) (x, y)
+renderSquare
+        Parameters {paramInitialHP=hpMax, paramInitialMaterial=matMax}
+        size
+        (GameSpot _ (Just Robot {robotTeam=team, robotAppearance=app, robotHitpoints=hp, robotMaterial=mat})) (x, y)
+    | onBorderRectangle leftHP rightHP topBar botBar x y
+        = PixelRGB8 0 0 0
+    | onBorderRectangle leftM rightM topBar botBar x y
+        = PixelRGB8 0 0 0
+    | inRectangle leftHP rightHP topBar botBar x y
+        = renderBar topBar botBar y (divin hp hpMax)
+    | inRectangle leftM rightM topBar botBar x y
+        = renderBar topBar botBar y (divin mat matMax)
     | x < size `div` 4 || y < size `div` 4 || x > 3 * size `div` 4 || y > 3 * size `div` 4
         = colorOf app
     | otherwise
         = colorOf team
+    where
+    (leftHP, rightHP) = (13 * size `div` 16, 14 * size `div` 16)
+    (leftM, rightM) = (14 * size `div` 16, 15 * size `div` 16)
+    (topBar, botBar) = (size `div` 8, 7 * size `div` 8)

@@ -22,17 +22,17 @@ import System.FilePath
 fps :: Int
 fps = 5
 
-writeBoard :: Int -> String -> (Board, [((Int, Int), RobotAction)]) -> IO ()
-writeBoard scale s = writePng s . renderer
+writeBoard :: Parameters -> Int -> String -> (Board, [((Int, Int), RobotAction)]) -> IO ()
+writeBoard p scale s = writePng s . renderer
     where
-    renderer (x, y) = renderBoardAndActions scale x y
+    renderer (x, y) = renderBoardAndActions p scale x y
 
-writeOnlyBoard :: Int -> String -> Board -> IO ()
-writeOnlyBoard scale s b = writeBoard scale s (b, [])
+writeOnlyBoard :: Parameters -> Int -> String -> Board -> IO ()
+writeOnlyBoard p scale s b = writeBoard p scale s (b, [])
 
 demoes :: IO ()
 demoes = do
-    writeOnlyBoard 16 "demo-starting-board.png" $ startingBoard (defaultParameters {paramBoardSize = makeNatural 60}) basicProgram
+    writeOnlyBoard defaultParameters 16 "demo-starting-board.png" $ startingBoard (defaultParameters {paramBoardSize = makeNatural 60}) basicProgram
     system "mkdir -p ./strategies/random-v-random"
     simulateGame SP {
         nBoards=100,
@@ -65,7 +65,7 @@ simulateGame SP {nBoards=nB, boardSize=size, pathToImage=path, strategyA=sA, str
         system $ "mkdir -p " ++ takeDirectory path
         forM_ selectedBoards $ \(x, board) -> do
             print x
-            writeBoard boardScalingFactor (path ++ "-" ++ showPadded x ++ ".png") board
+            writeBoard params boardScalingFactor (path ++ "-" ++ showPadded x ++ ".png") board
         writePng (path ++ "-" ++ showPadded (length selectedBoards) ++ ".png") $ renderVictory 1000 victor
         system . ffmpeg $ ["mp4", "gif"]
         return ()
